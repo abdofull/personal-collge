@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - نظام المالية الشخصية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="main.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #00aaff;
+            --secondary-color: #2a2f40;
+            --dark-color: #1c1f2b;
+            --light-color: #eaeaea;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--dark-color);
+            margin: 0;
+            padding: 0;
+            color: var(--light-color);
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-left: 10px;
+            font-size: 1.8rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light-color);
+            font-size: 1rem;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-nav .nav-link i {
+            margin-left: 8px;
+            font-size: 1.1rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(0, 170, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            background: var(--secondary-color);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            color: var(--light-color);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 170, 255, 0.2);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), #0066ff);
+        }
+
+        .card .icon {
+            font-size: 2.8rem;
+            margin-bottom: 1.2rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .icon {
+            transform: scale(1.1);
+        }
+
+        .card h5 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--light-color);
+        }
+
+        .card p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .card-danger {
+            background-color: var(--danger-color);
+            color: #fff;
+        }
+
+        .card-warning {
+            background-color: var(--warning-color);
+            color: #fff;
+        }
+
+        .warning-text {
+            color: var(--danger-color);
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .chart-container {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--secondary-color);
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .chart-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 170, 255, 0.2);
+        }
+
+        .table {
+            margin-top: 2rem;
+            background: var(--secondary-color);
+            color: var(--light-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .table thead {
+            background: linear-gradient(90deg, var(--primary-color), #0066ff);
+            color: #fff;
+        }
+
+        .table th, .table td {
+            padding: 1.2rem;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(0, 170, 255, 0.1);
+            transform: scale(1.01);
+        }
+
+        .table tr.over-budget {
+            background-color: var(--danger-color);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--secondary-color);
+            color: var(--light-color);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: 8px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0088cc;
+            border-color: #0088cc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 170, 255, 0.3);
+        }
+
+        .badge-income {
+            background-color: var(--success-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .badge-expense {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .section-title {
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 2rem;
+            color: var(--light-color);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+            border-radius: 2px;
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-color), #0066ff);
+            border-radius: 5px;
+        }
+
+        .quick-actions {
+            margin: 2rem 0;
+        }
+
+        .quick-actions .btn {
+            margin-left: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .quick-actions .btn i {
+            margin-left: 8px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-right: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .notification-icon {
+            position: relative;
+            margin-left: 1rem;
+            font-size: 1.3rem;
+            color: var(--light-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-icon:hover {
+            color: var(--primary-color);
+        }
+
+        /* قسم الإشعارات */
+        .notification-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .notification {
+            background: #343a40;
+            color: #ffffff;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(100%);
+            animation: slideIn 0.3s forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification.hide {
+            animation: slideOut 0.3s forwards;
+        }
+
+        @keyframes slideOut {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        .notification i {
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+
+        .notification.info {
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .notification.warning {
+            border-right: 4px solid var(--warning-color);
+        }
+
+        .notification.danger {
+            border-right: 4px solid var(--danger-color);
+        }
+
+        .notification.success {
+            border-right: 4px solid var(--success-color);
+        }
+
+        .notifications-list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            color: #212529;
+        }
+
+        .notification-item.info {
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .notification-item.warning {
+            border-right: 4px solid var(--warning-color);
+        }
+
+        .notification-item.danger {
+            border-right: 4px solid var(--danger-color);
+        }
+
+        .notification-item.success {
+            border-right: 4px solid var(--success-color);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .notification-header small {
+            color: #6c757d;
+            font-size: 0.8em;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل المحسن -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-chart-line"></i>
+                لوحة التحكم
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Transctionshow.html">
+                            <i class="fas fa-exchange-alt"></i> المعاملات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Budget.html">
+                            <i class="fas fa-wallet"></i> الميزانية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">
+                            <i class="fas fa-chart-line"></i> التقارير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Settings.html">
+                            <i class="fas fa-cog"></i> الإعدادات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()" style="color: var(--danger-color);">
+                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <div class="notification-icon notification-toggle" id="notificationToggle">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </div>
+                    
+                    <a class="nav-link" href="profile.html">
+                        <div id="user-info" class="d-flex align-items-center">
+                            <div class="user-avatar">م</div>
+                            <div class="user-info">
+                                <span class="user-name">محمد أحمد</span>
+                                <span class="user-role">مدير النظام</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- قسم الإشعارات -->
+    <div class="notification-container" id="notificationContainer">
+        <!-- الإشعارات ستظهر هنا ديناميكيًا -->
+    </div>
+
+    <!-- زر الرجوع إلى الأعلى -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- المحتوى الرئيسي المحسن -->
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="section-title animate__animated animate__fadeIn" id="UserNameNav">مرحبًا بك،،،</h1>
+            <div>
+                <span class="text-muted">آخر تحديث: <span id="lastUpdated">اليوم، 10:45 ص</span></span>
+                <button class="btn btn-primary ms-3" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> تحديث البيانات
+                </button>
+            </div>
+        </div>
+
+        <!-- إجراءات سريعة -->
+        <div class="quick-actions animate__animated animate__fadeInUp">
+            <h5 class="mb-3">إجراءات سريعة</h5>
+            <div class="d-flex flex-wrap">
+                <button class="btn btn-primary" onclick="window.location.href='add-transaction.html'">
+                    <i class="fas fa-plus"></i> إضافة معاملة
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='Budget.html'">
+                    <i class="fas fa-wallet"></i> إنشاء ميزانية
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='report.html'">
+                    <i class="fas fa-file-pdf"></i> إنشاء تقرير
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='Settings.html'">
+                    <i class="fas fa-cog"></i> تعديل الإعدادات
+                </button>
+            </div>
+        </div>
+
+        <!-- الكروت -->
+        <h2 class="section-title mt-5 animate__animated animate__fadeIn">نظرة عامة سريعة</h2>
+        <div class="row animate__animated animate__fadeInUp">
+            <div class="col-md-3">
+                <div class="card" id="balanceCard">
+                    <div class="card-body">
+                        <i class="fas fa-wallet icon"></i>
+                        <h5>إجمالي الرصيد</h5>
+                        <p id="totalBalance">0.00 دينار</p>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 85%"></div>
+                        </div>
+                        <small class="text-muted">زيادة 12% عن الشهر الماضي</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-dollar-sign icon"></i>
+                        <h5>إجمالي الدخل</h5>
+                        <p id="totalIncome">0.00 دينار</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: 65%"></div>
+                        </div>
+                        <small class="text-muted">زيادة 8% عن الشهر الماضي</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" id="expensesCard">
+                    <div class="card-body">
+                        <i class="fas fa-shopping-cart icon"></i>
+                        <h5>إجمالي المصروفات</h5>
+                        <p id="totalExpenses">0.00 دينار</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" style="width: 35%"></div>
+                        </div>
+                        <small class="text-muted">انخفاض 5% عن الشهر الماضي</small>
+                        <p class="warning-text" id="expensesWarning" style="display: none;">تحذير: المصروفات تجاوزت الدخل والميزانية!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-chart-pie icon"></i>
+                        <h5>الميزانية</h5>
+                        <p id="budgetStatus">0.00 دينار</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" style="width: 75%"></div>
+                        </div>
+                        <p id="budgetCount" class="mt-2">عدد الميزانيات: 0</p>
+                        <button class="btn btn-primary btn-sm" onclick="window.location.href='Budget.html'">
+                            <i class="fas fa-arrow-left"></i> إدارة الميزانية
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- الرسوم البيانية المحسنة -->
+        <h2 class="section-title mt-5 animate__animated animate__fadeIn">التحليلات المالية</h2>
+        <div class="row animate__animated animate__fadeInUp">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>توزيع المصروفات</h5>
+                        <select class="form-select form-select-sm" style="width: 150px;" id="expensePeriod">
+                            <option value="month">هذا الشهر</option>
+                            <option value="year">هذه السنة</option>
+                            <option value="custom">فترة مخصصة</option>
+                        </select>
+                    </div>
+                    <canvas id="pieChart" height="250"></canvas>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">أعلى مصروف: <strong>المواصلات (35%)</strong></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>مقارنة الدخل والمصروفات</h5>
+                        <select class="form-select form-select-sm" style="width: 150px;" id="comparisonPeriod">
+                            <option value="6months">آخر 6 أشهر</option>
+                            <option value="year">هذه السنة</option>
+                            <option value="custom">فترة مخصصة</option>
+                        </select>
+                    </div>
+                    <canvas id="barChart" height="250"></canvas>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">صافي الربح: <strong>0.00 دينار</strong></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول المعاملات الأخيرة المحسن -->
+        <h2 class="section-title mt-5 animate__animated animate__fadeIn">آخر المعاملات</h2>
+        <div class="animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <button class="btn btn-primary btn-sm" onclick="window.location.href='Transctionshow.html'">
+                        <i class="fas fa-list"></i> عرض جميع المعاملات
+                    </button>
+                </div>
+                <div>
+                    <input type="text" class="form-control form-control-sm" placeholder="بحث..." style="width: 200px;" id="transactionSearch">
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>الوصف</th>
+                            <th>الفئة</th>
+                            <th>المبلغ</th>
+                            <th>النوع</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table-body">
+                        <!-- البيانات سيتم ملؤها عبر الباك إند -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <span class="text-muted">عرض 1 إلى 5 من 32 معاملة</span>
+                </div>
+                <div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">التالي</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل المحسن -->
+    <footer class="footer animate__animated animate__fadeIn">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>عن النظام</h6>
+                    <p class="text-muted">نظام إدارة المالية الشخصية يساعدك على تتبع دخلك ومصروفاتك بسهولة وكفاءة.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6>روابط سريعة</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted">الأسئلة الشائعة</a></li>
+                        <li><a href="#" class="text-muted">الدعم الفني</a></li>
+                        <li><a href="#" class="text-muted">الشروط والأحكام</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-end">
+                    <h6>اتصل بنا</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@example.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +962 7 0000 0000</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-3 mb-3" style="border-color: rgba(255,255,255,0.1);">
+            <p class="mb-0">© 2023 نظام إدارة المالية الشخصية. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // متغيرات النظام
+        //const url = 'http://localhost:9050/'; // عنوان الخادم الأساسي
+        let unreadNotificationsCount = 0; // عدد الإشعارات غير المقروءة
+        let notifications = []; // قائمة لتخزين الإشعارات
+        let notificationPollingInterval = null; // مؤقت للتحقق من الإشعارات الجديدة
+
+        // دالة لإنشاء عنصر إشعار
+        function createNotificationElement(notification) {
+            // 1. ننشئ عنصر div جديد للإشعار
+            const notificationEl = document.createElement('div');
+            
+            // 2. نضيف له كلاس حسب نوع الإشعار (info, warning, danger, success)
+            notificationEl.className = `notification ${notification.type}`;
+            
+            // 3. نملأ العنصر بمحتوى الإشعار
+            notificationEl.innerHTML = `
+                <div>
+                    <h6>${notification.title}</h6> <!-- عنوان الإشعار -->
+                    <p>${notification.message}</p> <!-- محتوى الإشعار -->
+                    <small>${new Date(notification.createdAt).toLocaleString('ar-EG')}</small> <!-- تاريخ الإشعار -->
+                </div>
+                <i class="fas fa-times" onclick="dismissNotification('${notification._id}', this.parentElement)"></i> <!-- زر الإغلاق -->
+            `;
+            
+            // 4. إذا كان الإشعار مرتبطاً بشيء (مثل معاملة أو ميزانية)
+            if (notification.relatedEntity && notification.entityId) {
+                notificationEl.style.cursor = 'pointer'; // نجعل المؤشر يظهر كيد للإشارة أنه قابل للنقر
+                notificationEl.addEventListener('click', () => {
+                    openRelatedEntity(notification.relatedEntity, notification.entityId); // نفتح الصفحة المرتبطة
+                });
+            }
+            
+            return notificationEl; // نعيد العنصر الذي أنشأناه
+        }
+
+        // دالة لعرض الإشعار
+        function showNotification(notification) {
+            // 1. لا نعرض الإشعار إذا كانت نافذة الإشعارات مفتوحة
+            if (document.querySelector('.swal2-container')) return;
+            
+            // 2. نحصل على مكان عرض الإشعارات في الصفحة
+            const container = document.getElementById('notificationContainer');
+            
+            // 3. ننشئ عنصر الإشعار
+            const notificationEl = createNotificationElement(notification);
+            
+            // 4. نضيف الإشعار في بداية القائمة (ليظهر بالأعلى)
+            container.prepend(notificationEl);
+            
+            // 5. بعد 5 ثواني نبدأ إخفاء الإشعار
+            setTimeout(() => {
+                notificationEl.classList.add('hide'); // نضيف كلاس للإخفاء
+                setTimeout(() => notificationEl.remove(), 300); // بعد 0.3 ثانية نحذف العنصر
+            }, 9000);
+        }
+
+        // دالة لإخفاء الإشعار
+        function dismissNotification(notificationId, element) {
+            // 1. إذا وجد العنصر نبدأ إخفاءه
+            if (element) {
+                element.classList.add('hide'); // نضيف كلاس للإخفاء
+                setTimeout(() => element.remove(), 300); // بعد 0.3 ثانية نحذفه
+            }
+            
+            // 2. نرسل طلب للخادم لتمييز الإشعار كمقروء
+            axios.patch(`${url}api/notifications/${notificationId}/read`)
+                .catch(error => console.error('Error marking notification as read:', error));
+            
+            // 3. نقلل عدد الإشعارات غير المقروءة ونحدث العداد
+            if (unreadNotificationsCount > 0) {
+                unreadNotificationsCount--;
+                updateNotificationBadge();
+            }
+        }
+
+        // دالة لفتح الكيان المرتبط
+        function openRelatedEntity(entityType, entityId) {
+            // نفتح صفحة مختلفة حسب نوع العنصر المرتبط
+            switch(entityType) {
+                case 'transaction': // إذا كانت معاملة
+                    window.location.href = `Transctionshow.html?id=${entityId}`;
+                    break;
+                case 'budget': // إذا كانت ميزانية
+                    window.location.href = `Budget.html?id=${entityId}`;
+                    break;
+                case 'report': // إذا كان تقرير
+                    window.location.href = `report.html?id=${entityId}`;
+                    break;
+                default: // إذا لم يكن مرتبطاً بشيء
+                    break;
+            }
+        }
+
+        // دالة لتحديث بادج الإشعارات
+        function updateNotificationBadge() {
+            // 1. نحصل على عنصر العداد
+            const badge = document.getElementById('notificationBadge');
+            
+            // 2. إذا كان هناك إشعارات غير مقروءة
+            if (unreadNotificationsCount > 0) {
+                // نعرض الرقم (9+ إذا كانت أكثر من 9)
+                badge.textContent = unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount;
+                badge.style.display = 'flex'; // نجعله ظاهراً
+            } else {
+                badge.style.display = 'none'; // نجعله مخفياً
+            }
+        }
+
+        // دالة لجلب الإشعارات
+        async function fetchNotifications() {
+            try {
+                // 1. نحصل على ID المستخدم من localStorage
+                const userId = localStorage.getItem('userId');
+                if (!userId) return; // إذا لم يكن مسجلاً نخرج
+                
+                // 2. نطلب الإشعارات غير المقروءة من الخادم (حد أقصى 5)
+                const response = await axios.get(`${url}api/notifications/user/${userId}?unreadOnly=true&limit=5`);
+                const newNotifications = response.data.data; // الإشعارات الجديدة
+                const newCount = response.data.total; // العدد الكلي
+                
+                // 3. إذا كان هناك إشعارات جديدة ولم تكن معروضة من قبل
+                if (newNotifications.length > 0 && newCount > unreadNotificationsCount) {
+                    newNotifications.forEach(notif => {
+                        if (!notifications.some(n => n._id === notif._id)) {
+                            showNotification(notif); // نعرض كل إشعار جديد
+                        }
+                    });
+                }
+                
+                // 4. نحفظ الإشعارات الجديدة ونحدث العداد
+                notifications = newNotifications;
+                unreadNotificationsCount = newCount;
+                updateNotificationBadge();
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        }
+
+        // دالة لتمييز جميع الإشعارات كمقروءة
+        async function markAllAsRead() {
+            try {
+                // 1. نحصل على ID المستخدم
+                const userId = localStorage.getItem('userId');
+                if (!userId) return;
+                
+                // 2. نرسل طلب للخادم لتمييز جميع الإشعارات كمقروءة
+                await axios.patch(`${url}api/notifications/user/${userId}/read-all`);
+                
+                // 3. نعيد العداد للصفر ونحدثه
+                unreadNotificationsCount = 0;
+                updateNotificationBadge();
+                
+                // 4. نبدأ إخفاء جميع الإشعارات الظاهرة
+                document.querySelectorAll('#notificationContainer .notification').forEach(el => {
+                    el.classList.add('hide');
+                    setTimeout(() => el.remove(), 300);
+                });
+            } catch (error) {
+                console.error('Error marking all notifications as read:', error);
+            }
+        }
+
+        // دالة لعرض قائمة الإشعارات
+        async function showNotificationsList() {
+            try {
+                // 1. نحصل على ID المستخدم
+                const userId = localStorage.getItem('userId');
+                if (!userId) return;
+                
+                // 2. نطلب آخر 10 إشعارات من الخادم
+                const response = await axios.get(`${url}api/notifications/user/${userId}?limit=10`);
+                const notifications = response.data.data;
+                
+                // 3. نعرضها في نافذة منبثقة
+                Swal.fire({
+                    title: 'الإشعارات',
+                    html: generateNotificationsHTML(notifications), // نولد HTML للإشعارات
+                    showConfirmButton: false, // بدون زر تأكيد
+                    showCloseButton: true, // مع زر إغلاق
+                    width: '80%', // عرض النافذة
+                    maxWidth: '500px', // أقصى عرض
+                    customClass: {
+                        popup: 'rtl-popup' // كلاس للاتجاه RTL
+                    }
+                });
+                
+                // 4. نعلم الخادم أن المستخدم شاهد جميع الإشعارات
+                markAllAsRead();
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        }
+
+        // دالة لإنشاء HTML لقائمة الإشعارات
+        function generateNotificationsHTML(notifications) {
+            // 1. إذا لم يكن هناك إشعارات
+            if (notifications.length === 0) {
+                return '<p>لا توجد إشعارات جديدة</p>';
+            }
+
+            // 2. نبدأ بإنشاء HTML
+            let html = '<div class="notifications-list">';
+
+            // 3. نضيف كل إشعار
+            notifications.forEach(notif => {
+                html += `
+                    <div class="notification-item ${notif.type}">
+                        <div class="notification-header">
+                            <strong>${notif.title}</strong>
+                            <small>${new Date(notif.createdAt).toLocaleString('ar-EG')}</small>
+                        </div>
+                        <p>${notif.message}</p>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            return html;
+        }
+
+        // دالة لتهيئة نظام الإشعارات
+        function setupNotificationSystem() {
+            // جلب الإشعارات فوراً عند التحميل
+            fetchNotifications();
+
+            // بدء الاستقصاء الدوري كل 30 ثانية
+            notificationPollingInterval = setInterval(fetchNotifications, 30000);
+
+            // إضافة حدث النقر لزر الإشعارات
+            document.getElementById('notificationToggle').addEventListener('click', showNotificationsList);
+
+            // جلب الإشعارات عند عودة المستخدم للتبويب
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    fetchNotifications();
+                }
+            });
+        }
+
+        // دالة لعرض إشعار SweetAlert2
+        function showSweetAlertNotification(title, message, type) {
+            // نعرض نافذة منبثقة جميلة
+            Swal.fire({
+                title: title, // العنوان
+                text: message, // المحتوى
+                icon: type, // النوع (success, error, warning, info)
+                confirmButtonText: 'حسناً', // نص زر التأكيد
+                customClass: {
+                    popup: 'rtl-popup' // كلاس للاتجاه RTL
+                }
+            });
+        }
+
+        // دالة لجلب البيانات من الخادم
+        async function fetchData() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'يجب تسجيل الدخول أولاً',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+                return;
+            }
+
+            try {
+                const totalsResponse = await axios.get(`${url}api/transactions/totals?userId=${userId}`);
+                const { totalIncome, totalExpenses } = totalsResponse.data;
+
+                const budgetResponse = await axios.get(`${url}api/budgets/summary?userId=${userId}`);
+                const { lastBudget, budgetCount } = budgetResponse.data;
+
+                const transactionsResponse = await axios.get(`${url}api/transactions?userId=${userId}`);
+                const transactions = transactionsResponse.data;
+
+                const initialBalance = parseFloat(localStorage.getItem('initialBalance')) || 0;
+                const totalBalance = initialBalance + totalIncome - totalExpenses;
+
+                updateOverviewCards(totalBalance, totalIncome, totalExpenses, lastBudget, budgetCount);
+                updateCharts(transactions);
+                updateTransactionsTable(transactions);
+
+                if (totalExpenses > totalIncome) {
+                    // إرسال إشعار نظام عند تجاوز المصروفات للدخل
+                    axios.post(`${url}api/notifications`, {
+                        userId,
+                        title: 'تحذير مالي',
+                        message: 'لقد تجاوزت المصروفات الدخل لهذا الشهر',
+                        type: 'warning',
+                        relatedEntity: 'budget',
+                        entityId: budgetResponse.data._id
+                    });
+                    
+                    showSweetAlertNotification('تحذير!', 'لقد تجاوزت المصروفات الدخل لهذا الشهر.', 'warning');
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب البيانات:', error);
+                showSweetAlertNotification('خطأ', 'فشل جلب البيانات. يرجى المحاولة لاحقًا.', 'error');
+            }
+        }
+
+        async function fetchBudgetSummary() {
+            const userId = localStorage.getItem('userId');
+
+            if (!userId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'يجب تسجيل الدخول أولاً',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+                return;
+            }
+
+            try {
+                const response = await axios.get(`${url}api/budgets/summary?userId=${userId}`);
+                document.getElementById('budgetStatus').textContent = `${response.data.lastBudget.toFixed(2)} دينار`;
+                document.getElementById('budgetCount').textContent = `عدد الميزانيات: ${response.data.budgetCount}`;
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب ملخص الميزانية:', error);
+            }
+        }
+
+        function updateOverviewCards(totalBalance, totalIncome, totalExpenses, lastBudget, budgetCount) {
+            document.getElementById('totalBalance').textContent = `${totalBalance.toFixed(2)} دينار`;
+            if (totalBalance <= 0) {
+                document.getElementById('balanceCard').classList.add('card-danger');
+
+                // إرسال إشعار نظام عند انخفاض الرصيد
+                const userId = localStorage.getItem('userId');
+                if (userId) {
+                    axios.post(`${url}api/notifications`, {
+                        userId,
+                        title: 'رصيد منخفض',
+                        message: 'الرصيد لديك 0 أو أقل. يرجى تعيين رصيد أولي من الإعدادات',
+                        type: 'danger',
+                        relatedEntity: 'user',
+                        entityId: userId
+                    });
+                }
+            }
+
+            document.getElementById('totalIncome').textContent = `${(totalIncome || 0).toFixed(2)} دينار`;
+            if (totalIncome <= 0) {
+                document.getElementById('totalIncome').style.color = '#ff4d4d';
+            }
+
+            document.getElementById('totalExpenses').textContent = `${(totalExpenses || 0).toFixed(2)} دينار`;
+            if (totalExpenses > totalIncome) {
+                document.getElementById('expensesCard').classList.add('card-warning');
+                document.getElementById('expensesWarning').style.display = "block";
+            }
+
+            document.getElementById('budgetStatus').textContent = `${(lastBudget || 0).toFixed(2)} دينار`;
+            document.getElementById('budgetCount').textContent = `عدد الميزانيات: ${budgetCount || 0}`;
+        }
+
+        function updateCharts(transactions) {
+            const categories = {};
+            let incomeTotal = 0;
+            let expensesTotal = 0;
+
+            transactions.forEach(transaction => {
+                if (transaction.type === 'income') {
+                    incomeTotal += transaction.amount;
+                } else {
+                    expensesTotal += transaction.amount;
+                    categories[transaction.category] = (categories[transaction.category] || 0) + transaction.amount;
+                }
+            });
+
+            const pieChartData = {
+                labels: Object.keys(categories),
+                datasets: [{
+                    data: Object.values(categories),
+                    backgroundColor: ['#00aaff', '#ff4d4d', '#2ecc71', '#f39c12'],
+                }]
+            };
+
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: pieChartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                    },
+                },
+            });
+
+            const barChartData = {
+                labels: ['الدخل', 'المصروفات'],
+                datasets: [{
+                    label: 'المبلغ',
+                    data: [incomeTotal, expensesTotal],
+                    backgroundColor: ['#00aaff', '#ff4d4d'],
+                }],
+            };
+
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+
+        function updateTransactionsTable(transactions) {
+            const tableBody = document.getElementById('transactions-table-body');
+            tableBody.innerHTML = '';
+
+            transactions.slice(0, 5).forEach(transaction => {
+                const row = `
+                    <tr class="${transaction.amount > transaction.budget ? 'over-budget' : ''}">
+                        <td>${new Date(transaction.date).toLocaleDateString('ar-EG')}</td>
+                        <td>${transaction.description || '-'}</td>
+                        <td>${transaction.category}</td>
+                        <td>${transaction.amount.toFixed(2)} دينار</td>
+                        <td>${transaction.type === 'income' ? '<span class="badge-income">دخل</span>' : '<span class="badge-expense">مصروف</span>'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewTransaction('${transaction._id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="editTransaction('${transaction._id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        function viewTransaction(id) {
+            window.location.href = `Transctionshow.html?id=${id}`;
+        }
+
+        function editTransaction(id) {
+            window.location.href = `edit-transaction.html?id=${id}`;
+        }
+
+        function refreshData() {
+            // يمكنك هنا إضافة كود AJAX لجلب أحدث البيانات
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+            const timeString = now.toLocaleTimeString('ar-EG', options);
+            document.getElementById('lastUpdated').textContent = `اليوم، ${timeString}`;
+
+            // إضافة تأثير مرئي للتحديث
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.add('animate__animated', 'animate__pulse');
+                setTimeout(() => {
+                    card.classList.remove('animate__animated', 'animate__pulse');
+                }, 1000);
+            });
+
+            // إعادة جلب البيانات من الخادم
+            fetchData();
+            fetchBudgetSummary();
+        }
+
+        function logout() {
+            if (confirm('هل أنت متأكد من أنك تريد تسجيل الخروج؟')) {
+                // يمكنك هنا إضافة كود تسجيل الخروج
+                localStorage.removeItem('userId');
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // دالة لجلب بيانات المستخدم
+        // async function fetchUserData() {
+        //     const userId = localStorage.getItem('userId');
+        //     if (!userId) return;
+
+        //     try {
+        //         const response = await axios.get(`${url}/${userId}`);
+        //         const user = response.data;
+                
+        //         // تحديث واجهة المستخدم
+        //         document.querySelector('.user-name').textContent = user.name;
+        //         document.querySelector('.user-role').textContent = user.role || 'مستخدم';
+        //         document.querySelector('.user-avatar').textContent = user.name.charAt(0);
+                
+        //         // تحديث عنوان الترحيب
+        //         document.querySelector('.section-title').textContent = `مرحبًا بك، ${user.name.split(' ')[0]}!`;
+        //     } catch (error) {
+        //         console.error('حدث خطأ أثناء جلب بيانات المستخدم:', error);
+        //     }
+        // }
+
+        window.onload = function() {
+            fetchUserData();
+            fetchData();
+            fetchBudgetSummary();
+            setupNotificationSystem();
+
+            // تطبيق تأثيرات GSAP
+            gsap.from(".card", {
+                duration: 1,
+                y: 50,
+                opacity: 0,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
+
+            gsap.from("table tr", {
+                duration: 1,
+                x: -50,
+                opacity: 0,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+        };
+
+        window.onscroll = () => {
+            const backToTopButton = document.getElementById('backToTop');
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        };
+
+        document.getElementById('backToTop').onclick = () => {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        };
+
+        // تهيئة البحث في الجدول
+        document.getElementById('transactionSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#transactions-table-body tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        function showUserNameonNav(){
+            const userData = localStorage.getItem('userData');
+            const name = JSON.parse(userData);
+            console.log(name.id);
+            document.getElementById("UserNameNav").textContent = ",,, مرحبا بك " + name.username + "!";
+        };
+        showUserNameonNav()
+    </script>
+    
+</body>
+</html>

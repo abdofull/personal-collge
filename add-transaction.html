@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- تعريف مجموعة الأحرف المستخدمة في الصفحة -->
+    <meta charset="UTF-8">
+    
+    <!-- إعدادات العرض لتكون متجاوبة مع جميع أحجام الشاشات -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- عنوان الصفحة الذي يظهر في تبويب المتصفح -->
+    <title>إضافة معاملة - نظام المالية الشخصية</title>
+    
+    <!-- روابط لملفات CSS الخارجية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- إضافة مكتبة SweetAlert2 لعرض التنبيهات بشكل جميل -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- إضافة ملف JavaScript الخاص بالتطبيق -->
+    <script src="main.js"></script>
+
+    <style>
+        /* متغيرات الألوان لتكون متوافقة مع لوحة التحكم */
+        :root {
+            --primary-color: #00aaff; /* اللون الأساسي الأزرق */
+            --secondary-color: #2a2f40; /* اللون الثانوي الداكن */
+            --dark-color: #1c1f2b; /* لون الخلفية الداكن */
+            --light-color: #eaeaea; /* لون النص الفاتح */
+            --success-color: #28a745; /* لون النجاح الأخضر */
+            --danger-color: #dc3545; /* لون الخطأ الأحمر */
+            --warning-color: #ffc107; /* لون التحذير الأصفر */
+        }
+        
+        /* تصميم عام للصفحة */
+        body {
+            font-family: 'Tajawal', sans-serif; /* استخدام خط Tajawال للغة العربية */
+            background-color: var(--dark-color); /* لون خلفية الصفحة */
+            color: var(--light-color); /* لون النص الرئيسي */
+            margin: 0; /* إزالة الهوامش الافتراضية */
+            padding: 0; /* إزالة الحشو الافتراضي */
+        }
+        
+        /* تصميم شريط التنقل العلوي */
+        .navbar {
+            background-color: var(--secondary-color); /* لون خلفية الشريط */
+            padding: 1rem; /* حشو داخلي للشريط */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3); /* إضافة ظل خفيف */
+        }
+        
+        /* تصميم عنوان التطبيق في الشريط العلوي */
+        .navbar-brand {
+            font-size: 1.5rem; /* حجم الخط */
+            font-weight: 700; /* سماكة الخط */
+            color: var(--primary-color); /* لون النص */
+            display: flex; /* استخدام تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+        }
+        
+        /* تصميم الأيقونة بجوار عنوان التطبيق */
+        .navbar-brand i {
+            margin-left: 10px; /* مسافة بين الأيقونة والنص */
+            font-size: 1.8rem; /* حجم الأيقونة */
+        }
+        
+        /* تصميم روابط القائمة في شريط التنقل */
+        .navbar-nav .nav-link {
+            color: var(--light-color); /* لون النص */
+            font-size: 1rem; /* حجم الخط */
+            margin-right: 1rem; /* مسافة بين العناصر */
+            transition: all 0.3s ease; /* تأثير انتقالي عند التحويم */
+            padding: 0.5rem 1rem; /* حشو داخلي للروابط */
+            border-radius: 8px; /* زوايا مدورة */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+        }
+        
+        /* تصميم الأيقونات في روابط القائمة */
+        .navbar-nav .nav-link i {
+            margin-left: 8px; /* مسافة بين الأيقونة والنص */
+            font-size: 1.1rem; /* حجم الأيقونة */
+        }
+        
+        /* تأثيرات التحويم على روابط القائمة */
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-color); /* تغيير لون النص عند التحويم */
+            background-color: rgba(0, 170, 255, 0.1); /* لون خلفية خفيف عند التحويم */
+            transform: translateY(-2px); /* تحريك العنصر لأعلى قليلاً */
+        }
+        
+        /* تصميم المحتوى الرئيسي للصفحة */
+        .content {
+            padding: 2rem; /* حشو داخلي للمحتوى */
+        }
+        
+        /* تصميم بطاقة النموذج */
+        .card {
+            border: none; /* إزالة الحدود الافتراضية */
+            border-radius: 15px; /* زوايا مدورة */
+            padding: 1.5rem; /* حشو داخلي */
+            background: var(--secondary-color); /* لون الخلفية */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); /* إضافة ظل */
+            color: var(--light-color); /* لون النص */
+            margin-bottom: 1.5rem; /* مسافة من الأسفل */
+            transition: all 0.3s ease; /* تأثير انتقالي */
+        }
+        
+        /* تأثير التحويم على البطاقة */
+        .card:hover {
+            transform: translateY(-3px); /* تحريك البطاقة لأعلى قليلاً */
+            box-shadow: 0 12px 25px rgba(0, 170, 255, 0.2); /* تغيير الظل عند التحويم */
+        }
+        
+        /* شريط ملون أعلى البطاقة */
+        .card::before {
+            content: ''; /* محتوى زائف للعنصر */
+            position: absolute; /* تموضع مطلق */
+            top: 0; /* من الأعلى */
+            right: 0; /* من اليمين */
+            width: 100%; /* عرض كامل */
+            height: 5px; /* ارتفاع صغير */
+            background: linear-gradient(90deg, var(--primary-color), #0066ff); /* تدرج لوني */
+        }
+        
+        /* تصميم حقول الإدخال في النموذج */
+        .form-control {
+            background-color: #1e212e; /* لون خلفية الحقل */
+            border: 1px solid #2a2f40; /* لون حدود الحقل */
+            color: var(--light-color); /* لون النص */
+            padding: 0.75rem 1rem; /* حشو داخلي */
+            border-radius: 8px; /* زوايا مدورة */
+            transition: all 0.3s ease; /* تأثير انتقالي */
+        }
+        
+        /* تأثير التركيز على حقول الإدخال */
+        .form-control:focus {
+            border-color: var(--primary-color); /* تغيير لون الحدود */
+            box-shadow: 0 0 0 0.25rem rgba(0, 170, 255, 0.25); /* إضافة ظل */
+            background-color: #1e212e; /* الحفاظ على لون الخلفية */
+            color: var(--light-color); /* الحفاظ على لون النص */
+        }
+        
+        /* تصميم زر الإرسال */
+        .btn-submit {
+            background-color: var(--primary-color); /* لون الخلفية */
+            border: none; /* إزالة الحدود */
+            color: white; /* لون النص */
+            padding: 0.75rem 1.5rem; /* حشو داخلي */
+            border-radius: 8px; /* زوايا مدورة */
+            font-weight: 600; /* سماكة الخط */
+            transition: all 0.3s ease; /* تأثير انتقالي */
+            width: 100%; /* عرض كامل */
+        }
+        
+        /* تأثير التحويم على زر الإرسال */
+        .btn-submit:hover {
+            background-color: #0088cc; /* تغيير لون الخلفية */
+            transform: translateY(-2px); /* تحريك الزر لأعلى قليلاً */
+            box-shadow: 0 4px 10px rgba(0, 170, 255, 0.3); /* إضافة ظل */
+        }
+        
+        /* تصميم العناوين */
+        .section-title {
+            position: relative; /* تموضع نسبي */
+            padding-bottom: 10px; /* حشو من الأسفل */
+            margin-bottom: 2rem; /* مسافة من الأسفل */
+            color: var(--light-color); /* لون النص */
+        }
+        
+        /* شريط ملون تحت العناوين */
+        .section-title::after {
+            content: ''; /* محتوى زائف */
+            position: absolute; /* تموضع مطلق */
+            bottom: 0; /* من الأسفل */
+            right: 0; /* من اليمين */
+            width: 100px; /* عرض معين */
+            height: 4px; /* ارتفاع صغير */
+            background: linear-gradient(90deg, var(--primary-color), transparent); /* تدرج لوني */
+            border-radius: 2px; /* زوايا مدورة قليلاً */
+        }
+        
+        /* تصميم رسائل الخطأ */
+        .error-message {
+            color: var(--danger-color); /* لون أحمر للخطأ */
+            font-size: 0.875rem; /* حجم صغير للنص */
+            margin-top: 0.25rem; /* مسافة من الأعلى */
+            display: none; /* مخفي بشكل افتراضي */
+        }
+        
+        /* تصميم متجاوب للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem; /* تقليل الحشو الداخلي */
+            }
+            
+            .card {
+                padding: 1rem; /* تقليل حشو البطاقة */
+            }
+            
+            .section-title {
+                font-size: 1.5rem; /* تصغير حجم العنوان */
+            }
+        }
+        
+        /* تصميم عناصر المستخدم في شريط التنقل */
+        .user-profile {
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+            margin-right: 1rem; /* مسافة من اليمين */
+        }
+        
+        /* تصميم صورة المستخدم الدائرية */
+        .user-avatar {
+            width: 40px; /* عرض ثابت */
+            height: 40px; /* ارتفاع ثابت */
+            border-radius: 50%; /* جعلها دائرية */
+            background-color: var(--primary-color); /* لون الخلفية */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط المحتوى عمودياً */
+            justify-content: center; /* توسيط المحتوى أفقياً */
+            margin-left: 10px; /* مسافة من اليسار */
+            color: white; /* لون النص */
+            font-weight: bold; /* نص غامق */
+        }
+        
+        /* تصميم معلومات المستخدم */
+        .user-info {
+            display: flex; /* تخطيط مرن */
+            flex-direction: column; /* ترتيب العناصر عمودياً */
+        }
+        
+        /* تصميم اسم المستخدم */
+        .user-name {
+            font-weight: 600; /* نص غامق قليلاً */
+            font-size: 0.9rem; /* حجم مناسب */
+        }
+        
+        /* تصميم دور المستخدم */
+        .user-role {
+            font-size: 0.8rem; /* حجم أصغر */
+            color: rgba(255, 255, 255, 0.7); /* لون شبه شفاف */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل العلوي -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <!-- عنوان التطبيق مع الأيقونة -->
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-exchange-alt"></i>
+                إضافة معاملة
+            </a>
+            
+            <!-- زر القائمة المنسدلة للشاشات الصغيرة -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- عناصر القائمة -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- رابط لوحة التحكم -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-chart-line"></i> لوحة التحكم
+                        </a>
+                    </li>
+                    
+                    <!-- رابط المعاملات (الصفحة الحالية) -->
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Transctionshow.html">
+                            <i class="fas fa-exchange-alt"></i> المعاملات
+                        </a>
+                    </li>
+                    
+                    <!-- رابط الميزانية -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="Budget.html">
+                            <i class="fas fa-wallet"></i> الميزانية
+                        </a>
+                    </li>
+                    
+                    <!-- رابط التقارير -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">
+                            <i class="fas fa-chart-line"></i> التقارير
+                        </a>
+                    </li>
+                    
+                    <!-- رابط الإعدادات -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="Settings.html">
+                            <i class="fas fa-cog"></i> الإعدادات
+                        </a>
+                    </li>
+                    
+                    <!-- رابط تسجيل الخروج -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()" style="color: var(--danger-color);">
+                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- قسم معلومات المستخدم -->
+                <div class="d-flex align-items-center">
+                    <a class="nav-link" href="profile.html">
+                        <div id="user-info" class="d-flex align-items-center">
+                            <div class="user-avatar">م</div>
+                            <div class="user-info">
+                                <span class="user-name">محمد أحمد</span>
+                                <span class="user-role">مدير النظام</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي للصفحة -->
+    <div class="content">
+        <!-- عنوان الصفحة -->
+        <h1 class="section-title animate__animated animate__fadeIn">إضافة معاملة جديدة</h1>
+        
+        <!-- بطاقة النموذج -->
+        <div class="card animate__animated animate__fadeInUp">
+            <div class="card-body">
+                <!-- نموذج إضافة المعاملة -->
+                <form id="transactionForm">
+                    <!-- قسم نوع المعاملة -->
+                    <div class="mb-4">
+                        <label class="form-label">نوع المعاملة</label>
+                        <div class="d-flex">
+                            <!-- خيار الدخل -->
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="radio" name="transactionType" id="income" value="income" required>
+                                <label class="form-check-label" for="income">دخل</label>
+                            </div>
+                            
+                            <!-- خيار المصروف -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="transactionType" id="expense" value="expense">
+                                <label class="form-check-label" for="expense">مصروف</label>
+                            </div>
+                        </div>
+                        <!-- رسالة الخطأ لنوع المعاملة -->
+                        <div class="error-message" id="typeError"></div>
+                    </div>
+                    
+                    <!-- قسم الفئة -->
+                    <div class="mb-4">
+                        <label for="category" class="form-label">الفئة</label>
+                        <select class="form-control" id="category" required>
+                            <option value="">اختر فئة</option>
+                            <option value="طعام">طعام</option>
+                            <option value="مواصلات">مواصلات</option>
+                            <option value="إيجار">إيجار</option>
+                            <option value="مرافق">مرافق</option>
+                            <option value="تسوق">تسوق</option>
+                            <option value="ترفيه">ترفيه</option>
+                            <option value="صحة">صحة</option>
+                            <option value="تعليم">تعليم</option>
+                            <option value="أخرى">أخرى</option>
+                        </select>
+                        <!-- رسالة الخطأ للفئة -->
+                        <div class="error-message" id="categoryError"></div>
+                    </div>
+                    
+                    <!-- قسم المبلغ -->
+                    <div class="mb-4">
+                        <label for="amount" class="form-label">المبلغ</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="amount" placeholder="0.00" required step="0.01">
+                            <span class="input-group-text">دينار</span>
+                        </div>
+                        <!-- رسالة الخطأ للمبلغ -->
+                        <div class="error-message" id="amountError"></div>
+                    </div>
+                    
+                    <!-- قسم التاريخ -->
+                    <div class="mb-4">
+                        <label for="date" class="form-label">تاريخ المعاملة</label>
+                        <input type="date" class="form-control" id="date" required>
+                        <!-- رسالة الخطأ للتاريخ -->
+                        <div class="error-message" id="dateError"></div>
+                    </div>
+                    
+                    <!-- قسم الوصف -->
+                    <div class="mb-4">
+                        <label for="description" class="form-label">الوصف (اختياري)</label>
+                        <textarea class="form-control" id="description" rows="3" placeholder="أدخل وصفاً للمعاملة..."></textarea>
+                    </div>
+                    
+                    <!-- قسم المرفقات -->
+                    <div class="mb-4">
+                        <label for="attachment" class="form-label">إضافة مرفق (اختياري)</label>
+                        <input type="file" class="form-control" id="attachment">
+                        <small class="text-muted">يمكنك رفع صورة الفاتورة أو الإيصال</small>
+                    </div>
+                    
+                    <!-- زر الإرسال -->
+                    <button type="submit" class="btn btn-submit mt-4">
+                        <i class="fas fa-plus me-2"></i> إضافة المعاملة
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- مكتبات JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        
+        // دالة لإضافة معاملة جديدة
+        async function addTransaction(transactionData) {
+            try {
+                const response = await axios.post(`${url}api/transactions`, transactionData);
+                return response.data;
+            } catch (error) {
+                console.error('حدث خطأ أثناء إضافة المعاملة:', error);
+                throw error;
+            }
+        }
+        
+        // دالة للتحقق من صحة النموذج
+        function validateForm() {
+            let isValid = true;
+            
+            // التحقق من نوع المعاملة
+            const transactionType = document.querySelector('input[name="transactionType"]:checked');
+            if (!transactionType) {
+                document.getElementById('typeError').innerText = 'يجب اختيار نوع المعاملة';
+                document.getElementById('typeError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('typeError').style.display = 'none';
+            }
+            
+            // التحقق من الفئة
+            const category = document.getElementById('category').value;
+            if (!category) {
+                document.getElementById('categoryError').innerText = 'يجب اختيار فئة';
+                document.getElementById('categoryError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('categoryError').style.display = 'none';
+            }
+            
+            // التحقق من المبلغ
+            const amount = parseFloat(document.getElementById('amount').value);
+            if (isNaN(amount) || amount <= 0) {
+                document.getElementById('amountError').innerText = 'يجب إدخال مبلغ صحيح أكبر من الصفر';
+                document.getElementById('amountError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('amountError').style.display = 'none';
+            }
+            
+            // التحقق من التاريخ
+            const date = document.getElementById('date').value;
+            if (!date) {
+                document.getElementById('dateError').innerText = 'يجب اختيار تاريخ';
+                document.getElementById('dateError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('dateError').style.display = 'none';
+            }
+            
+            return isValid;
+        }
+        
+        // دالة لمعالجة إرسال النموذج
+        async function handleSubmit(event) {
+            event.preventDefault();
+            
+            // التحقق من صحة النموذج
+            if (!validateForm()) {
+                return;
+            }
+            
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'يجب تسجيل الدخول أولاً',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+                return;
+            }
+            
+            // جمع بيانات النموذج
+            const formData = {
+                userId: userId,
+                type: document.querySelector('input[name="transactionType"]:checked').value,
+                category: document.getElementById('category').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                date: document.getElementById('date').value,
+                description: document.getElementById('description').value,
+                attachment: document.getElementById('attachment').files[0]
+            };
+            
+            // عرض تحميل أثناء إرسال البيانات
+            Swal.fire({
+                title: 'جاري إضافة المعاملة...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            });
+            
+            try {
+                // إرسال البيانات إلى الخادم
+                await addTransaction(formData);
+                
+                // عرض رسالة نجاح
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تمت العملية',
+                    text: 'تم إضافة المعاملة بنجاح',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    // توجيه المستخدم إلى صفحة المعاملات بعد النجاح
+                    window.location.href = 'Transctionshow.html';
+                });
+            } catch (error) {
+                console.error('حدث خطأ:', error);
+                
+                // عرض رسالة خطأ
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ أثناء إضافة المعاملة. يرجى المحاولة مرة أخرى.',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+            }
+        }
+        
+        // دالة لتسجيل الخروج
+        function logout() {
+            Swal.fire({
+                title: 'تسجيل الخروج',
+                text: 'هل أنت متأكد من رغبتك في تسجيل الخروج؟',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، سجل الخروج',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // حذف بيانات المستخدم من التخزين المحلي
+                    localStorage.removeItem('userId');
+                    localStorage.removeItem('token');
+                    
+                    // توجيه المستخدم إلى صفحة تسجيل الدخول
+                    window.location.href = 'index.html';
+                }
+            });
+        }
+        
+        // تعيين اليوم الحالي كتاريخ افتراضي
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // جلب بيانات المستخدم عند تحميل الصفحة
+            fetchUserData();
+            
+            // إضافة مستمع حدث للنموذج
+            document.getElementById('transactionForm').addEventListener('submit', handleSubmit);
+        });
+    </script>
+</body>
+</html>

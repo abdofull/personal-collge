@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- تعريف مجموعة الأحرف -->
+    <meta charset="UTF-8">
+    
+    <!-- إعدادات العرض لتكون متجاوبة مع جميع أحجام الشاشات -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- عنوان الصفحة -->
+    <title>إدارة الميزانية - نظام المالية الشخصية</title>
+    
+    <!-- روابط لملفات CSS الخارجية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- مكتبة SweetAlert2 لعرض التنبيهات -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- مكتبة Axios للاتصال بالخادم -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <!-- ملف JavaScript الخاص بالتطبيق -->
+    <script src="main.js"></script>
+
+    <style>
+        /* متغيرات الألوان لتكون متوافقة مع لوحة التحكم */
+        :root {
+            --primary-color: #00aaff; /* اللون الأساسي */
+            --secondary-color: #2a2f40; /* اللون الثانوي */
+            --dark-color: #1c1f2b; /* لون الخلفية */
+            --light-color: #eaeaea; /* لون النص */
+            --success-color: #28a745; /* لون النجاح */
+            --danger-color: #dc3545; /* لون الخطأ */
+        }
+        
+        /* تصميم عام للصفحة */
+        body {
+            font-family: 'Tajawal', sans-serif; /* استخدام خط Tajawal */
+            background-color: var(--dark-color); /* لون الخلفية */
+            color: var(--light-color); /* لون النص */
+            margin: 0; /* إزالة الهوامش الافتراضية */
+            padding: 0; /* إزالة الحشو الافتراضي */
+        }
+        
+        /* تصميم شريط التنقل العلوي */
+        .navbar {
+            background-color: var(--secondary-color); /* لون الخلفية */
+            padding: 1rem; /* حشو داخلي */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3); /* إضافة ظل */
+        }
+        
+        /* تصميم عنوان التطبيق في الشريط */
+        .navbar-brand {
+            font-size: 1.5rem; /* حجم الخط */
+            font-weight: 700; /* سماكة الخط */
+            color: var(--primary-color); /* لون النص */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+        }
+        
+        /* تصميم الأيقونة بجوار العنوان */
+        .navbar-brand i {
+            margin-left: 10px; /* مسافة من اليسار */
+            font-size: 1.8rem; /* حجم الأيقونة */
+        }
+        
+        /* تصميم روابط القائمة */
+        .navbar-nav .nav-link {
+            color: var(--light-color); /* لون النص */
+            font-size: 1rem; /* حجم الخط */
+            margin-right: 1rem; /* مسافة بين العناصر */
+            transition: all 0.3s ease; /* تأثير تحويم */
+            padding: 0.5rem 1rem; /* حشو داخلي */
+            border-radius: 8px; /* زوايا مدورة */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+        }
+        
+        /* تصميم الأيقونات في القائمة */
+        .navbar-nav .nav-link i {
+            margin-left: 8px; /* مسافة من اليسار */
+            font-size: 1.1rem; /* حجم الأيقونة */
+        }
+        
+        /* تأثيرات التحويم على الروابط */
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-color); /* تغيير لون النص */
+            background-color: rgba(0, 170, 255, 0.1); /* لون خلفية خفيف */
+            transform: translateY(-2px); /* تحريك العنصر لأعلى قليلاً */
+        }
+        
+        /* تصميم المحتوى الرئيسي */
+        .content {
+            padding: 2rem; /* حشو داخلي */
+        }
+        
+        /* تصميم البطاقات */
+        .card {
+            border: none; /* إزالة الحدود */
+            border-radius: 15px; /* زوايا مدورة */
+            padding: 1.5rem; /* حشو داخلي */
+            background: var(--secondary-color); /* لون الخلفية */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); /* إضافة ظل */
+            color: var(--light-color); /* لون النص */
+            margin-bottom: 1.5rem; /* مسافة من الأسفل */
+            transition: all 0.3s ease; /* تأثير تحويم */
+        }
+        
+        /* تأثير التحويم على البطاقات */
+        .card:hover {
+            transform: translateY(-3px); /* تحريك البطاقة لأعلى قليلاً */
+            box-shadow: 0 12px 25px rgba(0, 170, 255, 0.2); /* تغيير الظل */
+        }
+        
+        /* شريط ملون أعلى البطاقات */
+        .card::before {
+            content: ''; /* محتوى زائف */
+            position: absolute; /* تموضع مطلق */
+            top: 0; /* من الأعلى */
+            right: 0; /* من اليمين */
+            width: 100%; /* عرض كامل */
+            height: 5px; /* ارتفاع صغير */
+            background: linear-gradient(90deg, var(--primary-color), #0066ff); /* تدرج لوني */
+        }
+        
+        /* تصميم حقول الإدخال */
+        .form-control {
+            background-color: #1e212e; /* لون الخلفية */
+            border: 1px solid #2a2f40; /* لون الحدود */
+            color: var(--light-color); /* لون النص */
+            padding: 0.75rem 1rem; /* حشو داخلي */
+            border-radius: 8px; /* زوايا مدورة */
+            transition: all 0.3s ease; /* تأثير تحويم */
+        }
+        
+        /* تأثير التركيز على حقول الإدخال */
+        .form-control:focus {
+            border-color: var(--primary-color); /* تغيير لون الحدود */
+            box-shadow: 0 0 0 0.25rem rgba(0, 170, 255, 0.25); /* إضافة ظل */
+            background-color: #1e212e; /* الحفاظ على لون الخلفية */
+            color: var(--light-color); /* الحفاظ على لون النص */
+        }
+        
+        /* تصميم الأزرار */
+        .btn-primary {
+            background-color: var(--primary-color); /* لون الخلفية */
+            border-color: var(--primary-color); /* لون الحدود */
+            border-radius: 8px; /* زوايا مدورة */
+            padding: 0.75rem 1.5rem; /* حشو داخلي */
+            font-weight: 600; /* سماكة الخط */
+            transition: all 0.3s ease; /* تأثير تحويم */
+        }
+        
+        /* تأثير التحويم على الأزرار */
+        .btn-primary:hover {
+            background-color: #0088cc; /* تغيير لون الخلفية */
+            border-color: #0088cc; /* تغيير لون الحدود */
+            transform: translateY(-2px); /* تحريك الزر لأعلى قليلاً */
+            box-shadow: 0 4px 10px rgba(0, 170, 255, 0.3); /* إضافة ظل */
+        }
+        
+        /* تصميم الجداول */
+        .table {
+            background: var(--secondary-color); /* لون الخلفية */
+            color: var(--light-color); /* لون النص */
+            border-radius: 15px; /* زوايا مدورة */
+            overflow: hidden; /* إخفاء المحتوى الزائد */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); /* إضافة ظل */
+        }
+        
+        /* تصميم رأس الجدول */
+        .table thead {
+            background: linear-gradient(90deg, var(--primary-color), #0066ff); /* تدرج لوني */
+            color: #fff; /* لون النص */
+        }
+        
+        /* تصميم خلايا الجدول */
+        .table th, .table td {
+            padding: 1.2rem; /* حشو داخلي */
+            text-align: center; /* محاذاة النص */
+            vertical-align: middle; /* توسيط عمودي */
+        }
+        
+        /* تأثير التحويم على صفوف الجدول */
+        .table tbody tr {
+            transition: all 0.3s ease; /* تأثير تحويم */
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(0, 170, 255, 0.1); /* لون خلفية خفيف */
+        }
+        
+        /* تصميم العناوين */
+        .section-title {
+            position: relative; /* تموضع نسبي */
+            padding-bottom: 10px; /* حشو من الأسفل */
+            margin-bottom: 2rem; /* مسافة من الأسفل */
+            color: var(--light-color); /* لون النص */
+        }
+        
+        /* شريط ملون تحت العناوين */
+        .section-title::after {
+            content: ''; /* محتوى زائف */
+            position: absolute; /* تموضع مطلق */
+            bottom: 0; /* من الأسفل */
+            right: 0; /* من اليمين */
+            width: 100px; /* عرض معين */
+            height: 4px; /* ارتفاع صغير */
+            background: linear-gradient(90deg, var(--primary-color), transparent); /* تدرج لوني */
+            border-radius: 2px; /* زوايا مدورة قليلاً */
+        }
+        
+        /* تصميم متجاوب للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem; /* تقليل الحشو */
+            }
+            
+            .card {
+                padding: 1rem; /* تقليل الحشو */
+            }
+            
+            .section-title {
+                font-size: 1.5rem; /* تصغير حجم الخط */
+            }
+        }
+        
+        /* تصميم عناصر المستخدم في الشريط العلوي */
+        .user-profile {
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+            margin-right: 1rem; /* مسافة من اليمين */
+        }
+        
+        /* تصميم صورة المستخدم الدائرية */
+        .user-avatar {
+            width: 40px; /* عرض ثابت */
+            height: 40px; /* ارتفاع ثابت */
+            border-radius: 50%; /* جعلها دائرية */
+            background-color: var(--primary-color); /* لون الخلفية */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط المحتوى عمودياً */
+            justify-content: center; /* توسيط المحتوى أفقياً */
+            margin-left: 10px; /* مسافة من اليسار */
+            color: white; /* لون النص */
+            font-weight: bold; /* نص غامق */
+        }
+        
+        /* تصميم معلومات المستخدم */
+        .user-info {
+            display: flex; /* تخطيط مرن */
+            flex-direction: column; /* ترتيب العناصر عمودياً */
+        }
+        
+        /* تصميم اسم المستخدم */
+        .user-name {
+            font-weight: 600; /* نص غامق */
+            font-size: 0.9rem; /* حجم الخط */
+        }
+        
+        /* تصميم دور المستخدم */
+        .user-role {
+            font-size: 0.8rem; /* حجم أصغر */
+            color: rgba(255, 255, 255, 0.7); /* لون شبه شفاف */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل العلوي -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <!-- عنوان التطبيق مع الأيقونة -->
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-wallet"></i>
+                إدارة الميزانية
+            </a>
+            
+            <!-- زر القائمة المنسدلة للشاشات الصغيرة -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- عناصر القائمة -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- رابط لوحة التحكم -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-chart-line"></i> لوحة التحكم
+                        </a>
+                    </li>
+                    
+                    <!-- رابط المعاملات -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="Transctionshow.html">
+                            <i class="fas fa-exchange-alt"></i> المعاملات
+                        </a>
+                    </li>
+                    
+                    <!-- رابط الميزانية (الصفحة الحالية) -->
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Budget.html">
+                            <i class="fas fa-wallet"></i> الميزانية
+                        </a>
+                    </li>
+                    
+                    <!-- رابط التقارير -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">
+                            <i class="fas fa-chart-line"></i> التقارير
+                        </a>
+                    </li>
+                    
+                    <!-- رابط الإعدادات -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="Settings.html">
+                            <i class="fas fa-cog"></i> الإعدادات
+                        </a>
+                    </li>
+                    
+                    <!-- رابط تسجيل الخروج -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()" style="color: var(--danger-color);">
+                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- قسم معلومات المستخدم -->
+                <div class="d-flex align-items-center">
+                    <a class="nav-link" href="profile.html">
+                        <div id="user-info" class="d-flex align-items-center">
+                            <div class="user-avatar">م</div>
+                            <div class="user-info">
+                                <span class="user-name">محمد أحمد</span>
+                                <span class="user-role">مدير النظام</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="content">
+        <!-- عنوان الصفحة -->
+        <h1 class="section-title">إدارة الميزانية</h1>
+        
+        <!-- بطاقة إنشاء ميزانية جديدة -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-4">إنشاء ميزانية جديدة</h5>
+                
+                <!-- نموذج إنشاء الميزانية -->
+                <form id="budgetForm">
+                    <!-- حقل الشهر -->
+                    <div class="mb-3">
+                        <label for="month" class="form-label">الشهر</label>
+                        <select class="form-control" id="month" required>
+                            <option value="">اختر الشهر</option>
+                            <option value="يناير">يناير</option>
+                            <option value="فبراير">فبراير</option>
+                            <option value="مارس">مارس</option>
+                            <option value="أبريل">أبريل</option>
+                            <option value="مايو">مايو</option>
+                            <option value="يونيو">يونيو</option>
+                            <option value="يوليو">يوليو</option>
+                            <option value="أغسطس">أغسطس</option>
+                            <option value="سبتمبر">سبتمبر</option>
+                            <option value="أكتوبر">أكتوبر</option>
+                            <option value="نوفمبر">نوفمبر</option>
+                            <option value="ديسمبر">ديسمبر</option>
+                        </select>
+                    </div>
+                    
+                    <!-- حقل السنة -->
+                    <div class="mb-3">
+                        <label for="year" class="form-label">السنة</label>
+                        <input type="number" class="form-control" id="year" min="2000" max="2100" required>
+                    </div>
+                    
+                    <!-- حقل الإيرادات المتوقعة -->
+                    <div class="mb-3">
+                        <label for="totalIncome" class="form-label">الإيرادات المتوقعة</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="totalIncome" min="0" step="0.01" required>
+                            <span class="input-group-text">دينار</span>
+                        </div>
+                    </div>
+                    
+                    <!-- بنود الميزانية -->
+                    <div class="mb-4">
+                        <h6 class="mb-3">بنود المصروفات</h6>
+                        <div id="budgetItems">
+                            <!-- سيتم إضافة بنود المصروفات هنا -->
+                        </div>
+                        <button type="button" id="addItem" class="btn btn-sm btn-outline-primary mt-2">
+                            <i class="fas fa-plus me-1"></i> إضافة بند جديد
+                        </button>
+                    </div>
+                    
+                    <!-- زر الإرسال -->
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-save me-1"></i> حفظ الميزانية
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- بطاقة عرض الميزانيات -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="mb-4">سجل الميزانيات</h5>
+                
+                <!-- شريط البحث والتحكم -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex">
+                        <input type="text" class="form-control form-control-sm me-2" placeholder="بحث..." style="width: 200px;" id="budgetSearch">
+                        <button class="btn btn-sm btn-outline-primary" onclick="refreshBudgets()">
+                            <i class="fas fa-sync-alt"></i> تحديث
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- جدول الميزانيات -->
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>الشهر</th>
+                                <th>السنة</th>
+                                <th>الإيرادات</th>
+                                <th>المصروفات</th>
+                                <th>عدد البنود</th>
+                                <th>تاريخ الإنشاء</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="budgetTableBody">
+                            <!-- سيتم ملء هذا الجدول بالبيانات من الخادم -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل -->
+    <footer class="footer text-center py-3">
+        <div class="container">
+            <p class="mb-0">© 2023 نظام إدارة المالية الشخصية. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <!-- مكتبات JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // متغيرات النظام
+        let budgets = []; // مصفوفة لتخزين الميزانيات
+        
+        // دالة لإضافة بند ميزانية جديد
+        function addBudgetItem() {
+            const budgetItemsContainer = document.getElementById('budgetItems');
+            const itemId = Date.now(); // إنشاء معرف فريد للبند
+            
+            // إنشاء عنصر البند الجديد
+            const newItem = document.createElement('div');
+            newItem.className = 'budget-item mb-3 p-3 border rounded';
+            newItem.dataset.id = itemId;
+            
+            // إضافة حقول الإدخال للبند الجديد
+            newItem.innerHTML = `
+                <div class="row g-2">
+                    <div class="col-md-5">
+                        <label class="form-label">اسم البند</label>
+                        <input type="text" class="form-control item-name" required>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">المبلغ المخصص</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control item-amount" min="0" step="0.01" required>
+                            <span class="input-group-text">دينار</span>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-sm btn-danger w-100" onclick="removeBudgetItem('${itemId}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // إضافة البند الجديد إلى الحاوية
+            budgetItemsContainer.appendChild(newItem);
+        }
+        
+        // دالة لإزالة بند ميزانية
+        function removeBudgetItem(itemId) {
+            const itemElement = document.querySelector(`.budget-item[data-id="${itemId}"]`);
+            if (itemElement) {
+                itemElement.remove();
+            }
+        }
+        
+// دالة لجلب الميزانيات من الخادم
+async function fetchBudgets() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'يجب تسجيل الدخول أولاً',
+            customClass: {
+                popup: 'rtl-popup'
+            }
+        }).then(() => {
+            window.location.href = 'index.html';
+        });
+        return;
+    }
+
+    try {
+        // عرض تحميل أثناء جلب البيانات
+        Swal.fire({
+            title: 'جاري تحميل البيانات...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            },
+            customClass: {
+                popup: 'rtl-popup'
+            }
+        });
+
+        const response = await axios.get(`${url}api/budgets?userId=${userId}`);
+        
+        // التعديل الرئيسي هنا: التأكد من أن budgets هي مصفوفة
+        budgets = Array.isArray(response.data) ? response.data : 
+                 response.data.budgets ? response.data.budgets : 
+                 response.data.data ? response.data.data : [];
+        
+        // إخفاء تحميل بعد جلب البيانات
+        Swal.close();
+        
+        // عرض الميزانيات في الجدول
+        displayBudgets();
+    } catch (error) {
+        console.error('حدث خطأ أثناء جلب الميزانيات:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'فشل جلب الميزانيات. يرجى المحاولة لاحقًا.',
+            customClass: {
+                popup: 'rtl-popup'
+            }
+        });
+        
+        // تهيئة budgets كمصفوفة فارغة في حالة الخطأ
+        budgets = [];
+        displayBudgets();
+    }
+}
+
+// دالة لعرض الميزانيات في الجدول
+function displayBudgets() {
+    const tableBody = document.getElementById('budgetTableBody');
+    tableBody.innerHTML = '';
+    
+    // التأكد من أن budgets هي مصفوفة قبل استخدام forEach
+    if (!Array.isArray(budgets)) {
+        console.error('المتغير budgets ليس مصفوفة:', budgets);
+        budgets = [];
+    }
+    
+    // إذا لم تكن هناك ميزانيات
+    if (budgets.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td colspan="7" class="text-center py-4">لا توجد ميزانيات مسجلة</td>
+        `;
+        tableBody.appendChild(row);
+        return;
+    }
+    
+    // عرض كل ميزانية في الجدول
+    budgets.forEach(budget => {
+        // التأكد من وجود الخصائص الأساسية
+        const month = budget.month || 'غير محدد';
+        const year = budget.year || 'غير محدد';
+        const totalIncome = budget.totalIncome ? budget.totalIncome.toFixed(2) : '0.00';
+        const totalExpenses = budget.totalExpenses ? budget.totalExpenses.toFixed(2) : '0.00';
+        const itemsCount = budget.items ? budget.items.length : 0;
+        const createdAt = budget.createdAt ? new Date(budget.createdAt).toLocaleDateString('ar-EG') : 'غير معروف';
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${month}</td>
+            <td>${year}</td>
+            <td>${totalIncome} دينار</td>
+            <td>${totalExpenses} دينار</td>
+            <td>${itemsCount}</td>
+            <td>${createdAt}</td>
+            <td>
+                <button onclick="viewBudget('${budget._id}')" class="btn btn-sm btn-primary me-1">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button onclick="confirmDeleteBudget('${budget._id}')" class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// دالة لعرض تفاصيل الميزانية
+        async function viewBudget(budgetId) {
+            try {
+                const budget = budgets.find(b => b._id === budgetId);
+                if (!budget) return;
+                
+                // إنشاء محتوى لعرض تفاصيل الميزانية
+                let content = `
+                    <div class="mb-3">
+                        <h6>الشهر: ${budget.month} - ${budget.year}</h6>
+                        <p>الإيرادات المتوقعة: ${budget.totalIncome.toFixed(2)} دينار</p>
+                        <p>إجمالي المصروفات: ${budget.totalExpenses.toFixed(2)} دينار</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>البند</th>
+                                    <th>المبلغ المخصص</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                // إضافة بنود الميزانية
+                budget.items.forEach(item => {
+                    content += `
+                        <tr>
+                            <td>${item.itemName}</td>
+                            <td>${item.allocatedAmount.toFixed(2)} دينار</td>
+                        </tr>
+                    `;
+                });
+                
+                content += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+                
+                // عرض التفاصيل في نافذة SweetAlert
+                Swal.fire({
+                    title: 'تفاصيل الميزانية',
+                    html: content,
+                    width: '800px',
+                    showCloseButton: true,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+            } catch (error) {
+                console.error('حدث خطأ أثناء عرض تفاصيل الميزانية:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'فشل عرض تفاصيل الميزانية. يرجى المحاولة لاحقًا.',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+            }
+        }
+        
+        // دالة لتأكيد حذف الميزانية
+        async function confirmDeleteBudget(budgetId) {
+            const result = await Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'لن تتمكن من استعادة هذه الميزانية بعد الحذف!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، احذفها',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            });
+            
+            if (result.isConfirmed) {
+                await deleteBudget(budgetId);
+            }
+        }
+        
+        // دالة لحذف الميزانية
+        async function deleteBudget(budgetId) {
+            try {
+                const response = await axios.delete(`${url}api/budgets/${budgetId}`);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'نجاح',
+                    text: 'تم حذف الميزانية بنجاح!',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    fetchBudgets(); // إعادة تحميل الميزانيات بعد الحذف
+                });
+            } catch (error) {
+                console.error('حدث خطأ أثناء حذف الميزانية:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'فشل حذف الميزانية. يرجى المحاولة لاحقًا.',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+            }
+        }
+        
+        // دالة لتحديث قائمة الميزانيات
+        function refreshBudgets() {
+            fetchBudgets();
+        }
+        
+        // دالة لإرسال نموذج إنشاء ميزانية جديدة
+        async function handleBudgetSubmit(event) {
+            event.preventDefault();
+            
+            // جمع بيانات النموذج
+            const month = document.getElementById('month').value;
+            const year = document.getElementById('year').value;
+            const totalIncome = parseFloat(document.getElementById('totalIncome').value);
+            
+            // جمع بنود الميزانية
+            const items = [];
+            const itemElements = document.querySelectorAll('.budget-item');
+            
+            itemElements.forEach(item => {
+                const name = item.querySelector('.item-name').value;
+                const amount = parseFloat(item.querySelector('.item-amount').value);
+                
+                if (name && !isNaN(amount)) {
+                    items.push({
+                        itemName: name,
+                        allocatedAmount: amount,
+                        spentAmount: 0
+                    });
+                }
+            });
+            
+            // حساب إجمالي المصروفات
+            const totalExpenses = items.reduce((sum, item) => sum + item.allocatedAmount, 0);
+            
+            // التحقق من صحة البيانات
+            if (!month || !year || isNaN(totalIncome) || items.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'يرجى ملء جميع الحقول المطلوبة وإضافة بنود للميزانية',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                return;
+            }
+            
+            // التحقق من أن الإيرادات أكبر من المصروفات
+            if (totalIncome < totalExpenses) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'تحذير',
+                    text: 'إجمالي المصروفات أكبر من الإيرادات المتوقعة!',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                return;
+            }
+            
+            try {
+                const userId = localStorage.getItem('userId');
+                
+                // عرض تحميل أثناء الإرسال
+                Swal.fire({
+                    title: 'جاري حفظ الميزانية...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                
+                // إرسال البيانات إلى الخادم
+                const response = await axios.post(`${url}api/budgets`, {
+                    userId: userId,
+                    month: month,
+                    year: year,
+                    totalIncome: totalIncome,
+                    totalExpenses: totalExpenses,
+                    items: items
+                });
+                
+                // إخفاء تحميل بعد الإرسال
+                Swal.close();
+                
+                // عرض رسالة نجاح
+                Swal.fire({
+                    icon: 'success',
+                    title: 'نجاح',
+                    text: 'تم حفظ الميزانية بنجاح!',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    // إعادة تعيين النموذج وتحديث الجدول
+                    document.getElementById('budgetForm').reset();
+                    document.getElementById('budgetItems').innerHTML = '';
+                    fetchBudgets();
+                });
+            } catch (error) {
+                console.error('حدث خطأ أثناء حفظ الميزانية:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'فشل حفظ الميزانية. يرجى المحاولة لاحقًا.',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+            }
+        }
+        
+        // تهيئة الصفحة عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            // تعيين السنة الحالية كقيمة افتراضية
+            document.getElementById('year').value = new Date().getFullYear();
+            
+            // إضافة مستمع حدث لزر إضافة بند جديد
+            document.getElementById('addItem').addEventListener('click', addBudgetItem);
+            
+            // إضافة مستمع حدث لنموذج الميزانية
+            document.getElementById('budgetForm').addEventListener('submit', handleBudgetSubmit);
+            
+            // جلب بيانات المستخدم والميزانيات
+            fetchUserData();
+            fetchBudgets();
+        });
+    </script>
+</body>
+</html>

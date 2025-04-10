@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإعدادات - نظام المالية الشخصية</title>
+    <!-- روابط CSS الخارجية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <!-- روابط JavaScript الخارجية -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="main.js"></script>
+
+    <style>
+        /* متغيرات الألوان لتكون متسقة مع لوحة التحكم */
+        :root {
+            --primary-color: #00aaff;
+            --secondary-color: #2a2f40;
+            --dark-color: #1c1f2b;
+            --light-color: #eaeaea;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--dark-color);
+            margin: 0;
+            padding: 0;
+            color: var(--light-color);
+        }
+
+        /* شريط التنقل - نفس نمط لوحة التحكم */
+        .navbar {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-left: 10px;
+            font-size: 1.8rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light-color);
+            font-size: 1rem;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-nav .nav-link i {
+            margin-left: 8px;
+            font-size: 1.1rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(0, 170, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link.active {
+            background-color: rgba(0, 170, 255, 0.2);
+            color: var(--primary-color);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* بطاقات الإعدادات */
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .settings-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+        }
+
+        .settings-card {
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            background: var(--secondary-color);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .settings-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 170, 255, 0.2);
+        }
+
+        .settings-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .settings-card h3 i {
+            margin-left: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light-color);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(0, 170, 255, 0.25);
+            background-color: rgba(255, 255, 255, 0.15);
+            outline: none;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-left: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #0088cc;
+            border-color: #0088cc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 170, 255, 0.3);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        /* التذييل */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: var(--secondary-color);
+            color: var(--light-color);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* تأثيرات للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .settings-card {
+                padding: 1rem;
+            }
+            
+            .settings-card h3 {
+                font-size: 1.1rem;
+            }
+            
+            .form-control {
+                padding: 0.5rem 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل المحسن -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-chart-line"></i>
+                لوحة التحكم
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Transctionshow.html">
+                            <i class="fas fa-exchange-alt"></i> المعاملات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Budget.html">
+                            <i class="fas fa-wallet"></i> الميزانية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">
+                            <i class="fas fa-chart-line"></i> التقارير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="Settings.html">
+                            <i class="fas fa-cog"></i> الإعدادات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="HelpSupport.html">
+                            <i class="fas fa-question-circle"></i> الدعم
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <a class="nav-link" href="profile.html">
+                        <div id="user-info" class="d-flex align-items-center">
+                            <div class="user-avatar" id="userAvatar">م</div>
+                            <div class="user-info">
+                                <span class="user-name" id="userNameNav">محمد أحمد</span>
+                                <span class="user-role">مستخدم</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="content">
+        <div class="settings-section animate__animated animate__fadeIn">
+            <h2><i class="fas fa-user-cog"></i> إعدادات الحساب</h2>
+            
+            <!-- بطاقة معلومات الحساب -->
+            <div class="settings-card animate__animated animate__fadeInUp">
+                <h3><i class="fas fa-user-edit"></i> المعلومات الشخصية</h3>
+                
+                <div class="form-group">
+                    <label for="username" class="form-label">اسم المستخدم</label>
+                    <input type="text" id="username" class="form-control" placeholder="أدخل اسم المستخدم">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">البريد الإلكتروني</label>
+                    <input type="email" id="email" class="form-control" placeholder="أدخل البريد الإلكتروني">
+                </div>
+                
+                <button id="updateProfileBtn" class="btn btn-primary">
+                    <i class="fas fa-save"></i> حفظ التغييرات
+                </button>
+            </div>
+            
+            <!-- بطاقة تغيير كلمة المرور -->
+            <div class="settings-card animate__animated animate__fadeInUp">
+                <h3><i class="fas fa-key"></i> تغيير كلمة المرور</h3>
+                
+                <div class="form-group">
+                    <label for="currentPassword" class="form-label">كلمة المرور الحالية</label>
+                    <input type="password" id="currentPassword" class="form-control" placeholder="أدخل كلمة المرور الحالية">
+                </div>
+                
+                <div class="form-group">
+                    <label for="newPassword" class="form-label">كلمة المرور الجديدة</label>
+                    <input type="password" id="newPassword" class="form-control" placeholder="أدخل كلمة المرور الجديدة">
+                    <small class="text-muted">يجب أن تحتوي على 8 أحرف على الأقل</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">تأكيد كلمة المرور الجديدة</label>
+                    <input type="password" id="confirmPassword" class="form-control" placeholder="أعد إدخال كلمة المرور الجديدة">
+                </div>
+                
+                <button id="changePasswordBtn" class="btn btn-primary">
+                    <i class="fas fa-lock"></i> تغيير كلمة المرور
+                </button>
+            </div>
+            
+            <!-- بطاقة الرصيد الأولي -->
+            <div class="settings-card animate__animated animate__fadeInUp">
+                <h3><i class="fas fa-wallet"></i> الرصيد الأولي</h3>
+                
+                <div class="form-group">
+                    <label for="initialBalance" class="form-label">الرصيد الحالي</label>
+                    <input type="number" id="initialBalance" class="form-control" placeholder="أدخل الرصيد الأولي">
+                </div>
+                
+                <button id="updateBalanceBtn" class="btn btn-primary">
+                    <i class="fas fa-sync-alt"></i> تحديث الرصيد
+                </button>
+            </div>
+            
+            <!-- بطاقة تخصيص الواجهة -->
+            <div class="settings-card animate__animated animate__fadeInUp">
+                <h3><i class="fas fa-palette"></i> تخصيص الواجهة</h3>
+                
+                <div class="form-group">
+                    <label for="themeColor" class="form-label">لون السمة الرئيسية</label>
+                    <input type="color" id="themeColor" class="form-control" value="#00aaff" style="height: 50px; padding: 0.25rem;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="darkMode" class="form-label">وضع العرض</label>
+                    <select id="darkMode" class="form-control">
+                        <option value="auto">تلقائي (حسب النظام)</option>
+                        <option value="light">وضع النهار</option>
+                        <option value="dark">وضع الليل</option>
+                    </select>
+                </div>
+                
+                <button id="saveThemeBtn" class="btn btn-primary">
+                    <i class="fas fa-save"></i> حفظ التخصيصات
+                </button>
+            </div>
+            
+            <!-- بطاقة الإعدادات المتقدمة -->
+            <div class="settings-card animate__animated animate__fadeInUp">
+                <h3><i class="fas fa-cogs"></i> الإعدادات المتقدمة</h3>
+                
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="notificationsEnabled">
+                    <label class="form-check-label" for="notificationsEnabled">تمكين الإشعارات</label>
+                </div>
+                
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="analyticsEnabled">
+                    <label class="form-check-label" for="analyticsEnabled">مشاركة بيانات التحليل</label>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-4">
+                    <button id="exportDataBtn" class="btn btn-primary">
+                        <i class="fas fa-file-export"></i> تصدير البيانات
+                    </button>
+                    
+                    <button id="resetSettingsBtn" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> إعادة الضبط
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل المحسن -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2023 نظام المالية الشخصية. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <!-- روابط JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ثوابت التطبيق
+        //const API_BASE_URL = 'http://localhost:9050';
+        const MIN_PASSWORD_LENGTH = 8;
+        
+        // تهيئة الصفحة عند التحميل
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // التحقق من صحة تسجيل الدخول
+                if (!checkAuth()) return;
+                
+                // جلب بيانات المستخدم
+                await loadUserData();
+                
+                // جلب إعدادات المستخدم
+                await loadUserSettings();
+                
+                // إعداد معالجين الأحداث
+                setupEventHandlers();
+                
+                // تطبيق تأثيرات GSAP
+                applyAnimations();
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء تهيئة الصفحة:', error);
+                showError('حدث خطأ أثناء تحميل الصفحة', 'يرجى المحاولة لاحقاً');
+            }
+        });
+
+        /**
+         * التحقق من صحة تسجيل الدخول
+         * @returns {boolean} true إذا كان المستخدم مسجلاً، false إذا لم يكن مسجلاً
+         */
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId');
+            
+            if (!token || !userId) {
+                showError('يجب تسجيل الدخول أولاً', 'سيتم توجيهك إلى صفحة تسجيل الدخول')
+                    .then(() => window.location.href = 'login.html');
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * جلب بيانات المستخدم من الخادم
+         */
+        async function loadUserData() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const response = await axios.get(`${url}${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                const userData = response.data;
+                
+                // تحديث واجهة المستخدم
+                document.getElementById('username').value = userData.username || '';
+                document.getElementById('email').value = userData.email || '';
+                document.getElementById('initialBalance').value = userData.initialBalance || 0;
+                
+                // تحديث معلومات المستخدم في شريط التنقل
+                updateNavUserInfo(userData);
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب بيانات المستخدم:', error);
+                throw error;
+            }
+        }
+
+        /**
+         * جلب إعدادات المستخدم من الخادم
+         */
+        async function loadUserSettings() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const response = await axios.get(`${url}api/settings/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                const settings = response.data;
+                
+                // تحديث واجهة المستخدم
+                if (settings.themeColor) {
+                    document.getElementById('themeColor').value = settings.themeColor;
+                }
+                
+                if (settings.darkMode) {
+                    document.getElementById('darkMode').value = settings.darkMode;
+                }
+                
+                if (settings.notificationsEnabled !== undefined) {
+                    document.getElementById('notificationsEnabled').checked = settings.notificationsEnabled;
+                }
+                
+                if (settings.analyticsEnabled !== undefined) {
+                    document.getElementById('analyticsEnabled').checked = settings.analyticsEnabled;
+                }
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب الإعدادات:', error);
+                // لا نرمي الخطأ هنا لأن الإعدادات قد لا تكون موجودة بعد
+            }
+        }
+
+        /**
+         * تحديث معلومات المستخدم في شريط التنقل
+         * @param {Object} userData - بيانات المستخدم
+         */
+        function updateNavUserInfo(userData) {
+            const userAvatar = document.getElementById('userAvatar');
+            const userNameNav = document.getElementById('userNameNav');
+            
+            if (userData.username) {
+                userNameNav.textContent = userData.username;
+                userAvatar.textContent = userData.username.charAt(0);
+            }
+            
+            if (userData.profileImage) {
+                userAvatar.style.backgroundImage = `url(${userData.profileImage})`;
+                userAvatar.textContent = '';
+            }
+        }
+
+        /**
+         * إعداد معالجين الأحداث
+         */
+        function setupEventHandlers() {
+            // تحديث المعلومات الشخصية
+            document.getElementById('updateProfileBtn').addEventListener('click', updateProfile);
+            
+            // تغيير كلمة المرور
+            document.getElementById('changePasswordBtn').addEventListener('click', changePassword);
+            
+            // تحديث الرصيد الأولي
+            document.getElementById('updateBalanceBtn').addEventListener('click', updateInitialBalance);
+            
+            // حفظ تخصيصات الواجهة
+            document.getElementById('saveThemeBtn').addEventListener('click', saveThemeSettings);
+            
+            // تصدير البيانات
+            document.getElementById('exportDataBtn').addEventListener('click', exportUserData);
+            
+            // إعادة ضبط الإعدادات
+            document.getElementById('resetSettingsBtn').addEventListener('click', resetSettings);
+        }
+
+        /**
+         * تحديث المعلومات الشخصية للمستخدم
+         */
+        async function updateProfile() {
+            try {
+                const username = document.getElementById('username').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const userId = localStorage.getItem('userId');
+                
+                // التحقق من صحة المدخلات
+                if (!username || !email) {
+                    showError('الحقول مطلوبة', 'يرجى ملء جميع الحقول المطلوبة');
+                    return;
+                }
+                
+                if (!validateEmail(email)) {
+                    showError('بريد إلكتروني غير صالح', 'يرجى إدخال بريد إلكتروني صحيح');
+                    return;
+                }
+                
+                // إرسال طلب التحديث
+                const response = await axios.put(`${url}api/users/${userId}`, {
+                    username,
+                    email
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                // تحديث البيانات المحلية
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                userData.username = username;
+                userData.email = email;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                
+                // تحديث واجهة المستخدم
+                updateNavUserInfo(userData);
+                
+                showSuccess('تم التحديث بنجاح', 'تم تحديث المعلومات الشخصية');
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء تحديث الملف الشخصي:', error);
+                
+                if (error.response && error.response.status === 409) {
+                    showError('اسم المستخدم موجود', 'اسم المستخدم هذا مستخدم بالفعل، يرجى اختيار اسم آخر');
+                } else {
+                    showError('حدث خطأ', 'فشل تحديث المعلومات الشخصية، يرجى المحاولة لاحقاً');
+                }
+            }
+        }
+
+        /**
+         * تغيير كلمة المرور
+         */
+        async function changePassword() {
+            try {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                const userId = localStorage.getItem('userId');
+                
+                // التحقق من صحة المدخلات
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    showError('الحقول مطلوبة', 'يرجى ملء جميع الحقول المطلوبة');
+                    return;
+                }
+                
+                if (newPassword.length < MIN_PASSWORD_LENGTH) {
+                    showError('كلمة مرور ضعيفة', `كلمة المرور يجب أن تحتوي على ${MIN_PASSWORD_LENGTH} أحرف على الأقل`);
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    showError('كلمات المرور غير متطابقة', 'يرجى التأكد من تطابق كلمتي المرور');
+                    return;
+                }
+                
+                // إرسال طلب تغيير كلمة المرور
+                const response = await axios.put(`${url}api/users/${userId}/password`, {
+                    currentPassword,
+                    newPassword
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                // مسح حقول كلمة المرور
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+                showSuccess('تم التغيير بنجاح', 'تم تغيير كلمة المرور بنجاح');
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء تغيير كلمة المرور:', error);
+                
+                if (error.response && error.response.status === 401) {
+                    showError('كلمة مرور خاطئة', 'كلمة المرور الحالية غير صحيحة');
+                } else {
+                    showError('حدث خطأ', 'فشل تغيير كلمة المرور، يرجى المحاولة لاحقاً');
+                }
+            }
+        }
+
+        /**
+         * تحديث الرصيد الأولي
+         */
+        async function updateInitialBalance() {
+            try {
+                const initialBalance = parseFloat(document.getElementById('initialBalance').value);
+                const userId = localStorage.getItem('userId');
+                
+                // التحقق من صحة المدخلات
+                if (isNaN(initialBalance)) {
+                    showError('قيمة غير صالحة', 'يرجى إدخال قيمة رقمية للرصيد');
+                    return;
+                }
+                
+                // إرسال طلب التحديث
+                const response = await axios.put(`${url}api/users/${userId}/balance`, {
+                    initialBalance
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+            
+                
+                showSuccess('تم التحديث بنجاح', 'تم تحديث الرصيد الأولي بنجاح');
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء تحديث الرصيد:', error);
+                showError('حدث خطأ', 'فشل تحديث الرصيد الأولي، يرجى المحاولة لاحقاً');
+            }
+        }
+
+        /**
+         * حفظ إعدادات الواجهة
+         */
+        async function saveThemeSettings() {
+            try {
+                const themeColor = document.getElementById('themeColor').value;
+                const darkMode = document.getElementById('darkMode').value;
+                const userId = localStorage.getItem('userId');
+                
+                // إرسال طلب الحفظ
+                const response = await axios.put(`${url}api/settings/${userId}/theme`, {
+                    themeColor,
+                    darkMode
+                }, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                showSuccess('تم الحفظ بنجاح', 'تم حفظ تخصيصات الواجهة بنجاح');
+                
+                // تطبيق التغييرات فوراً
+                applyThemeSettings(themeColor, darkMode);
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء حفظ الإعدادات:', error);
+                showError('حدث خطأ', 'فشل حفظ تخصيصات الواجهة، يرجى المحاولة لاحقاً');
+            }
+        }
+
+        /**
+         * تطبيق إعدادات الواجهة
+         * @param {string} themeColor - لون السمة
+         * @param {string} darkMode - وضع العرض
+         */
+        function applyThemeSettings(themeColor, darkMode) {
+            // هنا يمكنك إضافة كود لتطبيق التخصيصات على الواجهة
+            console.log('تم تطبيق إعدادات الواجهة:', { themeColor, darkMode });
+        }
+
+        /**
+         * تصدير بيانات المستخدم
+         */
+        async function exportUserData() {
+            try {
+                const userId = localStorage.getItem('userId');
+                const response = await axios.get(`${url}api/users/${userId}/export`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    responseType: 'blob'
+                });
+                
+                // إنشاء رابط لتنزيل الملف
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `user-data-${userId}.zip`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء تصدير البيانات:', error);
+                showError('حدث خطأ', 'فشل تصدير البيانات، يرجى المحاولة لاحقاً');
+            }
+        }
+
+        /**
+         * إعادة ضبط الإعدادات
+         */
+        async function resetSettings() {
+            try {
+                const result = await Swal.fire({
+                    title: 'هل أنت متأكد؟',
+                    text: 'سيتم إعادة جميع الإعدادات إلى القيم الافتراضية',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'نعم، إعادة الضبط',
+                    cancelButtonText: 'إلغاء',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                
+                if (result.isConfirmed) {
+                    const userId = localStorage.getItem('userId');
+                    const response = await axios.post(`${url}api/settings/${userId}/reset`, {}, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    
+                    // إعادة تحميل الإعدادات
+                    await loadUserSettings();
+                    
+                    showSuccess('تمت إعادة الضبط', 'تمت إعادة جميع الإعدادات إلى القيم الافتراضية');
+                }
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء إعادة ضبط الإعدادات:', error);
+                showError('حدث خطأ', 'فشل إعادة ضبط الإعدادات، يرجى المحاولة لاحقاً');
+            }
+        }
+
+        /**
+         * التحقق من صحة البريد الإلكتروني
+         * @param {string} email - البريد الإلكتروني للتحقق
+         * @returns {boolean} true إذا كان البريد صالحاً، false إذا كان غير صالح
+         */
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        /**
+         * عرض رسالة نجاح
+         * @param {string} title - عنوان الرسالة
+         * @param {string} text - نص الرسالة
+         */
+        function showSuccess(title, text) {
+            return Swal.fire({
+                icon: 'success',
+                title,
+                text,
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            });
+        }
+
+        /**
+         * عرض رسالة خطأ
+         * @param {string} title - عنوان الرسالة
+         * @param {string} text - نص الرسالة
+         */
+        function showError(title, text) {
+            return Swal.fire({
+                icon: 'error',
+                title,
+                text,
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            });
+        }
+
+        /**
+         * تطبيق تأثيرات GSAP للصفحة
+         */
+        function applyAnimations() {
+            gsap.from(".settings-section h2", {
+                duration: 0.8,
+                y: -20,
+                opacity: 0,
+                ease: "power2.out"
+            });
+            
+            gsap.from(".settings-card", {
+                duration: 0.8,
+                y: 50,
+                opacity: 0,
+                stagger: 0.15,
+                ease: "power2.out"
+            });
+        }
+    </script>
+</body>
+</html>

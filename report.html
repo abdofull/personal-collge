@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقارير - [اسم الموقع]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="main.js"></script>
+    <style>
+
+@font-face {
+        font-family: 'Amiri';
+        src: url('https://cdn.jsdelivr.net/npm/amiri-font@1.0.0/amiri-regular.ttf') format('truetype');
+    }
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #1c1f2b;
+            margin: 0;
+            padding: 0;
+            color: #eaeaea;
+        }
+
+        .navbar {
+            background-color: #2a2f40;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #00aaff;
+        }
+
+        .navbar-nav .nav-link {
+            color: #eaeaea;
+            font-size: 1rem;
+            margin-right: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #00aaff;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            background: #2a2f40;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: #eaeaea;
+            margin-bottom: 1rem;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #00aaff;
+        }
+
+        .chart-container {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #2a2f40;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            color: #eaeaea;
+        }
+
+        .table {
+            margin-top: 2rem;
+            background: #2a2f40;
+            color: #eaeaea;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .table thead {
+            background-color: #00aaff;
+            color: #fff;
+        }
+
+        .table th, .table td {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #2a2f40;
+            color: #eaeaea;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .export-buttons {
+            margin-top: 1rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .export-buttons button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #00aaff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .export-buttons button:hover {
+            background-color: #0088cc;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-nav .nav-link {
+                margin-right: 0.5rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .chart-container {
+                padding: 1rem;
+            }
+
+            .table th, .table td {
+                padding: 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .export-buttons {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">لوحة التحكم</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Transctionshow.html">
+                            <i class="fas fa-exchange-alt"></i> المعاملات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Budget.html">
+                            <i class="fas fa-wallet"></i> الميزانية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">
+                            <i class="fas fa-chart-line"></i> التقارير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Settings.html">
+                            <i class="fas fa-cog"></i> الإعدادات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()"  style="color: red;">
+                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="HelpSupport.html">
+                            <i class="fas fa-question-circle"></i> الدعم والمساعدة
+                        </a>
+                    </li>
+                </ul>
+            </div>
+                             <!-- إضافة اسم المستخدم وصورته إلى أقصى اليسار -->
+                             <a class="nav-link" href="profile.html">
+                                <div id="user-info" class="d-flex align-items-center ms-3">
+                                   <!-- سيتم ملء اسم المستخدم وصورته هنا -->
+                                </div>
+                               </a>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="content">
+        <h1 class="mb-4">التقارير</h1>
+
+        <!-- أزرار التصدير -->
+        <div class="export-buttons">
+            <button onclick="exportToPDF()">
+                <i class="fas fa-file-pdf"></i> تصدير إلى PDF
+            </button>
+            <button onclick="exportToExcel()">
+                <i class="fas fa-file-excel"></i> تصدير إلى Excel
+            </button>
+        </div>
+
+        <!-- رسم بياني خطي -->
+        <h2 class="mt-5 mb-3">رسم بياني خطي للمعاملات</h2>
+        <div class="chart-container">
+            <canvas id="lineChart"></canvas>
+        </div>
+
+        <!-- جدول التقارير -->
+        <h2 class="mt-5 mb-3">التفاصيل المالية</h2>
+        <table class="table table-striped" id="reportsTable">
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>الفئة</th>
+                    <th>المبلغ</th>
+                    <th>النوع</th>
+                </tr>
+            </thead>
+            <tbody id="reportsTableBody">
+                <!-- البيانات سيتم ملؤها عبر JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- التذييل -->
+    <footer class="footer">
+        <p>© 2023 [اسم الموقع]. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // جلب بيانات المعاملات من الخادم
+        async function fetchTransactions() {
+            const userId = localStorage.getItem('userId'); // جلب userId من localStorage
+            if (!userId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'يجب تسجيل الدخول أولاً',
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+                return;
+            }
+
+            try {
+                const response = await axios.get(`http://localhost:9050/api/transactions?userId=${userId}`);
+                const transactions = response.data;
+
+                // عرض البيانات في الجدول
+                displayTransactions(transactions);
+
+                // عرض البيانات في الرسم البياني
+                displayLineChart(transactions);
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب البيانات:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'فشل جلب البيانات. يرجى المحاولة لاحقًا.',
+                });
+            }
+        }
+
+        // عرض البيانات في الجدول
+        function displayTransactions(transactions) {
+            const reportsTableBody = document.getElementById('reportsTableBody');
+            reportsTableBody.innerHTML = '';
+
+            transactions.forEach(transaction => {
+                const row = `
+                    <tr>
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.category}</td>
+                        <td>${transaction.amount.toFixed(2)} دينار</td>
+                        <td>${transaction.type === 'income' ? 'دخل' : 'مصروفات'}</td>
+                    </tr>
+                `;
+                reportsTableBody.innerHTML += row;
+            });
+        }
+
+        // عرض البيانات في رسم بياني خطي
+        function displayLineChart(transactions) {
+            const labels = [];
+            const incomeData = [];
+            const expensesData = [];
+
+            // تجميع البيانات حسب التاريخ
+            transactions.forEach(transaction => {
+                const date = new Date(transaction.date).toLocaleDateString();
+                if (!labels.includes(date)) {
+                    labels.push(date);
+                }
+
+                if (transaction.type === 'income') {
+                    incomeData.push(transaction.amount);
+                } else {
+                    expensesData.push(transaction.amount);
+                }
+            });
+
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'الدخل',
+                            data: incomeData,
+                            borderColor: '#00aaff',
+                            fill: false
+                        },
+                        {
+                            label: 'المصروفات',
+                            data: expensesData,
+                            borderColor: '#ff4d4d',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // تصدير إلى PDF
+        function exportToPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // إضافة الخط العربي
+    doc.addFont('https://cdn.jsdelivr.net/npm/amiri-font@1.0.0/amiri-regular.ttf', 'Amiri', 'normal');
+    doc.setFont('Amiri'); // تعيين الخط العربي
+
+    // عنوان التقرير
+    doc.setFontSize(18);
+    doc.text("التقارير المالية", 14, 15);
+
+    // إضافة الجدول
+    doc.autoTable({
+        html: '#reportsTable',
+        startY: 25, // بداية الجدول بعد العنوان
+        theme: 'grid',
+        headStyles: { 
+            fillColor: [0, 170, 255], // لون خلفية رأس الجدول
+            font: 'Amiri', // استخدام الخط العربي
+            fontStyle: 'bold'
+        },
+        styles: { 
+            font: 'Amiri', // استخدام الخط العربي
+            halign: 'right' // محاذاة النص لليمين
+        }
+    });
+
+    // حفظ الملف
+    doc.save('التقارير.pdf');
+}
+function exportToExcel() {
+            const table = document.getElementById('reportsTable');
+            const workbook = XLSX.utils.table_to_book(table, { sheet: "التقارير" });
+            XLSX.writeFile(workbook, 'التقارير.xlsx');
+        }
+
+        // جلب البيانات عند تحميل الصفحة
+        window.onload = function() {
+            fetchTransactions();
+            fetchUserData(); // جلب بيانات المستخدم
+            applyBackgroundColor();//لتغيير لون الخلفية
+
+
+        };
+    </script>
+</body>
+</html>
+
+

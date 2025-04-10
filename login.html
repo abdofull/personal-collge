@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - [اسم الموقع]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="main.js"></script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-title {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .icon {
+            color: blue;
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 class="form-title"><i class="fas fa-sign-in-alt icon"></i> تسجيل الدخول</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" class="form-control" id="email" required placeholder="أدخل بريدك الإلكتروني">
+            </div>
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" class="form-control" id="password" required placeholder="أدخل كلمة المرور">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">تسجيل الدخول</button>
+            <p class="mt-3 text-center">ليس لديك حساب؟ <a href="signup.html">إنشاء حساب</a></p>
+        </form>
+    </div>
+
+    <footer class="footer">
+        <p>© 2023 [اسم الموقع]. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault(); // منع إعادة تحميل الصفحة
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // التحقق من المدخلات
+            if (!email || !password) {
+                Swal.fire('خطأ', 'يرجى ملء جميع الحقول!', 'error');
+                return;
+            }
+
+            try {
+                const response = await axios.post('http://localhost:9050/login', {
+                    email,
+                    password,
+                });
+                
+                Swal.fire('نجاح', response.data.message, 'success'); // عرض رسالة النجاح
+                
+                if (response.data.token) {
+                    localStorage.setItem('token', response.data.token); // تخزين التوكن
+                    localStorage.setItem('userId', response.data.user.id); // تخزين معرف المستخدم
+
+                    // تخزين بيانات المستخدم ككائن
+                    const userData = {
+                        username: response.data.user.username,
+                        profileImage: response.data.user.profileImage, // تأكد من وجود هذا الحقل في الاستجابة
+                        // أضف أي بيانات أخرى تحتاجها
+                    };
+                    localStorage.setItem('userData', JSON.stringify(userData)); // تخزين بيانات المستخدم
+
+                    // إعادة توجيه المستخدم إلى الصفحة الرئيسية
+                    window.location.href = 'test.html';
+                }
+            } catch (error) {
+                Swal.fire('خطأ', error.response.data.message, 'error'); // عرض رسالة الخطأ
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي - نظام المالية الشخصية</title>
+    <!-- روابط CSS الخارجية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <!-- روابط JavaScript الخارجية -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+    <style>
+        /* متغيرات الألوان لتكون متسقة مع لوحة التحكم */
+        :root {
+            --primary-color: #00aaff;
+            --secondary-color: #2a2f40;
+            --dark-color: #1c1f2b;
+            --light-color: #eaeaea;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--dark-color);
+            margin: 0;
+            padding: 0;
+            color: var(--light-color);
+        }
+
+        /* شريط التنقل - نفس نمط لوحة التحكم */
+        .navbar {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-left: 10px;
+            font-size: 1.8rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--light-color);
+            font-size: 1rem;
+            margin-right: 1rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-nav .nav-link i {
+            margin-left: 8px;
+            font-size: 1.1rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(0, 170, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        /* بطاقة الملف الشخصي */
+        .profile-card {
+            border: none;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            background: var(--secondary-color);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            color: var(--light-color);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), #0066ff);
+        }
+
+        .profile-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+            border: 4px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .profile-card img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+        }
+
+        .profile-card h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .profile-card p {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* بطاقات الإحصائيات والإعدادات */
+        .stats-card, .settings-card {
+            border: none;
+            border-radius: 15px;
+            padding: 1.5rem;
+            background: var(--secondary-color);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .stats-card:hover, .settings-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 170, 255, 0.2);
+        }
+
+        .stats-card h3, .settings-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .stats-card h3::after, .settings-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+        }
+
+        .stats-card p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stats-card p span {
+            font-weight: 600;
+            color: var(--light-color);
+        }
+
+        .settings-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .settings-card ul li {
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .settings-card ul li:hover {
+            transform: translateX(-5px);
+        }
+
+        .settings-card ul li a {
+            color: var(--light-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .settings-card ul li a i {
+            margin-left: 10px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .settings-card ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        /* جدول المعاملات */
+        .transactions-section {
+            margin-top: 3rem;
+        }
+
+        .transactions-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--light-color);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .transactions-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), transparent);
+        }
+
+        .table {
+            background: var(--secondary-color);
+            color: var(--light-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .table thead {
+            background: linear-gradient(90deg, var(--primary-color), #0066ff);
+            color: #fff;
+        }
+
+        .table th, .table td {
+            padding: 1.2rem;
+            text-align: center;
+            vertical-align: middle;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: rgba(0, 170, 255, 0.1);
+        }
+
+        .badge-income {
+            background-color: var(--success-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .badge-expense {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* التذييل */
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: var(--secondary-color);
+            color: var(--light-color);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* تأثيرات للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .profile-card img {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .profile-card h2 {
+                font-size: 1.5rem;
+            }
+            
+            .stats-card h3, .settings-card h3 {
+                font-size: 1.1rem;
+            }
+            
+            .table th, .table td {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شريط التنقل المحسن -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-chart-line"></i>
+                لوحة التحكم
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Transctionshow.html">
+                            <i class="fas fa-exchange-alt"></i> المعاملات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Budget.html">
+                            <i class="fas fa-wallet"></i> الميزانية
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">
+                            <i class="fas fa-chart-line"></i> التقارير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html">
+                            <i class="fas fa-user"></i> الملف الشخصي
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()" style="color: var(--danger-color);">
+                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="content">
+        <!-- بطاقة الملف الشخصي -->
+        <div class="profile-card animate__animated animate__fadeIn">
+            <img src="https://via.placeholder.com/150" alt="صورة المستخدم" id="profileImage" class="animate__animated animate__zoomIn">
+            <h2 id="username">محمد أحمد</h2>
+            <p id="email">mohamed@example.com</p>
+            <p id="joinDate">تاريخ التسجيل: ١ يناير ٢٠٢٣</p>
+            <p id="balance">الرصيد الحالي: <span class="fw-bold">0 دينار</span></p>
+        </div>
+
+        <div class="row animate__animated animate__fadeInUp">
+            <div class="col-md-6">
+                <!-- بطاقة الإحصائيات -->
+                <div class="stats-card">
+                    <h3><i class="fas fa-chart-pie"></i> الإحصائيات</h3>
+                    <p>عدد المعاملات: <span id="transactionCount" class="badge bg-primary">0</span></p>
+                    <p>إجمالي الدخل: <span id="totalIncome" class="badge bg-success">0 دينار</span></p>
+                    <p>إجمالي المصروفات: <span id="totalExpenses" class="badge bg-danger">0 دينار</span></p>
+                    <div class="progress mt-3" style="height: 10px;">
+                        <div id="incomeProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+                        <div id="expenseProgress" class="progress-bar bg-danger" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- بطاقة الإعدادات -->
+                <div class="settings-card">
+                    <h3><i class="fas fa-cog"></i> الإعدادات</h3>
+                    <ul>
+                        <li><a href="#" onclick="updateProfile()"><i class="fas fa-user-edit"></i> تعديل المعلومات الشخصية</a></li>
+                        <li><a href="#" onclick="changePassword()"><i class="fas fa-key"></i> تغيير كلمة المرور</a></li>
+                        <li><a href="#" onclick="updateProfileImage()"><i class="fas fa-camera"></i> تحديث الصورة</a></li>
+                        <li><a href="#" onclick="updateInitialBalance()"><i class="fas fa-wallet"></i> تحديث الرصيد الأولي</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم المعاملات الأخيرة -->
+        <div class="transactions-section animate__animated animate__fadeIn">
+            <h2><i class="fas fa-history"></i> المعاملات الأخيرة</h2>
+            <div class="table-responsive">
+                <table class="table table-hover" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>الوصف</th>
+                            <th>الفئة</th>
+                            <th>المبلغ</th>
+                            <th>النوع</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody">
+                        <!-- البيانات سيتم ملؤها عبر JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <a href="Transctionshow.html" class="btn btn-primary">
+                    <i class="fas fa-list"></i> عرض جميع المعاملات
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل المحسن -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2023 نظام المالية الشخصية. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <!-- روابط JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // عنوان URL الأساسي للخادم
+        const API_BASE_URL = 'http://localhost:9050';
+        
+        // دالة للتحقق من صحة تسجيل الدخول
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId');
+            
+            if (!token || !userId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ في المصادقة',
+                    text: 'يجب تسجيل الدخول أولاً',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+                return false;
+            }
+            return true;
+        }
+
+        // دالة لجلب بيانات المستخدم من localStorage والخادم
+        async function fetchUserData() {
+            try {
+                // التحقق من المصادقة أولاً
+                if (!checkAuth()) return;
+                
+                const userId = localStorage.getItem('userId');
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                
+                // عرض بيانات المستخدم من localStorage
+                if (userData) {
+                    document.getElementById('profileImage').src = userData.profileImage || 'https://via.placeholder.com/150';
+                    document.getElementById('username').textContent = userData.username || 'مستخدم';
+                    document.getElementById('email').textContent = userData.email || 'لا يوجد بريد إلكتروني';
+                    
+                    // تنسيق تاريخ التسجيل
+                    if (userData.createdAt) {
+                        const joinDate = new Date(userData.createdAt);
+                        document.getElementById('joinDate').textContent = `تاريخ التسجيل: ${joinDate.toLocaleDateString('ar-EG')}`;
+                    }
+                }
+                
+                // جلب الرصيد الأولي من الخادم
+                await fetchInitialBalance(userId);
+                
+                // جلب إحصائيات المستخدم
+                await fetchUserStats(userId);
+                
+                // جلب المعاملات الأخيرة
+                await fetchUserTransactions(userId);
+                
+                // تطبيق تأثيرات GSAP بعد تحميل البيانات
+                applyAnimations();
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب بيانات المستخدم:', error);
+                showErrorAlert('حدث خطأ أثناء جلب البيانات', 'يرجى المحاولة لاحقاً');
+            }
+        }
+
+        // دالة لجلب الرصيد الأولي من الخادم
+        async function fetchInitialBalance(userId) {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/getInitialBalance?userId=${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                if (response.data && response.data.initialBalance !== undefined) {
+                    document.getElementById('balance').innerHTML = `الرصيد الحالي: <span class="fw-bold">${response.data.initialBalance.toFixed(2)} دينار</span>`;
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب الرصيد الأولي:', error);
+                // لا نعرض رسالة خطأ للرصيد لأنه قد يكون غير موجود للمستخدم الجديد
+            }
+        }
+
+        // دالة لجلب إحصائيات المستخدم
+        async function fetchUserStats(userId) {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/api/transactions/totals?userId=${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                const { totalIncome = 0, totalExpenses = 0 } = response.data || {};
+                
+                // عرض الإحصائيات
+                document.getElementById('totalIncome').textContent = `${totalIncome.toFixed(2)} دينار`;
+                document.getElementById('totalExpenses').textContent = `${totalExpenses.toFixed(2)} دينار`;
+                
+                // جلب عدد المعاملات
+                const transactionsResponse = await axios.get(`${API_BASE_URL}/api/transactions?userId=${userId}&limit=5`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                document.getElementById('transactionCount').textContent = transactionsResponse.data.length || 0;
+                
+                // تحديث شريط التقدم
+                updateProgressBars(totalIncome, totalExpenses);
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب الإحصائيات:', error);
+                showErrorAlert('حدث خطأ في جلب الإحصائيات', 'يرجى المحاولة لاحقاً');
+            }
+        }
+
+        // دالة لتحديث أشرطة التقدم للدخل والمصروفات
+        function updateProgressBars(totalIncome, totalExpenses) {
+            const total = totalIncome + totalExpenses;
+            
+            if (total > 0) {
+                const incomePercent = (totalIncome / total) * 100;
+                const expensePercent = (totalExpenses / total) * 100;
+                
+                document.getElementById('incomeProgress').style.width = `${incomePercent}%`;
+                document.getElementById('expenseProgress').style.width = `${expensePercent}%`;
+            }
+        }
+
+        // دالة لجلب المعاملات الأخيرة
+        async function fetchUserTransactions(userId) {
+            try {
+                const response = await axios.get(`${API_BASE_URL}/api/transactions?userId=${userId}&limit=5&sort=-date`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                
+                const transactions = response.data || [];
+                const tableBody = document.getElementById('transactionsTableBody');
+                tableBody.innerHTML = '';
+                
+                transactions.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(transaction.date).toLocaleDateString('ar-EG')}</td>
+                        <td>${transaction.description || '-'}</td>
+                        <td>${transaction.category || '-'}</td>
+                        <td>${transaction.amount.toFixed(2)} دينار</td>
+                        <td>
+                            ${transaction.type === 'income' ? 
+                              '<span class="badge-income">دخل</span>' : 
+                              '<span class="badge-expense">مصروف</span>'}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب المعاملات:', error);
+                showErrorAlert('حدث خطأ في جلب المعاملات', 'يرجى المحاولة لاحقاً');
+            }
+        }
+
+        // دالة لتحديث الصورة الشخصية
+        async function updateProfileImage() {
+            try {
+                const { value: file } = await Swal.fire({
+                    title: 'اختر صورة جديدة',
+                    input: 'file',
+                    inputAttributes: {
+                        'accept': 'image/*',
+                        'aria-label': 'رفع صورة شخصية'
+                    },
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        document.getElementById('profileImage').src = e.target.result;
+                        
+                        // هنا يمكنك إضافة كود لإرسال الصورة للخادم
+                        // updateProfileImageOnServer(file);
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'تم التحديث!',
+                            text: 'تم تحديث الصورة الشخصية بنجاح',
+                            customClass: {
+                                popup: 'rtl-popup'
+                            }
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء تحديث الصورة:', error);
+                showErrorAlert('حدث خطأ أثناء تحديث الصورة', 'يرجى المحاولة لاحقاً');
+            }
+        }
+
+        // دالة لتحديث الرصيد الأولي
+        async function updateInitialBalance() {
+            try {
+                const { value: newBalance } = await Swal.fire({
+                    title: 'تحديث الرصيد الأولي',
+                    input: 'number',
+                    inputLabel: 'أدخل الرصيد الجديد',
+                    inputPlaceholder: 'مثال: 1000',
+                    showCancelButton: true,
+                    confirmButtonText: 'حفظ',
+                    cancelButtonText: 'إلغاء',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'يجب إدخال قيمة للرصيد';
+                        }
+                        if (isNaN(value) || value < 0) {
+                            return 'يجب إدخال رقم صحيح موجب';
+                        }
+                    },
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                
+                if (newBalance) {
+                    const userId = localStorage.getItem('userId');
+                    const response = await axios.post(`${API_BASE_URL}/updateInitialBalance`, {
+                        userId,
+                        initialBalance: parseFloat(newBalance)
+                    }, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    
+                    if (response.data.success) {
+                        document.getElementById('balance').innerHTML = `الرصيد الحالي: <span class="fw-bold">${parseFloat(newBalance).toFixed(2)} دينار</span>`;
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'تم التحديث!',
+                            text: 'تم تحديث الرصيد الأولي بنجاح',
+                            customClass: {
+                                popup: 'rtl-popup'
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء تحديث الرصيد:', error);
+                showErrorAlert('حدث خطأ أثناء تحديث الرصيد', 'يرجى المحاولة لاحقاً');
+            }
+        }
+
+        // دالة لتحديث الملف الشخصي
+        async function updateProfile() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                
+                const { value: formValues } = await Swal.fire({
+                    title: 'تعديل المعلومات الشخصية',
+                    html:
+                        '<input id="swal-input1" class="swal2-input" placeholder="الاسم" value="' + (userData.username || '') + '">' +
+                        '<input id="swal-input2" class="swal2-input" placeholder="البريد الإلكتروني" value="' + (userData.email || '') + '">',
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'حفظ',
+                    cancelButtonText: 'إلغاء',
+                    preConfirm: () => {
+                        return {
+                            username: document.getElementById('swal-input1').value,
+                            email: document.getElementById('swal-input2').value
+                        };
+                    },
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                
+                if (formValues) {
+                    // هنا يمكنك إضافة كود لتحديث البيانات على الخادم
+                    // updateProfileOnServer(formValues);
+                    
+                    // تحديث الواجهة مباشرة
+                    document.getElementById('username').textContent = formValues.username || 'مستخدم';
+                    document.getElementById('email').textContent = formValues.email || 'لا يوجد بريد إلكتروني';
+                    
+                    // تحديث البيانات في localStorage
+                    userData.username = formValues.username;
+                    userData.email = formValues.email;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم التحديث!',
+                        text: 'تم تحديث المعلومات الشخصية بنجاح',
+                        customClass: {
+                            popup: 'rtl-popup'
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء تحديث الملف الشخصي:', error);
+                showErrorAlert('حدث خطأ أثناء التحديث', 'يرجى المحاولة لاحقاً');
+            }
+        }
+
+        // دالة لتغيير كلمة المرور
+        async function changePassword() {
+            try {
+                const { value: formValues } = await Swal.fire({
+                    title: 'تغيير كلمة المرور',
+                    html:
+                        '<input id="swal-input1" class="swal2-input" placeholder="كلمة المرور الحالية" type="password">' +
+                        '<input id="swal-input2" class="swal2-input" placeholder="كلمة المرور الجديدة" type="password">' +
+                        '<input id="swal-input3" class="swal2-input" placeholder="تأكيد كلمة المرور الجديدة" type="password">',
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'تغيير',
+                    cancelButtonText: 'إلغاء',
+                    preConfirm: () => {
+                        const currentPassword = document.getElementById('swal-input1').value;
+                        const newPassword = document.getElementById('swal-input2').value;
+                        const confirmPassword = document.getElementById('swal-input3').value;
+                        
+                        if (!currentPassword || !newPassword || !confirmPassword) {
+                            Swal.showValidationMessage('جميع الحقول مطلوبة');
+                            return false;
+                        }
+                        
+                        if (newPassword !== confirmPassword) {
+                            Swal.showValidationMessage('كلمة المرور الجديدة غير متطابقة');
+                            return false;
+                        }
+                        
+                        if (newPassword.length < 6) {
+                            Swal.showValidationMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                            return false;
+                        }
+                        
+                        return {
+                            currentPassword,
+                            newPassword
+                        };
+                    },
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                
+                if (formValues) {
+                    // هنا يمكنك إضافة كود لتغيير كلمة المرور على الخادم
+                    // changePasswordOnServer(formValues);
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم التغيير!',
+                        text: 'تم تغيير كلمة المرور بنجاح',
+                        customClass: {
+                            popup: 'rtl-popup'
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء تغيير كلمة المرور:', error);
+                showErrorAlert('حدث خطأ أثناء التغيير', 'يرجى المحاولة لاحقاً');
+            }
+        }
+
+        // دالة لتسجيل الخروج
+        function logout() {
+            Swal.fire({
+                title: 'هل أنت متأكد؟',
+                text: 'لن تتمكن من الوصول إلى حسابك بعد تسجيل الخروج',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، سجل الخروج',
+                cancelButtonText: 'إلغاء',
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // حذف بيانات المستخدم من localStorage
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userId');
+                    localStorage.removeItem('userData');
+                    
+                    // توجيه المستخدم إلى صفحة تسجيل الدخول
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        // دالة لعرض رسالة خطأ
+        function showErrorAlert(title, text) {
+            Swal.fire({
+                icon: 'error',
+                title,
+                text,
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            });
+        }
+
+        // دالة لتطبيق تأثيرات GSAP
+        function applyAnimations() {
+            // تأثيرات للبطاقات
+            gsap.from(".profile-card", {
+                duration: 0.8,
+                y: 50,
+                opacity: 0,
+                ease: "power2.out"
+            });
+            
+            gsap.from(".stats-card", {
+                duration: 0.8,
+                x: -50,
+                opacity: 0,
+                delay: 0.2,
+                ease: "power2.out"
+            });
+            
+            gsap.from(".settings-card", {
+                duration: 0.8,
+                x: 50,
+                opacity: 0,
+                delay: 0.2,
+                ease: "power2.out"
+            });
+            
+            // تأثيرات لصفوف الجدول
+            gsap.from("#transactionsTableBody tr", {
+                duration: 0.6,
+                y: 30,
+                opacity: 0,
+                stagger: 0.1,
+                delay: 0.4,
+                ease: "power2.out"
+            });
+        }
+
+        // تهيئة الصفحة عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            // التحقق من صحة تسجيل الدخول أولاً
+            if (checkAuth()) {
+                // جلب بيانات المستخدم إذا كان مسجلاً
+                fetchUserData();
+            }
+        });
+    </script>
+</body>
+</html>
