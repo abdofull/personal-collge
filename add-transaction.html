@@ -33,7 +33,7 @@
             --warning-color: #ffc107; /* لون التحذير الأصفر */
         }
         
-        /* تصميم عام للصفحة */
+         /* تصميم عام للصفحة  */
         body {
             font-family: 'Tajawal', sans-serif; /* استخدام خط Tajawال للغة العربية */
             background-color: var(--dark-color); /* لون خلفية الصفحة */
@@ -76,7 +76,7 @@
             align-items: center; /* توسيط العناصر عمودياً */
         }
         
-        /* تصميم الأيقونات في روابط القائمة */
+        /* تصميم الأيقونات في روابط القائمة*/
         .navbar-nav .nav-link i {
             margin-left: 8px; /* مسافة بين الأيقونة والنص */
             font-size: 1.1rem; /* حجم الأيقونة */
@@ -115,7 +115,7 @@
         /* شريط ملون أعلى البطاقة */
         .card::before {
             content: ''; /* محتوى زائف للعنصر */
-            position: absolute; /* تموضع مطلق */
+            position: absolute; /*موضع مطلق */
             top: 0; /* من الأعلى */
             right: 0; /* من اليمين */
             width: 100%; /* عرض كامل */
@@ -241,12 +241,46 @@
             font-size: 0.8rem; /* حجم أصغر */
             color: rgba(255, 255, 255, 0.7); /* لون شبه شفاف */
         }
+
+        /* أنماط جديدة للتكامل مع الميزانية */
+        .budget-section {
+            background-color: rgba(42, 47, 64, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px dashed var(--primary-color);
+        }
+
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .budget-item:hover {
+            background-color: rgba(0, 170, 255, 0.1);
+        }
+
+        .budget-item.selected {
+            background-color: rgba(0, 170, 255, 0.2);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .remaining-amount {
+            font-size: 0.8rem;
+            color: var(--light-color);
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
 
     <!-- شريط التنقل العلوي -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark position-fixed z-3 w-100 mb-5">
         <div class="container-fluid">
             <!-- عنوان التطبيق مع الأيقونة -->
             <a class="navbar-brand" href="dashboard.html">
@@ -324,7 +358,7 @@
     <!-- المحتوى الرئيسي للصفحة -->
     <div class="content">
         <!-- عنوان الصفحة -->
-        <h1 class="section-title animate__animated animate__fadeIn">إضافة معاملة جديدة</h1>
+        <h1 class="section-title animate__animated animate__fadeIn " style="margin-top: 90px;">إضافة معاملة جديدة</h1>
         
         <!-- بطاقة النموذج -->
         <div class="card animate__animated animate__fadeInUp">
@@ -372,7 +406,7 @@
                     
                     <!-- قسم المبلغ -->
                     <div class="mb-4">
-                        <label for="amount" class="form-label">المبلغ</label>
+                        <label for="amount" class="form-label"> المبلغ</label>
                         <div class="input-group">
                             <input type="number" class="form-control" id="amount" placeholder="0.00" required step="0.01">
                             <span class="input-group-text">دينار</span>
@@ -389,6 +423,27 @@
                         <div class="error-message" id="dateError"></div>
                     </div>
                     
+                    <!-- قسم الميزانية (يظهر فقط للمصروفات) -->
+                    <div class="mb-4" id="budgetSection" style="display: none;">
+                        <label class="form-label">ربط المعاملة بالميزانية (اختياري)</label>
+                        <div class="budget-section">
+                            <div class="mb-3">
+                                <label for="budgetMonth" class="form-label">اختر شهر الميزانية</label>
+                                <select class="form-control" id="budgetMonth">
+                                    <option value="">اختر الميزانية</option>
+                                    <!-- سيتم ملء الخيارات بالجافاسكريبت -->
+                                </select>
+                            </div>
+                            
+                            <div id="budgetItemsContainer" style="display: none;">
+                                <label class="form-label">اختر بند المصروف</label>
+                                <div id="budgetItemsList">
+                                    <!-- سيتم ملء بنود الميزانية هنا -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- قسم الوصف -->
                     <div class="mb-4">
                         <label for="description" class="form-label">الوصف (اختياري)</label>
@@ -399,7 +454,7 @@
                     <div class="mb-4">
                         <label for="attachment" class="form-label">إضافة مرفق (اختياري)</label>
                         <input type="file" class="form-control" id="attachment">
-                        <small class="text-muted">يمكنك رفع صورة الفاتورة أو الإيصال</small>
+                        <small class="text-muted">يمكنك رفع صورة الفاتورة أو الإيصال (الحد الأقصى 5MB)</small>
                     </div>
                     
                     <!-- زر الإرسال -->
@@ -415,8 +470,78 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        
-        // دالة لإضافة معاملة جديدة
+        // متغيرات التطبيق
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+        let userBudgets = []; // لتخزين ميزانيات المستخدم
+
+        // دالة لجلب ميزانيات المستخدم
+        async function fetchUserBudgets() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
+
+            try {
+                const response = await axios.get(`${url}api/budgets?userId=${userId}`);
+                userBudgets = response.data.budgets || response.data || [];
+                populateBudgetDropdown();
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب الميزانيات:', error);
+                // يمكنك إضافة رسالة خطأ هنا إذا لزم الأمر
+            }
+        }
+
+        // ملء قائمة الميزانيات المتاحة
+        function populateBudgetDropdown() {
+            const select = document.getElementById('budgetMonth');
+            select.innerHTML = '<option value="">اختر الميزانية</option>';
+            
+            userBudgets.forEach(budget => {
+                const option = document.createElement('option');
+                option.value = budget._id;
+                option.textContent = `${budget.month} ${budget.year}`;
+                select.appendChild(option);
+            });
+        }
+
+        // عرض بنود الميزانية عند اختيار ميزانية
+        function showBudgetItems(budgetId) {
+            const container = document.getElementById('budgetItemsContainer');
+            const list = document.getElementById('budgetItemsList');
+            list.innerHTML = '';
+            
+            const budget = userBudgets.find(b => b._id === budgetId);
+            if (!budget || !budget.items) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            budget.items.forEach(item => {
+                const remaining = item.allocatedAmount - (item.spentAmount || 0);
+                const itemElement = document.createElement('div');
+                itemElement.className = 'budget-item';
+                itemElement.innerHTML = `
+                    <div>
+                        <input type="radio" name="budgetItem" id="item_${item.itemName}" value="${item.itemName}" style="display: none;">
+                        <label for="item_${item.itemName}">${item.itemName}</label>
+                    </div>
+                    <div class="remaining-amount">متبقي: ${remaining.toFixed(2)} دينار</div>
+                `;
+                
+                // إضافة حدث النقر لاختيار البند
+                itemElement.addEventListener('click', function() {
+                    document.querySelectorAll('.budget-item').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    document.querySelector(`#item_${item.itemName}`).checked = true;
+                });
+                
+                list.appendChild(itemElement);
+            });
+            
+            container.style.display = 'block';
+        }
+
+        // دالة لإضافة معاملة جديدة (محفوظة كما هي)
         async function addTransaction(transactionData) {
             try {
                 const response = await axios.post(`${url}api/transactions`, transactionData);
@@ -427,7 +552,7 @@
             }
         }
         
-        // دالة للتحقق من صحة النموذج
+        // دالة للتحقق من صحة النموذج (محفوظة كما هي مع إضافة تحقق من الملف)
         function validateForm() {
             let isValid = true;
             
@@ -471,88 +596,105 @@
                 document.getElementById('dateError').style.display = 'none';
             }
             
+            // التحقق من حجم الملف إذا تم رفعه
+            const fileInput = document.getElementById('attachment');
+            if (fileInput.files.length > 0 && fileInput.files[0].size > MAX_FILE_SIZE) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حجم الملف كبير جداً. الحد الأقصى المسموح به هو 5MB',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                });
+                isValid = false;
+            }
+            
             return isValid;
         }
         
-        // دالة لمعالجة إرسال النموذج
-        async function handleSubmit(event) {
-            event.preventDefault();
-            
-            // التحقق من صحة النموذج
-            if (!validateForm()) {
-                return;
-            }
-            
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'يجب تسجيل الدخول أولاً',
-                    customClass: {
-                        popup: 'rtl-popup'
-                    }
-                }).then(() => {
-                    window.location.href = 'index.html';
-                });
-                return;
-            }
-            
-            // جمع بيانات النموذج
-            const formData = {
-                userId: userId,
-                type: document.querySelector('input[name="transactionType"]:checked').value,
-                category: document.getElementById('category').value,
-                amount: parseFloat(document.getElementById('amount').value),
-                date: document.getElementById('date').value,
-                description: document.getElementById('description').value,
-                attachment: document.getElementById('attachment').files[0]
-            };
-            
-            // عرض تحميل أثناء إرسال البيانات
-            Swal.fire({
-                title: 'جاري إضافة المعاملة...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                },
-                customClass: {
-                    popup: 'rtl-popup'
-                }
-            });
-            
-            try {
-                // إرسال البيانات إلى الخادم
-                await addTransaction(formData);
-                
-                // عرض رسالة نجاح
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تمت العملية',
-                    text: 'تم إضافة المعاملة بنجاح',
-                    customClass: {
-                        popup: 'rtl-popup'
-                    }
-                }).then(() => {
-                    // توجيه المستخدم إلى صفحة المعاملات بعد النجاح
-                    window.location.href = 'Transctionshow.html';
-                });
-            } catch (error) {
-                console.error('حدث خطأ:', error);
-                
-                // عرض رسالة خطأ
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'حدث خطأ أثناء إضافة المعاملة. يرجى المحاولة مرة أخرى.',
-                    customClass: {
-                        popup: 'rtl-popup'
-                    }
-                });
-            }
-        }
+        // دالة لمعالجة إرسال النموذج (محدثة لتشمل بيانات الميزانية)
+    async function handleSubmit(event) {
+    event.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'يجب تسجيل الدخول أولاً',
+            customClass: { popup: 'rtl-popup' }
+        }).then(() => { window.location.href = 'index.html'; });
+        return;
+    }
+    
+    // جمع بيانات النموذج مع التحقق من وجود القيم
+    const formData = {
+        userId: userId,
+        type: document.querySelector('input[name="transactionType"]:checked')?.value,
+        category: document.getElementById('category')?.value,
+        amount: parseFloat(document.getElementById('amount')?.value),
+        date: document.getElementById('date')?.value,
+        description: document.getElementById('description')?.value || null,
+        // attachment: document.getElementById('attachment').files[0] // سنتعامل مع المرفق لاحقاً
+    };
+
+    // إضافة بيانات الميزانية إذا كانت معاملة مصروف
+    if (formData.type === 'expense') {
+        const budgetId = document.getElementById('budgetMonth')?.value;
+        const budgetItem = document.querySelector('input[name="budgetItem"]:checked')?.value;
         
-        // دالة لتسجيل الخروج
+        if (budgetId && budgetItem) {
+            formData.budgetId = budgetId;
+            formData.budgetItemName = budgetItem;
+        }
+    }
+
+    try {
+        // عرض تحميل أثناء الإرسال
+        Swal.fire({
+            title: 'جاري إضافة المعاملة...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); },
+            customClass: { popup: 'rtl-popup' }
+        });
+
+        console.log('بيانات الإرسال:', formData); // أضف هذا السطر لفحص البيانات
+        
+        // إرسال البيانات إلى الخادم
+        const response = await axios.post(`${url}api/transactions`, formData);
+        
+        // عرض رسالة نجاح
+        Swal.fire({
+            icon: 'success',
+            title: 'تمت العملية',
+            text: 'تم إضافة المعاملة بنجاح',
+            customClass: { popup: 'rtl-popup' }
+        }).then(() => {
+            window.location.href = 'Transctionshow.html';
+        });
+    } catch (error) {
+        console.error('حدث خطأ:', error);
+        console.error('تفاصيل الخطأ:', error.response?.data); // أضف هذا لرؤية رسالة الخطأ من الخادم
+        
+        let errorMessage = 'حدث خطأ أثناء إضافة المعاملة. يرجى المحاولة مرة أخرى.';
+        if (error.response?.data?.message) {
+            errorMessage = error.response.data.message;
+        } else if (error.response?.data) {
+            errorMessage = JSON.stringify(error.response.data);
+        }
+
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: errorMessage,
+            customClass: { popup: 'rtl-popup' }
+        });
+    }
+}        
+        // دالة لتسجيل الخروج (محفوظة كما هي)
         function logout() {
             Swal.fire({
                 title: 'تسجيل الخروج',
@@ -566,23 +708,39 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // حذف بيانات المستخدم من التخزين المحلي
                     localStorage.removeItem('userId');
                     localStorage.removeItem('token');
-                    
-                    // توجيه المستخدم إلى صفحة تسجيل الدخول
                     window.location.href = 'index.html';
                 }
             });
         }
         
-        // تعيين اليوم الحالي كتاريخ افتراضي
+        // تهيئة الصفحة عند التحميل
         document.addEventListener('DOMContentLoaded', function() {
+            // تعيين اليوم الحالي كتاريخ افتراضي
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('date').value = today;
             
-            // جلب بيانات المستخدم عند تحميل الصفحة
+            // جلب بيانات المستخدم والميزانيات
             fetchUserData();
+            fetchUserBudgets();
+            
+            // إظهار/إخفاء قسم الميزانية بناءً على نوع المعاملة
+            document.querySelectorAll('input[name="transactionType"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.getElementById('budgetSection').style.display = 
+                        this.value === 'expense' ? 'block' : 'none';
+                });
+            });
+            
+            // عند اختيار ميزانية معينة
+            document.getElementById('budgetMonth').addEventListener('change', function() {
+                if (this.value) {
+                    showBudgetItems(this.value);
+                } else {
+                    document.getElementById('budgetItemsContainer').style.display = 'none';
+                }
+            });
             
             // إضافة مستمع حدث للنموذج
             document.getElementById('transactionForm').addEventListener('submit', handleSubmit);

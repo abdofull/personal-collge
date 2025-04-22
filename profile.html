@@ -318,7 +318,7 @@
 <body>
 
     <!-- شريط التنقل المحسن -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark position-fixed z-3 w-100 mb-5">
         <div class="container-fluid">
             <a class="navbar-brand" href="dashboard.html">
                 <i class="fas fa-chart-line"></i>
@@ -345,6 +345,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="Settings.html">
+                            <i class="fas fa-cog"></i> الإعدادات
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" href="profile.html">
                             <i class="fas fa-user"></i> الملف الشخصي
                         </a>
@@ -362,7 +367,7 @@
     <!-- المحتوى الرئيسي -->
     <div class="content">
         <!-- بطاقة الملف الشخصي -->
-        <div class="profile-card animate__animated animate__fadeIn">
+        <div class="profile-card animate__animated animate__fadeIn mt-5">
             <img src="https://via.placeholder.com/150" alt="صورة المستخدم" id="profileImage" class="animate__animated animate__zoomIn">
             <h2 id="username">محمد أحمد</h2>
             <p id="email">mohamed@example.com</p>
@@ -462,24 +467,27 @@
         // دالة لجلب بيانات المستخدم من localStorage والخادم
         async function fetchUserData() {
             try {
-                // التحقق من المصادقة أولاً
-                if (!checkAuth()) return;
-                
-                const userId = localStorage.getItem('userId');
-                const userData = JSON.parse(localStorage.getItem('userData'));
-                
-                // عرض بيانات المستخدم من localStorage
-                if (userData) {
-                    document.getElementById('profileImage').src = userData.profileImage || 'https://via.placeholder.com/150';
-                    document.getElementById('username').textContent = userData.username || 'مستخدم';
-                    document.getElementById('email').textContent = userData.email || 'لا يوجد بريد إلكتروني';
-                    
-                    // تنسيق تاريخ التسجيل
-                    if (userData.createdAt) {
-                        const joinDate = new Date(userData.createdAt);
-                        document.getElementById('joinDate').textContent = `تاريخ التسجيل: ${joinDate.toLocaleDateString('ar-EG')}`;
-                    }
-                }
+        // التحقق من المصادقة أولاً
+        if (!checkAuth()) return;
+        
+        const userId = localStorage.getItem('userId');
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        
+        // عرض بيانات المستخدم من localStorage
+        if (userData) {
+            // تحقق من وجود صورة المستخدم، وإلا استخدم الصورة الافتراضية
+            const profileImage = userData.profileImage || 'https://via.placeholder.com/150';
+            document.getElementById('profileImage').src = profileImage;
+            
+            document.getElementById('username').textContent = userData.username || 'مستخدم';
+            document.getElementById('email').textContent = userData.email || 'لا يوجد بريد إلكتروني';
+            
+            // تنسيق تاريخ التسجيل
+            if (userData.createdAt) {
+                const joinDate = new Date(userData.createdAt);
+                document.getElementById('joinDate').textContent = `تاريخ التسجيل: ${joinDate.toLocaleDateString('ar-EG')}`;
+            }
+        }
                 
                 // جلب الرصيد الأولي من الخادم
                 await fetchInitialBalance(userId);
@@ -600,44 +608,46 @@
 
         // دالة لتحديث الصورة الشخصية
         async function updateProfileImage() {
-            try {
-                const { value: file } = await Swal.fire({
-                    title: 'اختر صورة جديدة',
-                    input: 'file',
-                    inputAttributes: {
-                        'accept': 'image/*',
-                        'aria-label': 'رفع صورة شخصية'
-                    },
+    try {
+        const { value: file } = await Swal.fire({
+            title: 'اختر صورة جديدة',
+            input: 'file',
+            inputAttributes: {
+                'accept': 'image/*',
+                'aria-label': 'رفع صورة شخصية'
+            },
+            customClass: {
+                popup: 'rtl-popup'
+            }
+        });
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const newImageUrl = e.target.result;
+                document.getElementById('profileImage').src = newImageUrl;
+                
+                // تحديث بيانات المستخدم في localStorage
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                userData.profileImage = newImageUrl;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم التحديث!',
+                    text: 'تم تحديث الصورة الشخصية بنجاح',
                     customClass: {
                         popup: 'rtl-popup'
                     }
                 });
-                
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        document.getElementById('profileImage').src = e.target.result;
-                        
-                        // هنا يمكنك إضافة كود لإرسال الصورة للخادم
-                        // updateProfileImageOnServer(file);
-                        
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'تم التحديث!',
-                            text: 'تم تحديث الصورة الشخصية بنجاح',
-                            customClass: {
-                                popup: 'rtl-popup'
-                            }
-                        });
-                    };
-                    reader.readAsDataURL(file);
-                }
-            } catch (error) {
-                console.error('حدث خطأ أثناء تحديث الصورة:', error);
-                showErrorAlert('حدث خطأ أثناء تحديث الصورة', 'يرجى المحاولة لاحقاً');
-            }
+            };
+            reader.readAsDataURL(file);
         }
-
+    } catch (error) {
+        console.error('حدث خطأ أثناء تحديث الصورة:', error);
+        showErrorAlert('حدث خطأ أثناء تحديث الصورة', 'يرجى المحاولة لاحقاً');
+    }
+}        
         // دالة لتحديث الرصيد الأولي
         async function updateInitialBalance() {
             try {

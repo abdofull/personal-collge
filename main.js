@@ -1,18 +1,63 @@
 const url = 'http://localhost:9050/';
 
-function fetchUserData() {
-    const userData = JSON.parse(localStorage.getItem('userData'));
-
-    if (!userData) {
-        console.error('لم يتم العثور على بيانات المستخدم.');
-        return;
+// استدعاء دالة جلب بيانات المستخدم عند تحميل الصفحة
+async function fetchUserData() {
+  try {
+    // **الخطوة 1: الحصول على التوكن من localStorage**
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    if (!token) {
+      console.error('لم يتم العثور على التوكن.');
+      return;
     }
 
-    const { username, profileImage } = userData;
+    // **الخطوة 2: إرسال طلب HTTP لجلب بيانات المستخدم باستخدام التوكن في رأس Authorization**
+    const response = await axios.get(`${url}users/${userId}` , { // نفترض أن لديك نقطة نهاية مثل /users/me لجلب بيانات المستخدم الحالي بناءً على التوكن
+      headers: {
+        Authorization: `Bearer ${token}`, // تنسيق شائع لتضمين التوكن في رأس Authorization
+      },
+    });
+    const userData = JSON.parse(localStorage.getItem("userData")); // صورة الملف الشخصي ستكون في response.data.user.profileImage
+    const userDataFromServer = response.data; // بيانات المستخدم ستكون في response.data
+    console.log('بيانات المستخدم:', userDataFromServer.user);
+    // **الخطوة 3: استخراج اسم المستخدم وصورة الملف الشخصي**
+    const { username } = userDataFromServer.user;
 
-    // تحديث الناف بار
-    updateNavbar(username, profileImage);
+    if (!username) {
+      console.error('لم يتم العثور على اسم المستخدم في بيانات الخادم.');
+      return;
+    }
+
+    // **الخطوة 4: تحديث الناف بار**
+    updateNavbar(username, userData.profileImage);
+
+  } catch (error) {
+    console.error('حدث خطأ أثناء جلب بيانات المستخدم:', error);
+    if (error.response) {
+      // يمكنك هنا فحص رمز الحالة للاستجابة (error.response.status)
+      console.error('بيانات الخطأ من الخادم:', error.response.data);
+    } else if (error.request) {
+      console.error('لم يتم تلقي أي استجابة من الخادم:', error.request);
+    } else {
+      console.error('حدث خطأ أثناء إعداد الطلب:', error.message);
+    }
+  }
 }
+
+
+// function fetchUserData() {
+//     const userData = JSON.parse(localStorage.getItem('userData'));
+
+//     if (!userData) {
+//         console.error('لم يتم العثور على بيانات المستخدم.');
+//         return;
+//     }
+
+//     const { username, profileImage } = userData;
+
+//     // تحديث الناف بار
+//     updateNavbar(username, profileImage);
+// }
 
 function updateNavbar(username, profileImage) {
     const userElement = document.getElementById('user-info');

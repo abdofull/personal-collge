@@ -8,7 +8,8 @@ const {
     changePassword,
     updateProfileImage,
     getInitialBalance,
-    deleteUserAccount
+    deleteUserAccount,
+    getUserProfile
 } = require('../controllers/userController');
 const { body, param , validationResult } = require('express-validator');
 const upload = require('../middleware/uploadMiddleware'); // استيراد multer
@@ -66,4 +67,10 @@ router.get('/getInitialBalance', getInitialBalance);
 // مسار تسجيل الخروج
 router.post('/logout/:userId', deleteUserAccount);
 
+
+// توجيه لاسترجاع بيانات المستخدم
+router.get('/users/:userId', getUserProfile);
+
+
 module.exports = router;
+

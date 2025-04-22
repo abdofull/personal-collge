@@ -1,6 +1,7 @@
 const Transaction = require('../models/Transaction');
 const { validationResult } = require('express-validator');
 const Notification = require('../models/Notification');
+const Budget = require('../models/Budget');
 
 // إضافة معاملة جديدة
 exports.addTransaction = async (req, res) => {
@@ -9,25 +10,103 @@ exports.addTransaction = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { userId, category, amount, type } = req.body;
+    const { userId, category, amount, type, budgetId, budgetItemName , description } = req.body;
 
     try {
-        const transaction = new Transaction({ userId, category, amount, type });
-                // إرسال إشعار
-                await Notification.create({
-                    userId: req.body.userId,
-                    title: 'معاملة جديدة',
-                    message: `تم تسجيل معاملة جديدة بقيمة ${req.body.amount} دينار`,
-                    type: 'info',
-                    relatedEntity: 'transaction',
-                    entityId: transaction._id
+        const transaction = new Transaction({ 
+            userId, 
+            category, 
+            amount, 
+            type,
+            description,
+            ...(budgetId && { budgetId }),
+            ...(budgetItemName && { budgetItemName })
+        });
+
+        // إذا كانت معاملة مصروف ومرتبطة بميزانية
+        if (type === 'expense' && budgetId && budgetItemName) {
+            // التأكد من وجود الميزانية وعدم تجميدها
+            const budget = await Budget.findOne({
+                _id: budgetId,
+                userId: userId,
+                isFrozen: { $ne: true } // التأكد من أن الميزانية غير مجمدة
+            });
+
+            if (!budget) {
+                return res.status(400).json({ 
+                    message: 'الميزانية غير موجودة أو غير نشطة' 
                 });
+            }
+
+            // التأكد من وجود البند في الميزانية
+            const itemExists = budget.items.some(item => 
+                item.itemName === budgetItemName
+            );
+
+            if (!itemExists) {
+                return res.status(400).json({ 
+                    message: 'بند الميزانية غير موجود' 
+                });
+            }
+
+            // تحديث الميزانية
+            const updateResult = await Budget.updateOne(
+                { 
+                    _id: budgetId,
+                    "items.itemName": budgetItemName
+                },
+                { 
+                    $inc: { 
+                        "items.$.spentAmount": amount,
+                        "totalExpenses": amount 
+                    } 
+                }
+            );
+
+            if (updateResult.modifiedCount === 0) {
+                console.error('فشل تحديث الميزانية:', {
+                    budgetId,
+                    budgetItemName,
+                    amount
+                });
+                return res.status(400).json({ 
+                    message: 'فشل تحديث الميزانية' 
+                });
+            }
+        }
+
         await transaction.save();
-        res.status(201).json({ message: 'معاملة تم إضافتها بنجاح', transaction });
+        
+        // إرسال إشعار
+        await Notification.create({
+            userId,
+            title: 'معاملة جديدة',
+            message: `تم تسجيل معاملة جديدة بقيمة ${amount} دينار`,
+            type: 'info',
+            relatedEntity: 'transaction',
+            entityId: transaction._id
+        });
+
+        res.status(201).json({ 
+            success: true,
+            message: 'معاملة تم إضافتها بنجاح', 
+            transaction 
+        });
+
     } catch (error) {
-        res.status(400).json({ message: 'حدث خطأ أثناء إضافة المعاملة', error: error.message });
+        console.error('حدث خطأ أثناء إضافة المعاملة:', {
+            error: error.message,
+            body: req.body,
+            stack: error.stack
+        });
+        res.status(400).json({ 
+            message: 'حدث خطأ أثناء إضافة المعاملة',
+            error: error.message
+        });
     }
 };
+
+
 
 // الحصول على جميع المعاملات
 exports.getTransactions = async (req, res) => {
@@ -41,13 +120,63 @@ exports.getTransactions = async (req, res) => {
     }
 };
 
+
+
+// جلب معاملة واحدة بواسطة ID
+exports.getTransaction = async (req, res) => {
+    try {
+        const transaction = await Transaction.findById(req.params.id);
+        
+        if (!transaction) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'لم يتم العثور على المعاملة' 
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'تم جلب المعاملة بنجاح',
+            transaction
+        });
+    } catch (error) {
+        console.error('حدث خطأ أثناء جلب المعاملة:', {
+            error: error.message,
+            params: req.params,
+            stack: error.stack
+        });
+        
+        res.status(400).json({ 
+            success: false,
+            message: 'حدث خطأ أثناء جلب المعاملة',
+            error: error.message
+        });
+    }
+};
+
+
+
 // تحديث معاملة
 exports.updateTransaction = async (req, res) => {
     try {
-        const transaction = await Transaction.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const transaction = await Transaction.findByIdAndUpdate(
+            req.params.id, 
+            req.body, 
+            { new: true, runValidators: true }
+        );
+        
+        if (!transaction) {
+            return res.status(404).json({ message: 'لم يتم العثور على المعاملة' });
+        }
+
         res.status(200).json({ message: 'تم تحديث المعاملة بنجاح', transaction });
     } catch (error) {
-        res.status(400).json({ message: 'حدث خطأ أثناء تحديث المعاملة', error: error.message });
+        console.error('Error updating transaction:', error);
+        res.status(400).json({ 
+            message: 'حدث خطأ أثناء تحديث المعاملة',
+            error: error.message,
+            ...(error.errors && { details: error.errors })
+        });
     }
 };
 

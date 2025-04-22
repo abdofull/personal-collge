@@ -270,7 +270,7 @@
 <body>
 
     <!-- شريط التنقل العلوي -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark position-fixed z-3 w-100 mb-5">
         <div class="container-fluid">
             <!-- عنوان التطبيق مع الأيقونة -->
             <a class="navbar-brand" href="dashboard.html">
@@ -346,7 +346,7 @@
     </nav>
 
     <!-- المحتوى الرئيسي -->
-    <div class="content">
+    <div class="content" style="margin-top: 80px;">
         <!-- عنوان الصفحة -->
         <h1 class="section-title">إدارة الميزانية</h1>
         
@@ -618,68 +618,78 @@ function displayBudgets() {
 }
 
 // دالة لعرض تفاصيل الميزانية
-        async function viewBudget(budgetId) {
-            try {
-                const budget = budgets.find(b => b._id === budgetId);
-                if (!budget) return;
-                
-                // إنشاء محتوى لعرض تفاصيل الميزانية
-                let content = `
-                    <div class="mb-3">
-                        <h6>الشهر: ${budget.month} - ${budget.year}</h6>
-                        <p>الإيرادات المتوقعة: ${budget.totalIncome.toFixed(2)} دينار</p>
-                        <p>إجمالي المصروفات: ${budget.totalExpenses.toFixed(2)} دينار</p>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th>البند</th>
-                                    <th>المبلغ المخصص</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-                
-                // إضافة بنود الميزانية
-                budget.items.forEach(item => {
-                    content += `
+async function viewBudget(budgetId) {
+    try {
+        const budget = budgets.find(b => b._id === budgetId);
+        if (!budget) return;
+        
+        // إنشاء محتوى لعرض تفاصيل الميزانية
+        let content = `
+            <div class="mb-3">
+                <h6>الشهر: ${budget.month} - ${budget.year}</h6>
+                <p>الإيرادات المتوقعة: ${budget.totalIncome.toFixed(2)} دينار</p>
+                <p>إجمالي المصروفات: ${budget.totalExpenses.toFixed(2)} دينار</p>
+                <p>الفرق: ${(budget.totalIncome - budget.totalExpenses).toFixed(2)} دينار</p>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
                         <tr>
-                            <td>${item.itemName}</td>
-                            <td>${item.allocatedAmount.toFixed(2)} دينار</td>
+                            <th>البند</th>
+                            <th>المبلغ المخصص</th>
+                            <th>المبلغ المصروف</th>
+                            <th>المتبقي</th>
                         </tr>
-                    `;
-                });
-                
-                content += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-                
-                // عرض التفاصيل في نافذة SweetAlert
-                Swal.fire({
-                    title: 'تفاصيل الميزانية',
-                    html: content,
-                    width: '800px',
-                    showCloseButton: true,
-                    showConfirmButton: false,
-                    customClass: {
-                        popup: 'rtl-popup'
-                    }
-                });
-            } catch (error) {
-                console.error('حدث خطأ أثناء عرض تفاصيل الميزانية:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'فشل عرض تفاصيل الميزانية. يرجى المحاولة لاحقًا.',
-                    customClass: {
-                        popup: 'rtl-popup'
-                    }
-                });
+                    </thead>
+                    <tbody>
+        `;
+        
+        // إضافة بنود الميزانية
+        budget.items.forEach(item => {
+            const remaining = item.allocatedAmount - item.spentAmount;
+            const remainingClass = remaining < 0 ? 'text-danger' : remaining === 0 ? 'text-warning' : 'text-success';
+            
+            content += `
+                <tr>
+                    <td>${item.itemName}</td>
+                    <td>${item.allocatedAmount.toFixed(2)} دينار</td>
+                    <td>${item.spentAmount.toFixed(2)} دينار</td>
+                    <td class="${remainingClass}">${remaining.toFixed(2)} دينار</td>
+                </tr>
+            `;
+        });
+        
+        content += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        // عرض التفاصيل في نافذة SweetAlert
+        Swal.fire({
+            title: 'تفاصيل الميزانية',
+            html: content,
+            width: '800px',
+            showCloseButton: true,
+            showConfirmButton: false,
+            customClass: {
+                popup: 'rtl-popup'
             }
-        }
+        });
+    } catch (error) {
+        console.error('حدث خطأ أثناء عرض تفاصيل الميزانية:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'فشل عرض تفاصيل الميزانية. يرجى المحاولة لاحقًا.',
+            customClass: {
+                popup: 'rtl-popup'
+            }
+        });
+    }
+}        
+        
+        
         
         // دالة لتأكيد حذف الميزانية
         async function confirmDeleteBudget(budgetId) {

@@ -248,5 +248,31 @@ exports.deleteUserAccount = async (req, res, next) => {
     }
 };
 
+// جلب بيانات المستخدم
+exports.getUserProfile = async (req, res, next) => {
+    const { userId } = req.params; // نأخذ userId من params
+
+    // تحقق من وجود المستخدم
+    const user = await User.findById(userId);
+    if (!user) {
+        return next(new ApiError(404, 'المستخدم غير موجود!'));
+    }
+
+    // إرسال بيانات المستخدم
+    res.status(200).json({
+        message: 'تم جلب بيانات المستخدم بنجاح!',
+        user: {
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            initialBalance: user.initialBalance,
+            profileImage: user.profileImage,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            notificationPreferences: user.notificationPreferences
+        }
+    });
+};
+
 
 

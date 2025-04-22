@@ -4,7 +4,12 @@ const mongoose = require('mongoose');
 // تعريف مخطط الميزانية باستخدام mongoose.Schema.
 const budgetSchema = new mongoose.Schema({
     // معرف المستخدم، يجب أن يكون موجودًا ويشير إلى المستخدم الذي يمتلك هذه الميزانية.
-    userId: { type: String, required: true },
+    userId:
+     {
+        type: mongoose.Schema.Types.ObjectId, 
+        required: true, 
+        ref: 'User' 
+        },
 
     // الشهر الذي تتعلق به الميزانية، يجب أن يكون موجودًا.
     month: { type: String, required: true },

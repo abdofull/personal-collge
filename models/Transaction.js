@@ -39,8 +39,18 @@ const transactionSchema = new mongoose.Schema({
     description: {
         type: String, // نوع البيانات هو نص.
         default: '' // إذا لم يتم تحديده، ستكون القيمة سلسلة فارغة.
-    }
-});
+    },
+     budgetId:
+         { 
+            type: mongoose.Schema.Types.ObjectId,
+             ref: 'Budget' 
+        },
+        
+        budgetItemName: {
+            type : String
+        } // إضافة هذا الحقل لربط المعاملة ببند الميزانية
+
+},{timestamps: true}); // إضافة timestamps لتسجيل تاريخ الإنشاء والتحديث تلقائيًا
 
 // تصدير نموذج المعاملة لاستخدامه في أجزاء أخرى من التطبيق.
 module.exports = mongoose.model('Transaction', transactionSchema);

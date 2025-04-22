@@ -101,6 +101,8 @@
                     const userData = {
                         username: response.data.user.username,
                         profileImage: response.data.user.profileImage, // تأكد من وجود هذا الحقل في الاستجابة
+                        email : response.data.user.email,
+                        createdAt: response.data.user.createdAt, // تأكد من وجود هذا الحقل في الاستجابة
                         // أضف أي بيانات أخرى تحتاجها
                     };
                     localStorage.setItem('userData', JSON.stringify(userData)); // تخزين بيانات المستخدم
