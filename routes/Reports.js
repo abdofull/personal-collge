@@ -20,4 +20,7 @@ router.delete('/:reportId', reportController.deleteReport);
 // حذف كل التقارير
 router.delete('/reports/:userId', reportController.deleteUserReports);
 
+router.get('/goals', reportController.generateGoalReport);
+
+
 module.exports = router;

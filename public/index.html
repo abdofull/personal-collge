@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>إدارة أموالك بسهولة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -394,8 +395,11 @@
             <h1 class="hero-title">إدارة أموالك بسهولة مع محاسبي</h1>
             <p class="hero-subtitle">سجل دخولك الآن وابدأ في تتبع دخل ومصروفاتك بكل سهولة</p>
             <div class="d-flex justify-content-center gap-3">
-                <a href="login.html" class="btn btn-primary btn-lg">
+                <a href="login.html" class="btn btn-primary btn-lg" id="loginbtn"> 
                     <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                </a>
+                <a href="login.html" class="btn btn-primary btn-lg d-none" id="logoutBtn">
+                    <i class="fas fa-sign-in-alt"></i> تسجيل الخروج
                 </a>
                 <a href="register.html" class="btn btn-outline-light btn-lg">
                     <i class="fas fa-user-plus"></i> إنشاء حساب
@@ -542,15 +546,20 @@
             const goBtn = document.getElementById('go');
             const outBtn = document.getElementById('out');
             const goOutBtn = document.getElementById('go_out');
+            const loginbtn = document.getElementById('loginbtn');
+            const logoutBtn = document.getElementById('logoutBtn');
             
             if (token) {
                 goBtn.style.display = '';
                 outBtn.style.display = 'none';
                 goOutBtn.style.display = '';
+                //loginbtn.style.display = 'none';
+                //logoutBtn.style.display = 'block';
             } else {
                 goBtn.style.display = 'none';
                 outBtn.style.display = '';
-                goOutBtn.style.display = 'none';
+                //goOutBtn.style.display = 'none';
+                //loginbtn.style.display = 'none';
             }
         }
 

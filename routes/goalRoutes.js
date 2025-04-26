@@ -1,20 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const goalController = require('../controllers/goalController');
-const authController = require('../controllers/userController');
+const { createGoal, getGoals, updateGoal, deleteGoal } = require('../controllers/goalController'); // تأكد من تعديل المسار حسب هيكل مشروعك
+//const { protect } = require('../middleware/authMiddleware'); // تأكد من وجود middleware للتحقق من المستخدم
 
-// تأمين جميع المسارات
-//router.use(authController.protect);
+// حماية جميع المسارات باستخدام middleware
+//router.use(protect);
 
-router.route('/')
-    .post(goalController.createGoal)
-    .get(goalController.getUserGoals);
+// إنشاء هدف جديد
+router.post('/', createGoal);
 
-router.route('/:id')
-    .patch(goalController.updateGoal)
-    .delete(goalController.deleteGoal);
+// الحصول على جميع الأهداف
+router.get('/', getGoals);
 
-router.post('/:goalId/link-transaction/:transactionId', goalController.linkTransaction);
+// تحديث هدف
+router.put('/:goalId', updateGoal);
+
+// حذف هدف
+router.delete('/:goalId', deleteGoal);
 
 module.exports = router;
-

@@ -22,7 +22,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     
     <!-- ملف JavaScript الخاص بالتطبيق -->
-    <script src="main.js"></script>
+    <script src="js/main.js"></script>
 
     <style>
         /* متغيرات الألوان لتكون متوافقة مع لوحة التحكم */
@@ -265,21 +265,107 @@
             font-size: 0.8rem; /* حجم أصغر */
             color: rgba(255, 255, 255, 0.7); /* لون شبه شفاف */
         }
+
+        /* أنماط زر التبديل */
+#themeToggle {
+    position: relative;
+    padding-left: 40px;
+}
+
+#themeToggle i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    font-size: 1.3rem;
+    margin-right: 5px;
+    transform: translateY(-50%);
+    transition: all 0.3s ease;
+}
+
+.light-mode #themeToggle i {
+    transform: translateY(-50%) rotate(180deg);
+    color: var(--primary-color);
+}
+/* أنماط الوضع النهاري */
+body.light-mode {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.light-mode .navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .navbar-nav .nav-link {
+    color: #555;
+}
+
+.light-mode .navbar-nav .nav-link:hover {
+    color: var(--primary-color);
+    background-color: rgba(0, 170, 255, 0.1);
+}
+
+.light-mode .card {
+    background: #ffffff;
+    color: #333;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .chart-container,
+.light-mode .table {
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .table thead {
+    background: linear-gradient(90deg, var(--primary-color), #0066ff);
+}
+
+.light-mode .footer {
+    background: #ffffff;
+    color: #333;
+}
+
+.light-mode .section-title {
+    color: #333;
+}
+
+.light-mode .form-control {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+.light-mode .form-control:focus {
+    background-color: #ffffff;
+    color: #333;
+}
+
+.light-mode .user-role {
+    color: rgba(0, 0, 0, 0.7);
+}
     </style>
 </head>
 <body>
 
     <!-- شريط التنقل العلوي -->
-    <nav class="navbar navbar-expand-lg navbar-dark position-fixed z-3 w-100 mb-5">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
         <div class="container-fluid">
             <!-- عنوان التطبيق مع الأيقونة -->
             <a class="navbar-brand" href="dashboard.html">
                 <i class="fas fa-wallet"></i>
                 إدارة الميزانية
             </a>
+
+            <li class="nav-item">
+                <a class="nav-link" id="themeToggle" href="#">
+                    <i class="fas fa-moon" style="font-size: 200px;"></i>
+                </a>
+            </li>
             
             <!-- زر القائمة المنسدلة للشاشات الصغيرة -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style='background-color:rgb(216, 149, 149)'>
                 <span class="navbar-toggler-icon"></span>
             </button>
             

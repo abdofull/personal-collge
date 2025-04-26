@@ -10,9 +10,10 @@ exports.addTransaction = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const { userId, category, amount, type, budgetId, budgetItemName , description } = req.body;
+    const { userId, category, amount, type, budgetId, budgetItemName , description , goalId} = req.body;
 
     try {
+        //const { goalId, ...transactionData } = req.body;
         const transaction = new Transaction({ 
             userId, 
             category, 
@@ -73,6 +74,13 @@ exports.addTransaction = async (req, res) => {
                     message: 'فشل تحديث الميزانية' 
                 });
             }
+        };
+
+        if (goalId) {
+            transaction.goalId = goalId;
+            await Goal.findByIdAndUpdate(goalId, {
+                $inc: { currentAmount: transactionData.amount }
+            });
         }
 
         await transaction.save();

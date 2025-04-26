@@ -1,6 +1,9 @@
 const Notification = require('../models/Notification');
 const ApiError = require('../utils/apierror');
 const asyncHandler = require('express-async-handler');
+const Goal = require('../models/Goal');
+
+
 
 // إنشاء إشعار جديد
 exports.createNotification = asyncHandler(async (req, res, next) => {
@@ -125,3 +128,49 @@ exports.createSystemNotification = async (userId, title, message, type = 'info',
     }
 };
 
+exports.checkGoalProgress = async () => {
+    try {
+        // أهداف اقترب موعدها
+        const nearingGoals = await Goal.find({
+            isCompleted: false,
+            deadline: { 
+                $lte: new Date(Date.now() + 3*24*60*60*1000), // 3 أيام
+                $gte: new Date() 
+            }
+        });
+
+        for (const goal of nearingGoals) {
+            await Notification.create({
+                userId: goal.userId,
+                title: 'موعد الهدف يقترب',
+                message: `هدفك "${goal.title}" ينتهي في ${goal.deadline.toLocaleDateString()}`,
+                type: 'goal',
+                relatedEntity: 'goal',
+                entityId: goal._id
+            });
+        }
+
+        // أهداف اكتملت تلقائياً
+        const completedGoals = await Goal.find({
+            isCompleted: true,
+            notifiedCompleted: { $ne: true }
+        });
+
+        for (const goal of completedGoals) {
+            await Notification.create({
+                userId: goal.userId,
+                title: 'تهانينا! لقد حققت هدفك',
+                message: `لقد حققت هدفك "${goal.title}" بنجاح`,
+                type: 'goal',
+                relatedEntity: 'goal',
+                entityId: goal._id
+            });
+            
+            await Goal.findByIdAndUpdate(goal._id, { notifiedCompleted: true });
+        }
+    } catch (error) {
+        console.error('فشل في إرسال إشعارات الأهداف:', error);
+    }
+};
+
+// تشغيل الدالة يومياً (يمكن استخدام Agenda.js أو node-cron)

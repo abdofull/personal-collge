@@ -123,6 +123,24 @@ exports.deleteUserReports = async (req, res) => {
     }
 };
 
+exports.generateGoalReport = async (req, res) => {
+    try {
+        const goals = await Goal.aggregate([
+            { $match: { userId: req.user._id } },
+            { $group: {
+                _id: '$category',
+                totalGoals: { $sum: 1 },
+                completed: { $sum: { $cond: ['$isCompleted', 1, 0] } },
+                totalAmount: { $sum: '$targetAmount' }
+            }}
+        ]);
+        
+        res.json(goals);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 
 
 
