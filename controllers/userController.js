@@ -3,6 +3,7 @@ const Budget = require('../models/Budget');
 const Report = require('../models/ReportModel');
 const Transaction = require('../models/Transaction');
 const asyncHandler = require('express-async-handler');
+const Goal = require('../models/Goal');
 const ApiError = require('../utils/apierror');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
@@ -235,6 +236,7 @@ exports.deleteUserAccount = async (req, res, next) => {
 
     try {
         // حذف جميع الميزانيات والتقارير والمعاملات
+        await Goal.deleteMany({ userId });
         await Budget.deleteMany({ userId });
         await Report.deleteMany({ userId });
         await Transaction.deleteMany({ userId });

@@ -188,7 +188,7 @@ const tips = [
 exports.seed = async ()=> {
     try {
 
-        // حذف البيانات القديمة أولاً (اختياري)
+        // حذف البيانات القديمة أولا)
         await EducationalNotification.deleteMany({});
 
         // إضافة البيانات الجديدة

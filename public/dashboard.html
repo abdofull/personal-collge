@@ -13,7 +13,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
 
     <style>
         :root {
@@ -454,70 +456,208 @@
         }
 
         /* أضف هذه الأنماط في قسم style */
-body.light-mode {
-    background-color: #f5f5f5;
-    color: #333;
-}
+        body.light-mode {
+            background-color: #f5f5f5;
+            color: #333;
+        }
 
-.light-mode .navbar {
-    background-color: #ffffff;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-}
+        .light-mode .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
 
-.light-mode .navbar-nav .nav-link {
-    color: #555;
-}
+        .light-mode .navbar-nav .nav-link {
+            color: #555;
+        }
 
-.light-mode .navbar-nav .nav-link:hover {
-    color: var(--primary-color);
-    background-color: rgba(0, 170, 255, 0.1);
-}
+        .light-mode .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(0, 170, 255, 0.1);
+        }
 
-.light-mode .card {
-    background: #ffffff;
-    color: #333;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
+        .light-mode .card {
+            background: #ffffff;
+            color: #333;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
 
-.light-mode .chart-container,
-.light-mode .table {
-    background: #ffffff;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
+        .light-mode .chart-container,
+        .light-mode .table {
+            background: #ffffff;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
 
-.light-mode .table thead {
-    background: linear-gradient(90deg, var(--primary-color), #0066ff);
-}
+        .light-mode .table thead {
+            background: linear-gradient(90deg, var(--primary-color), #0066ff);
+        }
 
-.light-mode .footer {
-    background: #ffffff;
-    color: #333;
-}
+        .light-mode .footer {
+            background: #ffffff;
+            color: #333;
+        }
 
-.light-mode .section-title {
-    color: #333;
-}
+        .light-mode .section-title {
+            color: #333;
+        }
 
-/* أنماط زر التبديل */
-#themeToggle {
-    position: relative;
-    padding-left: 40px;
-}
+        /* أنماط زر التبديل */
+        #themeToggle {
+            position: relative;
+            padding-left: 40px;
+        }
 
-#themeToggle i {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    font-size: 1.3rem;
-    margin-right: 5px;
-    transform: translateY(-50%);
-    transition: all 0.3s ease;
-}
+        #themeToggle i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            font-size: 1.3rem;
+            margin-right: 5px;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
 
-.light-mode #themeToggle i {
-    transform: translateY(-50%) rotate(180deg);
-    color: var(--primary-color);
-}
+        .light-mode #themeToggle i {
+            transform: translateY(-50%) rotate(180deg);
+            color: var(--primary-color);
+        }
+
+        /* أنماط آخر الأهداف */
+        .goal-card {
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .goal-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .goal-progress {
+            height: 10px;
+            margin-top: 0.8rem;
+            margin-bottom: 0.4rem;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .goal-card.almost-complete .goal-progress .progress-bar {
+            background: linear-gradient(90deg, var(--success-color), var(--primary-color));
+        }
+
+        .goal-card.halfway .goal-progress .progress-bar {
+            background: linear-gradient(90deg, var(--warning-color), var(--primary-color));
+        }
+
+        .goal-card.just-started .goal-progress .progress-bar {
+            background: linear-gradient(90deg, var(--danger-color), var(--primary-color));
+        }
+
+        .goal-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .goal-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .goal-amount {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+        }
+
+        .goal-type {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: rgba(0, 170, 255, 0.2);
+            color: var(--primary-color);
+        }
+
+        .pattern-analysis-card {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            height: 100%;
+        }
+
+        .pattern-analysis-card h5 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+
+        .ai-recommendation {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            background: rgba(0, 170, 255, 0.1);
+            border-right: 4px solid var(--primary-color);
+        }
+
+        .ai-recommendation i {
+            color: var(--primary-color);
+            margin-left: 0.5rem;
+        }
+
+        .prediction-chart {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* التحديثات للتفاعل بين الميزانية والمصروفات */
+        .budget-progress {
+            margin-top: 1rem;
+            position: relative;
+        }
+
+        .budget-threshold {
+            position: absolute;
+            top: -5px;
+            height: 20px;
+            width: 2px;
+            background-color: var(--warning-color);
+        }
+
+        .budget-threshold.warning {
+            background-color: var(--warning-color);
+        }
+
+        .budget-threshold.danger {
+            background-color: var(--danger-color);
+        }
+
+        .budget-progress-bar {
+            transition: all 0.5s ease;
+        }
+
+        .budget-warning {
+            color: var(--warning-color);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .budget-danger {
+            color: var(--danger-color);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: none;
+        }
 
         @media (max-width: 768px) {
             .content {
@@ -531,7 +671,6 @@ body.light-mode {
             .section-title {
                 font-size: 1.5rem;
             }
-
         }
     </style>
 </head>
@@ -546,7 +685,7 @@ body.light-mode {
             </a>
             <li class="nav-item">
                 <a class="nav-link" id="themeToggle" href="#">
-                    <i class="fas fa-moon" style="font-size: 200px;"></i>
+                    <i class="fas fa-moon" style="font-size: 1.3rem;"></i>
                 </a>
             </li>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style='background-color:rgb(216, 149, 149)'>
@@ -564,6 +703,13 @@ body.light-mode {
                             <i class="fas fa-wallet"></i> الميزانية
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="goals.html">
+                            <i class="fas fa-bullseye"></i> الخطط والأهداف
+                        </a>
+                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="report.html">
                             <i class="fas fa-chart-line"></i> التقارير
@@ -639,6 +785,9 @@ body.light-mode {
                 <button class="btn btn-primary" onclick="window.location.href='Budget.html'">
                     <i class="fas fa-wallet"></i> إنشاء ميزانية
                 </button>
+                <button class="btn btn-primary" onclick="window.location.href='goals.html'">
+                    <i class="fas fa-bullseye"></i> إنشاء هدف
+                </button>
                 <button class="btn btn-primary" onclick="window.location.href='report.html'">
                     <i class="fas fa-file-pdf"></i> إنشاء تقرير
                 </button>
@@ -649,19 +798,40 @@ body.light-mode {
         </div>
 
         <!--الجزء الخاص بالإشعارات التوعوية -->
-<div class="card mt-4">
-    <div class="card-header bg-primary text-white">
-        <i class="fas fa-lightbulb me-2"></i> نصائح مالية توعوية
-    </div>
-    <div class="card-body" id="educationalTips">
-        <!-- سيتم ملؤها بالجافاسكريبت -->
-        <div class="text-center">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">جاري التحميل...</span>
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-lightbulb me-2"></i> نصائح مالية توعوية
+            </div>
+            <div class="card-body" id="educationalTips">
+                <!-- سيتم ملؤها بالجافاسكريبت -->
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+
+        <!-- قسم آخر الأهداف -->
+        <div class="card mt-4 animate__animated animate__fadeInUp">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-bullseye me-2"></i> آخر الأهداف المالية
+                </div>
+                <button class="btn btn-sm btn-light" onclick="window.location.href='goals.html'">
+                    عرض الكل <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row" id="recentGoals">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">جاري التحميل...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- الكروت -->
         <h2 class="section-title mt-5 animate__animated animate__fadeIn">نظرة عامة سريعة</h2>
@@ -707,19 +877,82 @@ body.light-mode {
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="card">
+                <div class="card" id="budgetCard">
                     <div class="card-body">
                         <i class="fas fa-chart-pie icon"></i>
                         <h5>الميزانية</h5>
                         <p id="budgetStatus">0.00 دينار</p>
-                        <div class="progress">
-                            <div class="progress-bar bg-warning" style="width: 75%"></div>
+                        <div class="progress budget-progress">
+                            <div class="progress-bar budget-progress-bar" id="budgetProgressBar" style="width: 75%"></div>
+                            <div class="budget-threshold warning" id="warningThreshold" style="left: 70%"></div>
+                            <div class="budget-threshold danger" id="dangerThreshold" style="left: 90%"></div>
                         </div>
                         <p id="budgetCount" class="mt-2">عدد الميزانيات: 0</p>
+                        <p class="budget-warning" id="budgetWarning">تنبيه: استهلكت 70% من الميزانية!</p>
+                        <p class="budget-danger" id="budgetDanger">تحذير: استهلكت 90% من الميزانية!</p>
                         <button class="btn btn-primary btn-sm" onclick="window.location.href='Budget.html'">
                             <i class="fas fa-arrow-left"></i> إدارة الميزانية
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم تحليل الأنماط والتنبؤات المالية -->
+        <div class="card mt-4 animate__animated animate__fadeInUp">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-brain me-2"></i> تحليل الأنماط والتنبؤات المالية
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="pattern-analysis-card">
+                            <h5><i class="fas fa-chart-line me-2"></i> أنماط الإنفاق</h5>
+                            <div id="spendingPatterns">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">جاري التحليل...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="prediction-chart mt-3">
+                                <canvas id="spendingPatternChart" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="pattern-analysis-card">
+                            <h5><i class="fas fa-money-bill-wave me-2"></i> التوفير المتوقع</h5>
+                            <div id="savingsPrediction">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">جاري التحليل...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="prediction-chart mt-3">
+                                <canvas id="savingsPredictionChart" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="pattern-analysis-card">
+                            <h5><i class="fas fa-forward me-2"></i> المصروفات المتوقعة</h5>
+                            <div id="expensesPrediction">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">جاري التحليل...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="prediction-chart mt-3">
+                                <canvas id="expensesPredictionChart" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="aiRecommendations" class="mt-4">
+                    <!-- التوصيات ستظهر هنا -->
                 </div>
             </div>
         </div>
@@ -852,6 +1085,10 @@ body.light-mode {
         let unreadNotificationsCount = 0; // عدد الإشعارات غير المقروءة
         let notifications = []; // قائمة لتخزين الإشعارات
         let notificationPollingInterval = null; // مؤقت للتحقق من الإشعارات الجديدة
+        let globalTotalExpenses = 0; // المصروفات الكلية
+        let globalTotalIncome = 0; // الدخل الكلي
+        let globalBudgetAmount = 0; // قيمة الميزانية
+        let transactionsData = []; // بيانات المعاملات
 
         // دالة لإنشاء عنصر إشعار
         function createNotificationElement(notification) {
@@ -934,6 +1171,9 @@ body.light-mode {
                     break;
                 case 'report': // إذا كان تقرير
                     window.location.href = `report.html?id=${entityId}`;
+                    break;
+                case 'goal': // إذا كان هدف
+                    window.location.href = `goals.html?id=${entityId}`;
                     break;
                 default: // إذا لم يكن مرتبطاً بشيء
                     break;
@@ -1118,24 +1358,44 @@ body.light-mode {
             }
 
             try {
-
                 const totalsResponse = await axios.get(`${url}api/transactions/totals?userId=${userId}`);
                 const { totalIncome, totalExpenses } = totalsResponse.data;
+                
+                // حفظ البيانات في المتغيرات العالمية
+                globalTotalIncome = totalIncome || 0;
+                globalTotalExpenses = totalExpenses || 0;
 
                 const budgetResponse = await axios.get(`${url}api/budgets/summary?userId=${userId}`);
                 const { lastBudget, budgetCount } = budgetResponse.data;
+                
+                // حفظ قيمة الميزانية في المتغير العالمي
+                globalBudgetAmount = lastBudget || 0;
 
                 const transactionsResponse = await axios.get(`${url}api/transactions?userId=${userId}`);
-                const transactions = transactionsResponse.data;
+                // حفظ بيانات المعاملات
+                transactionsData = transactionsResponse.data;
 
                 const userData = await axios.get(`${url}users/${userId}`);
-                console.log(userData.data);
-                const initialBalance = userData.data.user.initialBalance|| 0;
+                const initialBalance = userData.data.user.initialBalance || 0;
                 const totalBalance = initialBalance + totalIncome - totalExpenses;
 
+                // تحديث البطاقات
                 updateOverviewCards(totalBalance, totalIncome, totalExpenses, lastBudget, budgetCount);
-                updateCharts(transactions);
-                updateTransactionsTable(transactions);
+                
+                // تحديث الرسوم البيانية
+                updateCharts(transactionsData);
+                
+                // تحديث جدول المعاملات
+                updateTransactionsTable(transactionsData);
+                
+                // جلب الأهداف
+                fetchRecentGoals(userId);
+                
+                // تحليل أنماط الإنفاق وعمل التنبؤات
+                analyzeSpendingPatterns(transactionsData);
+                
+                // تحديث التفاعل بين الميزانية والمصروفات
+                updateBudgetExpenseInteraction(totalExpenses, lastBudget);
 
                 if (totalExpenses > totalIncome) {
                     // إرسال إشعار نظام عند تجاوز المصروفات للدخل
@@ -1156,52 +1416,589 @@ body.light-mode {
             }
         }
 
-async function fetchBudgetSummary() {
-    const userId = localStorage.getItem('userId');
-    if (!userId) {
-        console.log('User ID not found');
-        return { error: 'User not authenticated' };
-    }
-
-    try {
-        const response = await axios.get(`${url}api/budgets/summary?userId=${userId}`, {
-            timeout: 5000 // 5 ثواني كحد أقصى للانتظار
-        });
-
-        // التحقق من وجود البيانات المطلوبة
-        if (response.data && response.data.success) {
-            const { lastBudget, budgetCount } = response.data.data;
+        // دالة لتحديث التفاعل بين الميزانية والمصروفات
+        function updateBudgetExpenseInteraction(expenses, budget) {
+            if (!budget || budget <= 0) return;
             
-            document.getElementById('budgetStatus').textContent = 
-                lastBudget ? `${lastBudget.toFixed(2)} دينار` : '0.00 دينار';
+            const budgetCard = document.getElementById('budgetCard');
+            const progressBar = document.getElementById('budgetProgressBar');
+            const budgetWarning = document.getElementById('budgetWarning');
+            const budgetDanger = document.getElementById('budgetDanger');
             
-            document.getElementById('budgetCount').textContent = 
-                `عدد الميزانيات: ${budgetCount || 0}`;
+            // حساب نسبة استهلاك الميزانية
+            const consumptionPercentage = Math.min((expenses / budget) * 100, 100);
             
-            return { lastBudget, budgetCount };
-        } else {
-            console.error('Invalid response structure', response.data);
-            return { error: 'Invalid server response' };
+            // تحديث نص الميزانية المتبقية
+            const remainingBudget = Math.max(budget - expenses, 0);
+            document.getElementById('budgetStatus').textContent = `${remainingBudget.toFixed(2)} دينار`;
+            
+            // تحديث شريط التقدم
+            progressBar.style.width = `${consumptionPercentage}%`;
+            
+            // تحديث لون الشريط حسب النسبة
+            if (consumptionPercentage >= 90) {
+                progressBar.className = 'progress-bar budget-progress-bar bg-danger';
+                budgetWarning.style.display = 'none';
+                budgetDanger.style.display = 'block';
+                budgetCard.classList.add('card-danger');
+                budgetCard.classList.remove('card-warning');
+            } else if (consumptionPercentage >= 70) {
+                progressBar.className = 'progress-bar budget-progress-bar bg-warning';
+                budgetWarning.style.display = 'block';
+                budgetDanger.style.display = 'none';
+                budgetCard.classList.add('card-warning');
+                budgetCard.classList.remove('card-danger');
+            } else {
+                progressBar.className = 'progress-bar budget-progress-bar';
+                budgetWarning.style.display = 'none';
+                budgetDanger.style.display = 'none';
+                budgetCard.classList.remove('card-warning', 'card-danger');
+            }
+            
+            // تحريك العتبات إلى الأمام في حالة تجاوز المصروفات للميزانية
+            if (consumptionPercentage >= 100) {
+                document.getElementById('warningThreshold').style.display = 'none';
+                document.getElementById('dangerThreshold').style.display = 'none';
+                
+                // إرسال إشعار نظام
+                const userId = localStorage.getItem('userId');
+                if (userId) {
+                    axios.post(`${url}api/notifications`, {
+                        userId,
+                        title: 'تنبيه الميزانية',
+                        message: 'لقد تجاوزت الميزانية المخصصة لهذا الشهر',
+                        type: 'danger',
+                        relatedEntity: 'budget'
+                    }).catch(err => console.error('فشل إرسال الإشعار:', err));
+                }
+            }
         }
-    } catch (error) {
-        console.error('حدث خطأ أثناء جلب ملخص الميزانية:', {
-            error: error.message,
-            config: error.config,
-            response: error.response?.data
-        });
-        
-        // عرض رسالة للمستخدم
-        if (error.response?.status === 500) {
-            console.error('Server error details:', error.response.data);
+
+        // دالة لجلب الأهداف الأخيرة
+        async function fetchRecentGoals(userId) {
+            try {
+                const response = await axios.get(`${url}api/goals/user/${userId}?limit=3`);
+                const goals = response.data.data || [];
+                
+                const goalsContainer = document.getElementById('recentGoals');
+                goalsContainer.innerHTML = '';
+                
+                if (goals.length === 0) {
+                    goalsContainer.innerHTML = `
+                        <div class="col-12 text-center">
+                            <p>لم تقم بإنشاء أي أهداف بعد.</p>
+                            <button class="btn btn-primary btn-sm mt-2" onclick="window.location.href='goals.html'">
+                                <i class="fas fa-plus-circle me-2"></i> إنشاء هدف جديد
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                goals.forEach(goal => {
+                    // حساب نسبة التقدم
+                    const progress = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
+                    
+                    // تحديد فئة التقدم
+                    let progressClass = 'just-started';
+                    if (progress >= 75) {
+                        progressClass = 'almost-complete';
+                    } else if (progress >= 40) {
+                        progressClass = 'halfway';
+                    }
+                    
+                    // تنسيق التاريخ
+                    const endDate = new Date(goal.endDate).toLocaleDateString('ar-EG');
+                    
+                    // إنشاء بطاقة الهدف
+                    const goalHtml = `
+                        <div class="col-md-4 mb-3">
+                            <div class="goal-card ${progressClass}" onclick="window.location.href='goals.html?id=${goal._id}'">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="goal-title">${goal.title}</h5>
+                                    <span class="goal-type">${getGoalTypeText(goal.type)}</span>
+                                </div>
+                                <p class="goal-amount">${goal.currentAmount.toFixed(2)} / ${goal.targetAmount.toFixed(2)} دينار</p>
+                                <div class="goal-progress progress">
+                                    <div class="progress-bar" style="width: ${progress}%"></div>
+                                </div>
+                                <div class="goal-info">
+                                    <span><i class="fas fa-calendar-alt me-1"></i> ${endDate}</span>
+                                    <span><i class="fas fa-chart-line me-1"></i> ${progress.toFixed(1)}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    goalsContainer.innerHTML += goalHtml;
+                });
+                
+                // تطبيق تأثيرات GSAP على الأهداف
+                gsap.from(".goal-card", {
+                    duration: 0.7,
+                    y: 20,
+                    opacity: 0,
+                    stagger: 0.2,
+                    ease: "power2.out"
+                });
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب الأهداف:', error);
+                document.getElementById('recentGoals').innerHTML = `
+                    <div class="col-12 text-center">
+                        <p class="text-danger">فشل جلب الأهداف. يرجى المحاولة لاحقاً.</p>
+                    </div>
+                `;
+            }
         }
-        
-        // تعيين قيم افتراضية
-        document.getElementById('budgetStatus').textContent = '0.00 دينار';
-        document.getElementById('budgetCount').textContent = 'عدد الميزانيات: 0';
-        
-        return { error: error.message };
-    }
-}        
+
+        // دالة لتحويل نوع الهدف إلى نص عربي
+        function getGoalTypeText(type) {
+            const types = {
+                'saving': 'توفير',
+                'debt': 'سداد دين',
+                'investment': 'استثمار',
+                'purchase': 'شراء',
+                'other': 'آخر'
+            };
+            return types[type] || 'آخر';
+        }
+
+        // دالة تحليل أنماط الإنفاق
+        function analyzeSpendingPatterns(transactions) {
+            if (!transactions || transactions.length < 3) {
+                document.getElementById('spendingPatterns').innerHTML = '<p>لا توجد بيانات كافية للتحليل.</p>';
+                document.getElementById('savingsPrediction').innerHTML = '<p>لا توجد بيانات كافية للتنبؤ.</p>';
+                document.getElementById('expensesPrediction').innerHTML = '<p>لا توجد بيانات كافية للتنبؤ.</p>';
+                document.getElementById('aiRecommendations').innerHTML = '';
+                return;
+            }
+            
+            // 1. تجميع المصروفات حسب الفئة
+            const expensesByCategory = {};
+            const expensesByMonth = {};
+            const incomeByMonth = {};
+            let expensesTotal = 0;
+            let incomeTotal = 0;
+            
+            transactions.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                
+                if (transaction.type === 'expense') {
+                    // إضافة للمصروفات حسب الفئة
+                    expensesByCategory[transaction.category] = (expensesByCategory[transaction.category] || 0) + transaction.amount;
+                    expensesTotal += transaction.amount;
+                    
+                    // إضافة للمصروفات حسب الشهر
+                    expensesByMonth[monthKey] = (expensesByMonth[monthKey] || 0) + transaction.amount;
+                } else {
+                    // إضافة للدخل حسب الشهر
+                    incomeByMonth[monthKey] = (incomeByMonth[monthKey] || 0) + transaction.amount;
+                    incomeTotal += transaction.amount;
+                }
+            });
+            
+            // 2. تحديد أنماط الإنفاق
+            const topCategories = Object.entries(expensesByCategory)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3);
+            
+            // 3. التحليل الزمني للمصروفات (لآخر 6 أشهر)
+            const last6Months = [];
+            const currentDate = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const month = new Date(currentDate);
+                month.setMonth(currentDate.getMonth() - i);
+                const monthKey = `${month.getFullYear()}-${month.getMonth() + 1}`;
+                const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'short' }).format(month);
+                
+                last6Months.push({
+                    month: monthName,
+                    expenses: expensesByMonth[monthKey] || 0,
+                    income: incomeByMonth[monthKey] || 0
+                });
+            }
+            
+            // 4. التنبؤ بالمصروفات المستقبلية (باستخدام الانحدار الخطي)
+            const expensesData = last6Months.map((m, i) => [i, m.expenses]);
+            const incomeData = last6Months.map((m, i) => [i, m.income]);
+            
+            // استخدام مكتبة الانحدار للتنبؤ
+            const expensesResult = regression.linear(expensesData);
+            const incomeResult = regression.linear(incomeData);
+            
+            // التنبؤ بالقيم المستقبلية
+            const nextThreeMonths = [];
+            for (let i = 1; i <= 3; i++) {
+                const nextMonth = new Date(currentDate);
+                nextMonth.setMonth(currentDate.getMonth() + i);
+                const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'short' }).format(nextMonth);
+                
+                const predictedExpense = expensesResult.predict(expensesData.length - 1 + i)[1];
+                const predictedIncome = incomeResult.predict(incomeData.length - 1 + i)[1];
+                
+                nextThreeMonths.push({
+                    month: monthName,
+                    expenses: Math.max(0, predictedExpense),
+                    income: Math.max(0, predictedIncome)
+                });
+            }
+            
+            // 5. حساب التوفير المتوقع
+            const expectedSavings = nextThreeMonths.map(m => ({
+                month: m.month,
+                saving: Math.max(0, m.income - m.expenses)
+            }));
+            
+            // 6. عرض النتائج في واجهة المستخدم
+            
+            // 6.1 تحليل أنماط الإنفاق
+            let patternsHtml = `<p>أكثر 3 فئات تنفق عليها:</p><ul>`;
+            
+            topCategories.forEach(([category, amount]) => {
+                const percentage = (amount / expensesTotal * 100).toFixed(1);
+                patternsHtml += `<li><strong>${category}:</strong> ${amount.toFixed(2)} دينار (${percentage}%)</li>`;
+            });
+            
+            patternsHtml += `</ul>`;
+            
+            if (topCategories.length > 0) {
+                const topCategory = topCategories[0][0];
+                const percentage = (topCategories[0][1] / expensesTotal * 100).toFixed(1);
+                
+                if (percentage > 40) {
+                    patternsHtml += `<div class="alert alert-warning mt-2">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>تنبيه:</strong> تنفق أكثر من ${percentage}% من مصروفاتك على ${topCategory}. قد ترغب في مراجعة هذه النفقات.
+                    </div>`;
+                }
+            }
+            
+            document.getElementById('spendingPatterns').innerHTML = patternsHtml;
+            
+            // 6.2 التوفير المتوقع
+            let savingsHtml = `<p>التوفير المتوقع للأشهر القادمة:</p>`;
+            
+            expectedSavings.forEach(month => {
+                savingsHtml += `<div class="d-flex justify-content-between">
+                    <span>${month.month}</span>
+                    <strong>${month.saving.toFixed(2)} دينار</strong>
+                </div>`;
+            });
+            
+            const averageSaving = expectedSavings.reduce((sum, month) => sum + month.saving, 0) / expectedSavings.length;
+            
+            if (averageSaving <= 0) {
+                savingsHtml += `<div class="alert alert-danger mt-2">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>تحذير:</strong> التنبؤات تشير إلى عدم وجود توفير في الأشهر القادمة.
+                </div>`;
+            }
+            
+            document.getElementById('savingsPrediction').innerHTML = savingsHtml;
+            
+            // 6.3 المصروفات المتوقعة
+            let expensesHtml = `<p>المصروفات المتوقعة للأشهر القادمة:</p>`;
+            
+            nextThreeMonths.forEach(month => {
+                expensesHtml += `<div class="d-flex justify-content-between">
+                    <span>${month.month}</span>
+                    <strong>${month.expenses.toFixed(2)} دينار</strong>
+                </div>`;
+            });
+            
+            // حساب معدل النمو في المصروفات
+            const firstExpense = last6Months[0].expenses;
+            const lastExpense = last6Months[last6Months.length - 1].expenses;
+            const expenseGrowthRate = firstExpense > 0 ? ((lastExpense - firstExpense) / firstExpense) * 100 : 0;
+            
+            if (expenseGrowthRate > 20) {
+                expensesHtml += `<div class="alert alert-warning mt-2">
+                    <i class="fas fa-chart-line me-2"></i>
+                    <strong>ملاحظة:</strong> معدل نمو المصروفات لديك ${expenseGrowthRate.toFixed(1)}%، وهو معدل مرتفع.
+                </div>`;
+            }
+            
+            document.getElementById('expensesPrediction').innerHTML = expensesHtml;
+            
+            // 6.4 التوصيات الذكية
+            generateAIRecommendations(
+                topCategories,
+                expensesTotal,
+                incomeTotal,
+                lastExpense,
+                firstExpense,
+                nextThreeMonths,
+                expectedSavings
+            );
+            
+            // 7. رسم المخططات التنبؤية
+            
+            // 7.1 مخطط أنماط الإنفاق
+            const spendingCtx = document.getElementById('spendingPatternChart').getContext('2d');
+            const categoryLabels = topCategories.map(cat => cat[0]);
+            const categoryValues = topCategories.map(cat => cat[1]);
+            
+            new Chart(spendingCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        data: categoryValues,
+                        backgroundColor: ['#00aaff', '#ff6b6b', '#2ecc71', '#f39c12'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // 7.2 مخطط التوفير المتوقع
+            const savingsCtx = document.getElementById('savingsPredictionChart').getContext('2d');
+            const savingsLabels = expectedSavings.map(month => month.month);
+            const savingsValues = expectedSavings.map(month => month.saving);
+            
+            new Chart(savingsCtx, {
+                type: 'bar',
+                data: {
+                    labels: savingsLabels,
+                    datasets: [{
+                        label: 'التوفير المتوقع',
+                        data: savingsValues,
+                        backgroundColor: 'rgba(46, 204, 113, 0.5)',
+                        borderColor: '#2ecc71',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // 7.3 مخطط المصروفات المتوقعة
+            const expensesCtx = document.getElementById('expensesPredictionChart').getContext('2d');
+            const expensesLabels = nextThreeMonths.map(month => month.month);
+            const expensesValues = nextThreeMonths.map(month => month.expenses);
+            const incomeValues = nextThreeMonths.map(month => month.income);
+            
+            new Chart(expensesCtx, {
+                type: 'line',
+                data: {
+                    labels: expensesLabels,
+                    datasets: [{
+                        label: 'المصروفات',
+                        data: expensesValues,
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        borderColor: '#ff6b6b',
+                        borderWidth: 2,
+                        fill: true
+                    }, {
+                        label: 'الدخل',
+                        data: incomeValues,
+                        backgroundColor: 'rgba(0, 170, 255, 0.1)',
+                        borderColor: '#00aaff',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // دالة لتوليد التوصيات الذكية
+        function generateAIRecommendations(
+            topCategories,
+            expensesTotal,
+            incomeTotal,
+            lastExpense,
+            firstExpense,
+            nextThreeMonths,
+            expectedSavings
+        ) {
+            const recommendations = [];
+            
+            // 1. التوصية بناءً على نسبة الإنفاق على الفئة الأعلى
+            if (topCategories.length > 0) {
+                const topCategory = topCategories[0][0];
+                const topAmount = topCategories[0][1];
+                const topPercentage = (topAmount / expensesTotal * 100);
+                
+                if (topPercentage > 40) {
+                    recommendations.push({
+                        title: 'تقليل الإنفاق على ' + topCategory,
+                        message: `تنفق ${topPercentage.toFixed(1)}% من مصروفاتك على ${topCategory}. حاول تقليل هذه النسبة إلى 30% أو أقل.`,
+                        type: 'warning'
+                    });
+                }
+            }
+            
+            // 2. التوصية بناءً على نسبة المصروفات للدخل
+            const expenseToIncomeRatio = expensesTotal / incomeTotal;
+            
+            if (expenseToIncomeRatio > 0.9) {
+                recommendations.push({
+                    title: 'المصروفات قريبة من الدخل',
+                    message: `تنفق ${(expenseToIncomeRatio * 100).toFixed(1)}% من دخلك. ينصح بالحفاظ على نسبة 70-80% كحد أقصى.`,
+                    type: 'danger'
+                });
+            } else if (expenseToIncomeRatio < 0.5) {
+                recommendations.push({
+                    title: 'معدل توفير ممتاز',
+                    message: `أنت توفر ${((1 - expenseToIncomeRatio) * 100).toFixed(1)}% من دخلك. استمر في هذا النمط الجيد!`,
+                    type: 'success'
+                });
+            }
+            
+            // 3. التوصية بناءً على معدل نمو المصروفات
+            const expenseGrowthRate = firstExpense > 0 ? ((lastExpense - firstExpense) / firstExpense) * 100 : 0;
+            
+            if (expenseGrowthRate > 20) {
+                recommendations.push({
+                    title: 'نمو سريع في المصروفات',
+                    message: `معدل نمو مصروفاتك مرتفع (${expenseGrowthRate.toFixed(1)}%). حاول مراجعة أسباب هذه الزيادة للحفاظ على التوازن المالي.`,
+                    type: 'warning'
+                });
+            } else if (expenseGrowthRate < 0) {
+                recommendations.push({
+                    title: 'انخفاض في المصروفات',
+                    message: `رائع! استطعت تقليل مصروفاتك بنسبة ${Math.abs(expenseGrowthRate).toFixed(1)}%. استمر في هذا الاتجاه الإيجابي.`,
+                    type: 'success'
+                });
+            }
+            
+            // 4. التوصية بناءً على التوفير المتوقع
+            const averageSaving = expectedSavings.reduce((sum, month) => sum + month.saving, 0) / expectedSavings.length;
+            const savingToIncomeRatio = averageSaving / (incomeTotal / 6);  // نسبة التوفير للدخل الشهري المتوسط
+            
+            if (savingToIncomeRatio <= 0.05) {
+                recommendations.push({
+                    title: 'التوفير المتوقع منخفض',
+                    message: `توقعات التوفير الخاصة بك منخفضة جداً. ننصح بمراجعة الميزانية وتقليل بعض المصروفات غير الضرورية.`,
+                    type: 'warning'
+                });
+            } else if (savingToIncomeRatio >= 0.3) {
+                recommendations.push({
+                    title: 'معدل توفير متوقع ممتاز',
+                    message: `من المتوقع أن توفر حوالي ${(savingToIncomeRatio * 100).toFixed(1)}% من دخلك الشهري. هذا معدل ممتاز للتوفير!`,
+                    type: 'success'
+                });
+            }
+            
+            // 5. عرض التوصيات في واجهة المستخدم
+            const recommendationsContainer = document.getElementById('aiRecommendations');
+            
+            if (recommendations.length === 0) {
+                recommendationsContainer.innerHTML = `
+                    <div class="ai-recommendation">
+                        <i class="fas fa-thumbs-up"></i>
+                        <strong>أداء مالي مستقر</strong>
+                        <p>وضعك المالي مستقر ومتوازن. استمر في الإدارة الجيدة لميزانيتك.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let recommendationsHtml = `<h5 class="mb-3"><i class="fas fa-robot me-2"></i> توصيات ذكية لتحسين وضعك المالي</h5>`;
+            
+            recommendations.forEach(rec => {
+                recommendationsHtml += `
+                    <div class="ai-recommendation">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>${rec.title}</strong>
+                        <p>${rec.message}</p>
+                    </div>
+                `;
+            });
+            
+            recommendationsContainer.innerHTML = recommendationsHtml;
+            
+            // تطبيق تأثيرات GSAP على التوصيات
+            gsap.from(".ai-recommendation", {
+                duration: 0.5,
+                y: 20,
+                opacity: 0,
+                stagger: 0.2,
+                ease: "power2.out",
+                delay: 0.3
+            });
+        }
+
+        async function fetchBudgetSummary() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                console.log('User ID not found');
+                return { error: 'User not authenticated' };
+            }
+
+            try {
+                const response = await axios.get(`${url}api/budgets/summary?userId=${userId}`, {
+                    timeout: 5000 // 5 ثواني كحد أقصى للانتظار
+                });
+
+                // التحقق من وجود البيانات المطلوبة
+                if (response.data && response.data.success) {
+                    const { lastBudget, budgetCount } = response.data.data;
+                    
+                    // حفظ قيمة الميزانية في المتغير العالمي
+                    globalBudgetAmount = lastBudget || 0;
+                    
+                    // تحديث التفاعل بين الميزانية والمصروفات
+                    updateBudgetExpenseInteraction(globalTotalExpenses, lastBudget);
+                    
+                    return { lastBudget, budgetCount };
+                } else {
+                    console.error('Invalid response structure', response.data);
+                    return { error: 'Invalid server response' };
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب ملخص الميزانية:', {
+                    error: error.message,
+                    config: error.config,
+                    response: error.response?.data
+                });
+                
+                // عرض رسالة للمستخدم
+                if (error.response?.status === 500) {
+                    console.error('Server error details:', error.response.data);
+                }
+                
+                // تعيين قيم افتراضية
+                document.getElementById('budgetStatus').textContent = '0.00 دينار';
+                document.getElementById('budgetCount').textContent = 'عدد الميزانيات: 0';
+                
+                return { error: error.message };
+            }
+        }        
         
         
         function updateOverviewCards(totalBalance, totalIncome, totalExpenses, lastBudget, budgetCount) {
@@ -1234,8 +2031,13 @@ async function fetchBudgetSummary() {
                 document.getElementById('expensesWarning').style.display = "block";
             }
 
-            document.getElementById('budgetStatus').textContent = `${(lastBudget || 0).toFixed(2)} دينار`;
+            // تحديث الميزانية ومراقبة المصروفات
+            const remainingBudget = Math.max(lastBudget - totalExpenses, 0);
+            document.getElementById('budgetStatus').textContent = `${remainingBudget.toFixed(2)} دينار`;
             document.getElementById('budgetCount').textContent = `عدد الميزانيات: ${budgetCount || 0}`;
+            
+            // تحديث التفاعل بين الميزانية والمصروفات
+            updateBudgetExpenseInteraction(totalExpenses, lastBudget);
         }
 
         function updateCharts(transactions) {
@@ -1362,33 +2164,30 @@ async function fetchBudgetSummary() {
                 window.location.href = 'login.html';
             }
         }
-
-        // دالة لجلب بيانات المستخدم
-        // async function fetchUserData() {
-        //     const userId = localStorage.getItem('userId');
-        //     if (!userId) return;
-
-        //     try {
-        //         const response = await axios.get(`${url}/${userId}`);
-        //         const user = response.data;
-                
-        //         // تحديث واجهة المستخدم
-        //         document.querySelector('.user-name').textContent = user.name;
-        //         document.querySelector('.user-role').textContent = user.role || 'مستخدم';
-        //         document.querySelector('.user-avatar').textContent = user.name.charAt(0);
-                
-        //         // تحديث عنوان الترحيب
-        //         document.querySelector('.section-title').textContent = `مرحبًا بك، ${user.name.split(' ')[0]}!`;
-        //     } catch (error) {
-        //         console.error('حدث خطأ أثناء جلب بيانات المستخدم:', error);
-        //     }
-        // }
+        
+        // إضافة مستمعي الأحداث لتبديل الوضع المظلم/الفاتح
+        document.getElementById('themeToggle').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.body.classList.toggle('light-mode');
+            
+            // حفظ التفضيل في localStorage
+            if (document.body.classList.contains('light-mode')) {
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+        // التحقق من التفضيل المحفوظ عند تحميل الصفحة
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+        }
 
         window.onload = function() {
-            fetchUserData();
             fetchData();
             fetchBudgetSummary();
             setupNotificationSystem();
+            fetchUserData();
 
             // تطبيق تأثيرات GSAP
             gsap.from(".card", {
@@ -1433,23 +2232,31 @@ async function fetchBudgetSummary() {
             });
         });
 
+        // function showUserNameonNav(){
+        //     const user_Data = axios.get(`${url}users/${localStorage.getItem('userId')}`)
+        //     .then((response) => {
+        //         console.log(response.data);
+        //         const user = response.data.user.username;
+        //         document.getElementById("UserNameNav").textContent = ",,, مرحبا بك " + user + "!";
+                
+        //     }).catch((error) => {
+        //         console.error('Error fetching user data:', error);
+        //     });
+        // };
+        // showUserNameonNav();
         function showUserNameonNav(){
 
-            const user_Data = axios.get(`${url}users/${localStorage.getItem('userId')}`)
-            .then((response) => {
-                console.log(response.data);
-                const user = response.data.user.username;
-                document.getElementById("UserNameNav").textContent = ",,, مرحبا بك " + user + "!";
-                
-            }).catch((error) => {
-                console.error('Error fetching user data:', error);
-            });
-            // const userData = localStorage.getItem('userData');
-            // const name = JSON.parse(userData);
-            // console.log(name.id);
-            // document.getElementById("UserNameNav").textContent = ",,, مرحبا بك " + name.username + "!";
+                const user_Data = axios.get(`${url}users/${localStorage.getItem('userId')}`)
+                .then((response) => {
+                    console.log(response.data);
+                    const user = response.data.user.username;
+                    document.getElementById("UserNameNav").textContent = ",,, مرحبا بك " + user + "!";
+                    
+                }).catch((error) => {
+                    console.error('Error fetching user data:', error);
+                });
         };
-        showUserNameonNav()
+        showUserNameonNav();
     </script>
     
 </body>

@@ -2,6 +2,7 @@ const Transaction = require('../models/Transaction');
 const { validationResult } = require('express-validator');
 const Notification = require('../models/Notification');
 const Budget = require('../models/Budget');
+const Goal = require('../models/Goal');
 
 // إضافة معاملة جديدة
 exports.addTransaction = async (req, res) => {
@@ -78,9 +79,12 @@ exports.addTransaction = async (req, res) => {
 
         if (goalId) {
             transaction.goalId = goalId;
-            await Goal.findByIdAndUpdate(goalId, {
-                $inc: { currentAmount: transactionData.amount }
-            });
+            // تحديث الخطة المرتبطة
+            const goal = await Goal.findById(goalId);
+            if (goal && type === 'income') {
+                goal.currentAmount += amount;
+                await goal.save();
+            }
         }
 
         await transaction.save();

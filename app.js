@@ -10,13 +10,13 @@ const budgetRoutes = require('./routes/budgetRoutes');
 const reportRoutes = require('./routes/Reports');
 const goalRoutes = require('./routes/goalRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
-const postRoutes = require('./routes/postRoutes'); // استيراد الرواتر للمنشورات
+//const postRoutes = require('./routes/postRoutes'); // استيراد الرواتر للمنشورات
 const notificationRoutes = require('./routes/notificationRoutes');
+const Goal = require('./routes/goalRoutes');
 const { checkGoalProgress } = require('./controllers/notificationController');
 const { seed } = require('./public/js/seedEducationalNotifications');
 const schedule = require('node-schedule');
 const EducationalNotification = require('./models/EducationalNotification');
-const Goal = require('./routes/goalRoutes');
 const ApiError = require("./utils/apierror");
 const Users = require("./routes/userRoutes");
 //const globalError = require("./middleware/errormiddleware");
@@ -54,7 +54,8 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/notifications', notificationRoutes);// إعداد مسار الإشعارات
 app.use('/api/goals', goalRoutes);// إعداد مسار الأهداف
 app.use('/api/educational-notifications' , require('./routes/educationalNotifications'));// إعداد مسار الإشعارات التعليمية
-app.use('/api/posts', postRoutes); // ربط الرواتر
+//app.use('/api/posts', postRoutes); // ربط الرواتر
+app.use('/api/goals', goalRoutes);// إعداد مسار الأهداف
 
 //app.use('/api/goals', Goal);
 
