@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>لوحة التحكم - نظام المالية الشخصية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+<!-- 
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"></script> -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
+    <script src="./js/dashboard.js"></script>
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="stylesheet" href="./styles/dashboard.css">
+    <script src="./js/main.js"></script>
+
+
+
+</head>
+<body>
+
+    <!-- شريط التنقل المحسن -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-chart-line"></i>
+                لوحة التحكم
+            </a>
+            <li class="nav-item">
+                <a class="nav-link" id="themeToggle" href="#">
+                    <i class="fas fa-moon" style="font-size: 1.3rem;"></i>
+                </a>
+            </li>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style='background-color:rgb(216, 149, 149)'>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">
+                            <i class="fas fa-home"></i> لوحة التحكم
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="Transctionshow.html">
+                            <i class="fas fa-exchange-alt"></i> المعاملات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="Budget.html">
+                            <i class="fas fa-wallet"></i> الميزانية
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link " href="goals.html">
+                            <i class="fas fa-bullseye"></i> الخطط والأهداف
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="report.html">
+                            <i class="fas fa-chart-line"></i> التقارير
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="posts.html">
+                            <i class="fas fa-comments"></i> المنتدى
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()" style="color: var(--danger-color);">
+                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="Help & Suppor.html">
+                            <i class="fas fa-question-circle"></i> الدعم
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    <div class="notification-icon notification-toggle" id="notificationToggle">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </div>
+                    
+                    <a class="nav-link" href="profile.html">
+                        <div id="user-info" class="d-flex align-items-center">
+                            <div class="user-avatar"></div>
+                            <div class="user-info">
+                                <span class="user-name"> </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="notificationContainer"></div>
+    <!-- زر الرجوع إلى الأعلى -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- المحتوى الرئيسي المحسن -->
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="section-title animate__animated animate__fadeIn" id="UserNameNav">مرحبًا بك،،،</h1>
+            <div>
+                <button class="btn btn-primary ms-3" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> تحديث البيانات
+                </button>
+            </div>
+        </div>
+
+        <!-- إجراءات سريعة -->
+        <div class="quick-actions animate__animated animate__fadeInUp">
+            <h5 class="mb-3">إجراءات سريعة</h5>
+            <div class="d-flex flex-wrap">
+                <button class="btn btn-primary" onclick="window.location.href='/add-transaction.html'">
+                    <i class="fas fa-plus"></i> إضافة معاملة
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='/Budget.html'">
+                    <i class="fas fa-wallet"></i> إنشاء ميزانية
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='/goals.html'">
+                    <i class="fas fa-bullseye"></i> إنشاء هدف
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='/report.html'">
+                    <i class="fas fa-file-pdf"></i> إنشاء تقرير
+                </button>
+
+            </div>
+        </div>
+
+
+        <!-- قسم آخر الأهداف -->
+        <div class="card mt-4 animate__animated animate__fadeInUp">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-bullseye me-2"></i> آخر الأهداف المالية
+                </div>
+                <button class="btn btn-sm btn-light" onclick="window.location.href='goals.html'">
+                    عرض الكل <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="row" id="recentGoals">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">جاري التحميل...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!--الجزء الخاص بالإشعارات التوعوية -->
+                <div class="card mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-lightbulb me-2"></i> نصائح مالية توعوية
+                    </div>
+                    <div class="card-body" id="educationalTips">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">جاري التحميل...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+        <!-- الكروت -->
+        <h2 class="section-title mt-5 animate__animated animate__fadeIn">نظرة عامة سريعة</h2>
+        <div class="row animate__animated animate__fadeInUp">
+            <div class="col-md-3">
+                <div class="card" id="balanceCard">
+                    <div class="card-body">
+                        <i class="fas fa-wallet icon"></i>
+                        <h5>إجمالي الرصيد</h5>
+                        <p id="totalBalance">0.00 دينار</p>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: 85%"></div>
+                        </div>
+                        <small class="text-muted">زيادة 12% عن الشهر الماضي</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <i class="fas fa-dollar-sign icon"></i>
+                        <h5>إجمالي الدخل</h5>
+                        <p id="totalIncome">0.00 دينار</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" style="width: 65%"></div>
+                        </div>
+                        <small class="text-muted">زيادة 8% عن الشهر الماضي</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" id="expensesCard">
+                    <div class="card-body">
+                        <i class="fas fa-shopping-cart icon"></i>
+                        <h5>إجمالي المصروفات</h5>
+                        <p id="totalExpenses">0.00 دينار</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" style="width: 35%"></div>
+                        </div>
+                        <small class="text-muted">انخفاض 5% عن الشهر الماضي</small>
+                        <p class="warning-text" id="expensesWarning" style="display: none;">تحذير: المصروفات تجاوزت الدخل والميزانية!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card" id="budgetCard">
+                    <div class="card-body">
+                        <i class="fas fa-chart-pie icon"></i>
+                        <h5>الميزانية</h5>
+                        <p id="budgetStatus">0.00 دينار</p>
+                        <div class="progress budget-progress">
+                            <div class="progress-bar budget-progress-bar" id="budgetProgressBar" style="width: 75%"></div>
+                            <div class="budget-threshold warning" id="warningThreshold" style="left: 70%"></div>
+                            <div class="budget-threshold danger" id="dangerThreshold" style="left: 90%"></div>
+                        </div>
+                        <p id="budgetCount" class="mt-2">عدد الميزانيات: 0</p>
+                        <p class="budget-warning" id="budgetWarning">تنبيه: استهلكت 70% من الميزانية!</p>
+                        <p class="budget-danger" id="budgetDanger">تحذير: استهلكت 90% من الميزانية!</p>
+                        <button class="btn btn-primary btn-sm" onclick="window.location.href='Budget.html'">
+                            <i class="fas fa-arrow-left"></i> إدارة الميزانية
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم تحليل الأنماط والتنبؤات المالية -->
+        <div class="card mt-4 animate__animated animate__fadeInUp">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-brain me-2"></i> تحليل الأنماط والتنبؤات المالية
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="pattern-analysis-card">
+                            <h5><i class="fas fa-chart-line me-2"></i> أنماط الإنفاق</h5>
+                            <div id="spendingPatterns">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">جاري التحليل...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="prediction-chart mt-3">
+                                <canvas id="spendingPatternChart" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="pattern-analysis-card">
+                            <h5><i class="fas fa-money-bill-wave me-2"></i> التوفير المتوقع</h5>
+                            <div id="savingsPrediction">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">جاري التحليل...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="prediction-chart mt-3">
+                                <canvas id="savingsPredictionChart" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="pattern-analysis-card">
+                            <h5><i class="fas fa-forward me-2"></i> المصروفات المتوقعة</h5>
+                            <div id="expensesPrediction">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">جاري التحليل...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="prediction-chart mt-3">
+                                <canvas id="expensesPredictionChart" height="150"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="aiRecommendations" class="mt-4">
+                    <!-- التوصيات ستظهر هنا -->
+                </div>
+            </div>
+        </div>
+
+        <!-- الرسوم البيانية المحسنة -->
+        <h2 class="section-title mt-5 animate__animated animate__fadeIn">التحليلات المالية</h2>
+        <div class="row animate__animated animate__fadeInUp">
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>توزيع المصروفات</h5>
+                        <select class="form-select form-select-sm" style="width: 150px;" id="expensePeriod">
+                            <option value="month">هذا الشهر</option>
+                            <option value="year">هذه السنة</option>
+                            <option value="custom">فترة مخصصة</option>
+                        </select>
+                    </div>
+                    <canvas id="pieChart" height="250"></canvas>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">أعلى مصروف: <strong>المواصلات (35%)</strong></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>مقارنة الدخل والمصروفات</h5>
+                        <select class="form-select form-select-sm" style="width: 150px;" id="comparisonPeriod">
+                            <option value="6months">آخر 6 أشهر</option>
+                            <option value="year">هذه السنة</option>
+                            <option value="custom">فترة مخصصة</option>
+                        </select>
+                    </div>
+                    <canvas id="barChart" height="250"></canvas>
+                    <div class="mt-3 text-center">
+                        <small class="text-muted">صافي الربح: <strong>0.00 دينار</strong></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- جدول المعاملات الأخيرة المحسن -->
+        <h2 class="section-title mt-5 animate__animated animate__fadeIn">آخر المعاملات</h2>
+        <div class="animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <button class="btn btn-primary btn-sm" onclick="window.location.href='Transctionshow.html'">
+                        <i class="fas fa-list"></i> عرض جميع المعاملات
+                    </button>
+                </div>
+                <div>
+                    <input type="text" class="form-control form-control-sm" placeholder="بحث..." style="width: 200px;" id="transactionSearch">
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>الوصف</th>
+                            <th>الفئة</th>
+                            <th>المبلغ</th>
+                            <th>النوع</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table-body">
+                        <!-- البيانات سيتم ملؤها عبر الباك إند -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <span class="text-muted">عرض 1 إلى 5 من 32 معاملة</span>
+                </div>
+                <div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">التالي</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل المحسن -->
+    <footer class="footer animate__animated animate__fadeIn">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>عن النظام</h6>
+                    <p class="text-muted">نظام إدارة المالية الشخصية يساعدك على تتبع دخلك ومصروفاتك بسهولة وكفاءة.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h6>روابط سريعة</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted">الأسئلة الشائعة</a></li>
+                        <li><a href="#" class="text-muted">الدعم الفني</a></li>
+                        <li><a href="#" class="text-muted">الشروط والأحكام</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-end">
+                    <h6>اتصل بنا</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@example.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +962 7 0000 0000</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-3 mb-3" style="border-color: rgba(255,255,255,0.1);">
+            <p class="mb-0">© 2023 نظام إدارة المالية الشخصية. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // متغيرات النظام
+        //const url = 'http://localhost:9050/'; // عنوان الخادم الأساسي
+        let unreadNotificationsCount = 0; // عدد الإشعارات غير المقروءة
+        let notifications = []; // قائمة لتخزين الإشعارات
+        let notificationPollingInterval = null; // مؤقت للتحقق من الإشعارات الجديدة
+        let globalTotalExpenses = 0; // المصروفات الكلية
+        let globalTotalIncome = 0; // الدخل الكلي
+        let globalBudgetAmount = 0; // قيمة الميزانية
+        let transactionsData = []; // بيانات المعاملات
+
+        // دالة لإنشاء عنصر إشعار
+        function createNotificationElement(notification) {
+            // 1. ننشئ عنصر div جديد للإشعار
+            const notificationEl = document.createElement('div');
+            
+            // 2. نضيف له كلاس حسب نوع الإشعار (info, warning, danger, success)
+            notificationEl.className = `notification ${notification.type}`;
+            
+            // 3. نملأ العنصر بمحتوى الإشعار
+            notificationEl.innerHTML = `
+                <div>
+                    <h6>${notification.title}</h6> <!-- عنوان الإشعار -->
+                    <p>${notification.message}</p> <!-- محتوى الإشعار -->
+                    <small>${new Date(notification.createdAt).toLocaleString('ar-EG')}</small> <!-- تاريخ الإشعار -->
+                </div>
+                <i class="fas fa-times" onclick="dismissNotification('${notification._id}', this.parentElement)"></i> <!-- زر الإغلاق -->
+            `;
+            
+            // 4. إذا كان الإشعار مرتبطاً بشيء (مثل معاملة أو ميزانية)
+            if (notification.relatedEntity && notification.entityId) {
+                notificationEl.style.cursor = 'pointer'; // نجعل المؤشر يظهر كيد للإشارة أنه قابل للنقر
+                notificationEl.addEventListener('click', () => {
+                    openRelatedEntity(notification.relatedEntity, notification.entityId); // نفتح الصفحة المرتبطة
+                });
+            }
+            
+            return notificationEl; // نعيد العنصر الذي أنشأناه
+        }
+
+        // دالة لعرض الإشعار
+        function showNotification(notification) {
+            // 1. لا نعرض الإشعار إذا كانت نافذة الإشعارات مفتوحة
+            if (document.querySelector('.swal2-container')) return;
+            
+            // 2. نحصل على مكان عرض الإشعارات في الصفحة
+            const container = document.getElementById('notificationContainer');
+            
+            // 3. ننشئ عنصر الإشعار
+            const notificationEl = createNotificationElement(notification);
+            
+            // 4. نضيف الإشعار في بداية القائمة (ليظهر بالأعلى)
+            container.prepend(notificationEl);
+            
+            // 5. بعد 5 ثواني نبدأ إخفاء الإشعار
+            setTimeout(() => {
+                notificationEl.classList.add('hide'); // نضيف كلاس للإخفاء
+                setTimeout(() => notificationEl.remove(), 300); // بعد 0.3 ثانية نحذف العنصر
+            }, 2500);
+        }
+
+        // دالة لإخفاء الإشعار
+        function dismissNotification(notificationId, element) {
+            // 1. إذا وجد العنصر نبدأ إخفاءه
+            if (element) {
+                element.classList.add('hide'); // نضيف كلاس للإخفاء
+                setTimeout(() => element.remove(), 300); // بعد 0.3 ثانية نحذفه
+            }
+            
+            // 2. نرسل طلب للخادم لتمييز الإشعار كمقروء
+            axios.patch(`${url}api/notifications/${notificationId}/read`)
+                .catch(error => console.error('Error marking notification as read:', error));
+            
+            // 3. نقلل عدد الإشعارات غير المقروءة ونحدث العداد
+            if (unreadNotificationsCount > 0) {
+                unreadNotificationsCount--;
+                updateNotificationBadge();
+            }
+        }
+
+        // دالة لفتح الكيان المرتبط
+        function openRelatedEntity(entityType, entityId) {
+            // نفتح صفحة مختلفة حسب نوع العنصر المرتبط
+            switch(entityType) {
+                case 'transaction': // إذا كانت معاملة
+                    window.location.href = `Transctionshow.html?id=${entityId}`;
+                    break;
+                case 'budget': // إذا كانت ميزانية
+                    window.location.href = `Budget.html?id=${entityId}`;
+                    break;
+                case 'report': // إذا كان تقرير
+                    window.location.href = `report.html?id=${entityId}`;
+                    break;
+                case 'goal': // إذا كان هدف
+                    window.location.href = `goals.html?id=${entityId}`;
+                    break;
+                default: // إذا لم يكن مرتبطاً بشيء
+                    break;
+            }
+        }
+
+        // دالة لتحديث بادج الإشعارات
+        function updateNotificationBadge() {
+            // 1. نحصل على عنصر العداد
+            const badge = document.getElementById('notificationBadge');
+            
+            // 2. إذا كان هناك إشعارات غير مقروءة
+            if (unreadNotificationsCount > 0) {
+                // نعرض الرقم (9+ إذا كانت أكثر من 9)
+                badge.textContent = unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount;
+                badge.style.display = 'flex'; // نجعله ظاهراً
+            } else {
+                badge.style.display = 'none'; // نجعله مخفياً
+            }
+        }
+
+        // دالة لجلب الإشعارات
+        async function fetchNotifications() {
+            try {
+                // 1. نحصل على ID المستخدم من localStorage
+                const userId = localStorage.getItem('userId');
+                if (!userId) return; // إذا لم يكن مسجلاً نخرج
+                
+                // 2. نطلب الإشعارات غير المقروءة من الخادم (حد أقصى 5)
+                const response = await axios.get(`${url}api/notifications/user/${userId}?unreadOnly=true&limit=5`);
+                const newNotifications = response.data.data; // الإشعارات الجديدة
+                const newCount = response.data.total; // العدد الكلي
+                
+                // 3. إذا كان هناك إشعارات جديدة ولم تكن معروضة من قبل
+                if (newNotifications.length > 0 && newCount > unreadNotificationsCount) {
+                    newNotifications.forEach(notif => {
+                        if (!notifications.some(n => n._id === notif._id)) {
+                            showNotification(notif); // نعرض كل إشعار جديد
+                        }
+                    });
+                }
+                
+                // 4. نحفظ الإشعارات الجديدة ونحدث العداد
+                notifications = newNotifications;
+                unreadNotificationsCount = newCount;
+                updateNotificationBadge();
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        }
+
+        // دالة لتمييز جميع الإشعارات كمقروءة
+        async function markAllAsRead() {
+            try {
+                // 1. نحصل على ID المستخدم
+                const userId = localStorage.getItem('userId');
+                if (!userId) return;
+                
+                // 2. نرسل طلب للخادم لتمييز جميع الإشعارات كمقروءة
+                await axios.patch(`${url}api/notifications/user/${userId}/read-all`);
+                
+                // 3. نعيد العداد للصفر ونحدثه
+                unreadNotificationsCount = 0;
+                updateNotificationBadge();
+                
+                // 4. نبدأ إخفاء جميع الإشعارات الظاهرة
+                document.querySelectorAll('#notificationContainer .notification').forEach(el => {
+                    el.classList.add('hide');
+                    setTimeout(() => el.remove(), 300);
+                });
+            } catch (error) {
+                console.error('Error marking all notifications as read:', error);
+            }
+        }
+
+        // دالة لعرض قائمة الإشعارات
+        async function showNotificationsList() {
+            try {
+                // 1. نحصل على ID المستخدم
+                const userId = localStorage.getItem('userId');
+                if (!userId) return;
+                
+                // 2. نطلب آخر 10 إشعارات من الخادم
+                const response = await axios.get(`${url}api/notifications/user/${userId}?limit=10`);
+                const notifications = response.data.data;
+                
+                // 3. نعرضها في نافذة منبثقة
+                Swal.fire({
+                    title: 'الإشعارات',
+                    html: generateNotificationsHTML(notifications), // نولد HTML للإشعارات
+                    showConfirmButton: false, // بدون زر تأكيد
+                    showCloseButton: true, // مع زر إغلاق
+                    width: '80%', // عرض النافذة
+                    maxWidth: '500px', // أقصى عرض
+                    customClass: {
+                        popup: 'rtl-popup' // كلاس للاتجاه RTL
+                    }
+                });
+                
+                // 4. نعلم الخادم أن المستخدم شاهد جميع الإشعارات
+                markAllAsRead();
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        }
+
+        // دالة لإنشاء HTML لقائمة الإشعارات
+        function generateNotificationsHTML(notifications) {
+            // 1. إذا لم يكن هناك إشعارات
+            if (notifications.length === 0) {
+                return '<p>لا توجد إشعارات جديدة</p>';
+            }
+
+            // 2. نبدأ بإنشاء HTML
+            let html = '<div class="notifications-list">';
+
+            // 3. نضيف كل إشعار
+            notifications.forEach(notif => {
+                html += `
+                    <div class="notification-item ${notif.type}">
+                        <div class="notification-header">
+                            <strong>${notif.title}</strong>
+                            <small>${new Date(notif.createdAt).toLocaleString('ar-EG')}</small>
+                        </div>
+                        <p>${notif.message}</p>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            return html;
+        }
+
+        // دالة لتهيئة نظام الإشعارات
+        function setupNotificationSystem() {
+            // جلب الإشعارات فوراً عند التحميل
+            fetchNotifications();
+
+            // بدء الاستقصاء الدوري كل 30 ثانية
+            notificationPollingInterval = setInterval(fetchNotifications, 80000);
+
+            // إضافة حدث النقر لزر الإشعارات
+            document.getElementById('notificationToggle').addEventListener('click', showNotificationsList);
+
+            // جلب الإشعارات عند عودة المستخدم للتبويب
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    fetchNotifications();
+                }
+            });
+        }
+
+        // دالة لعرض إشعار SweetAlert2
+        function showSweetAlertNotification(title, message, type) {
+            // نعرض نافذة منبثقة جميلة
+            Swal.fire({
+                title: title, // العنوان
+                text: message, // المحتوى
+                icon: type, // النوع (success, error, warning, info)
+                confirmButtonText: 'حسناً', // نص زر التأكيد
+                customClass: {
+                    popup: 'rtl-popup' // كلاس للاتجاه RTL
+                }
+            });
+        }
+
+        // دالة للتحقق من وجود المستخدم
+        async function fetchData() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'يجب تسجيل الدخول أولاً',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+                return;
+            }
+
+            try {
+                const totalsResponse = await axios.get(`${url}api/transactions/totals?userId=${userId}`);
+                const { totalIncome, totalExpenses } = totalsResponse.data;
+                
+                // حفظ البيانات في المتغيرات العالمية
+                globalTotalIncome = totalIncome || 0;
+                globalTotalExpenses = totalExpenses || 0;
+
+                const budgetResponse = await axios.get(`${url}api/budgets/summary?userId=${userId}`);
+                const { lastBudget, budgetCount } = budgetResponse.data;
+                
+                // حفظ قيمة الميزانية في المتغير العالمي
+                globalBudgetAmount = lastBudget || 0;
+
+                const transactionsResponse = await axios.get(`${url}api/transactions?userId=${userId}`);
+                // حفظ بيانات المعاملات
+                transactionsData = transactionsResponse.data;
+
+                const userData = await axios.get(`${url}users/${userId}`);
+                const initialBalance = userData.data.user.initialBalance || 0;
+                const totalBalance = initialBalance + totalIncome - totalExpenses;
+
+                // تحديث البطاقات
+                updateOverviewCards(totalBalance, totalIncome, totalExpenses, lastBudget, budgetCount);
+                
+                // تحديث الرسوم البيانية
+                updateCharts(transactionsData);
+                
+                // تحديث جدول المعاملات
+                updateTransactionsTable(transactionsData);
+                
+                // جلب الأهداف
+                fetchRecentGoals(userId);
+                
+                // تحليل أنماط الإنفاق وعمل التنبؤات
+                analyzeSpendingPatterns(transactionsData);
+                
+                // تحديث التفاعل بين الميزانية والمصروفات
+                updateBudgetExpenseInteraction(totalExpenses, lastBudget);
+
+                if (totalExpenses > totalIncome) {
+                    // إرسال إشعار نظام عند تجاوز المصروفات للدخل
+                    axios.post(`${url}api/notifications`, {
+                        userId,
+                        title: 'تحذير مالي',
+                        message: 'لقد تجاوزت المصروفات الدخل لهذا الشهر',
+                        type: 'warning',
+                        relatedEntity: 'budget',
+                        entityId: budgetResponse.data._id
+                    });
+                    
+                    showSweetAlertNotification('تحذير!', 'لقد تجاوزت المصروفات الدخل لهذا الشهر.', 'warning');
+                }
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب البيانات:', error);
+                showSweetAlertNotification('خطأ', 'فشل جلب البيانات. يرجى المحاولة لاحقًا.', 'error');
+            }
+        }
+
+        // دالة لتحديث التفاعل بين الميزانية والمصروفات
+    function updateBudgetExpenseInteraction(expenses, budget) {
+    if (!budget || budget <= 0) {
+        // إخفاء التحذيرات إذا لم تكن هناك ميزانية
+        document.getElementById('budgetWarning').style.display = 'none';
+        document.getElementById('budgetDanger').style.display = 'none';
+        return;
+    }
+    
+    const budgetCard = document.getElementById('budgetCard');
+    const progressBar = document.getElementById('budgetProgressBar');
+    const budgetWarning = document.getElementById('budgetWarning');
+    const budgetDanger = document.getElementById('budgetDanger');
+    
+    // حساب نسبة الاستهلاك
+    const consumptionPercentage = Math.min((expenses / budget) * 100, 100);
+    const remainingBudget = Math.max(budget - expenses, 0);
+    
+    // تحديث النص والشريط
+    document.getElementById('budgetStatus').textContent = `${remainingBudget.toFixed(2)} دينار`;
+    progressBar.style.width = `${consumptionPercentage}%`;
+    
+    // إدارة التحذيرات
+    if (consumptionPercentage >= 90) {
+        progressBar.className = 'progress-bar budget-progress-bar bg-danger';
+        budgetWarning.style.display = 'none';
+        budgetDanger.style.display = 'block';
+        budgetCard.classList.add('card-danger');
+        
+        // إرسال إشعار إذا تجاوزت 90%
+        if (consumptionPercentage >= 90 && consumptionPercentage < 100) {
+            const userId = localStorage.getItem('userId');
+            if (userId) {
+                axios.post(`${url}api/notifications`, {
+                    userId,
+                    title: 'تحذير ميزانية',
+                    message: 'لقد استهلكت أكثر من 90% من ميزانيتك',
+                    type: 'danger'
+                });
+            }
+        }
+    } else if (consumptionPercentage >= 70) {
+        progressBar.className = 'progress-bar budget-progress-bar bg-warning';
+        budgetWarning.style.display = 'block';
+        budgetDanger.style.display = 'none';
+        budgetCard.classList.add('card-warning');
+    } else {
+        progressBar.className = 'progress-bar budget-progress-bar';
+        budgetWarning.style.display = 'none';
+        budgetDanger.style.display = 'none';
+        budgetCard.classList.remove('card-warning', 'card-danger');
+    }
+    
+    // إدارة العتبات
+    document.getElementById('warningThreshold').style.display = consumptionPercentage >= 100 ? 'none' : 'block';
+    document.getElementById('dangerThreshold').style.display = consumptionPercentage >= 100 ? 'none' : 'block';
+}       
+       
+       
+        // دالة لجلب الأهداف الأخيرة
+        async function fetchRecentGoals(userId) {
+            try {
+                const response = await axios.get(`${url}api/goals/user/${userId}?limit=3`);
+                const goals = response.data.data || [];
+                
+                const goalsContainer = document.getElementById('recentGoals');
+                goalsContainer.innerHTML = '';
+                
+                if (goals.length === 0) {
+                    goalsContainer.innerHTML = `
+                        <div class="col-12 text-center">
+                            <p>لم تقم بإنشاء أي أهداف بعد.</p>
+                            <button class="btn btn-primary btn-sm mt-2" onclick="window.location.href='goals.html'">
+                                <i class="fas fa-plus-circle me-2"></i> إنشاء هدف جديد
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                goals.forEach(goal => {
+                    // حساب نسبة التقدم
+                    const progress = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
+                    
+                    // تحديد فئة التقدم
+                    let progressClass = 'just-started';
+                    if (progress >= 75) {
+                        progressClass = 'almost-complete';
+                    } else if (progress >= 40) {
+                        progressClass = 'halfway';
+                    }
+                    
+                    // تنسيق التاريخ
+                    const endDate = new Date(goal.endDate).toLocaleDateString('ar-EG');
+                    
+                    // إنشاء بطاقة الهدف
+                    const goalHtml = `
+                        <div class="col-md-4 mb-3">
+                            <div class="goal-card ${progressClass}" onclick="window.location.href='goals.html?id=${goal._id}'">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="goal-title">${goal.title}</h5>
+                                    <span class="goal-type">${getGoalTypeText(goal.type)}</span>
+                                </div>
+                                <p class="goal-amount">${goal.currentAmount.toFixed(2)} / ${goal.targetAmount.toFixed(2)} دينار</p>
+                                <div class="goal-progress progress">
+                                    <div class="progress-bar" style="width: ${progress}%"></div>
+                                </div>
+                                <div class="goal-info">
+                                    <span><i class="fas fa-calendar-alt me-1"></i> ${endDate}</span>
+                                    <span><i class="fas fa-chart-line me-1"></i> ${progress.toFixed(1)}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    goalsContainer.innerHTML += goalHtml;
+                });
+                
+                // تطبيق تأثيرات GSAP على الأهداف
+                gsap.from(".goal-card", {
+                    duration: 0.7,
+                    y: 20,
+                    opacity: 0,
+                    stagger: 0.2,
+                    ease: "power2.out"
+                });
+                
+            } catch (error) {
+                console.error('حدث خطأ أثناء جلب الأهداف:', error);
+                document.getElementById('recentGoals').innerHTML = `
+                    <div class="col-12 text-center">
+                        <p class="text-danger">فشل جلب الأهداف. يرجى المحاولة لاحقاً.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // دالة لتحويل نوع الهدف إلى نص عربي
+        function getGoalTypeText(type) {
+            const types = {
+                'saving': 'توفير',
+                'debt': 'سداد دين',
+                'investment': 'استثمار',
+                'purchase': 'شراء',
+                'other': 'آخر'
+            };
+            return types[type] || 'آخر';
+        }
+
+        // دالة تحليل أنماط الإنفاق
+        function analyzeSpendingPatterns(transactions) {
+            if (!transactions || transactions.length < 3) {
+                document.getElementById('spendingPatterns').innerHTML = '<p>لا توجد بيانات كافية للتحليل.</p>';
+                document.getElementById('savingsPrediction').innerHTML = '<p>لا توجد بيانات كافية للتنبؤ.</p>';
+                document.getElementById('expensesPrediction').innerHTML = '<p>لا توجد بيانات كافية للتنبؤ.</p>';
+                document.getElementById('aiRecommendations').innerHTML = '';
+                return;
+            }
+            
+            // 1. تجميع المصروفات حسب الفئة
+            const expensesByCategory = {};
+            const expensesByMonth = {};
+            const incomeByMonth = {};
+            let expensesTotal = 0;
+            let incomeTotal = 0;
+            
+            transactions.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+                
+                if (transaction.type === 'expense') {
+                    // إضافة للمصروفات حسب الفئة
+                    expensesByCategory[transaction.category] = (expensesByCategory[transaction.category] || 0) + transaction.amount;
+                    expensesTotal += transaction.amount;
+                    
+                    // إضافة للمصروفات حسب الشهر
+                    expensesByMonth[monthKey] = (expensesByMonth[monthKey] || 0) + transaction.amount;
+                } else {
+                    // إضافة للدخل حسب الشهر
+                    incomeByMonth[monthKey] = (incomeByMonth[monthKey] || 0) + transaction.amount;
+                    incomeTotal += transaction.amount;
+                }
+            });
+            
+            // 2. تحديد أنماط الإنفاق
+            const topCategories = Object.entries(expensesByCategory)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3);
+            
+            // 3. التحليل الزمني للمصروفات (لآخر 6 أشهر)
+            const last6Months = [];
+            const currentDate = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const month = new Date(currentDate);
+                month.setMonth(currentDate.getMonth() - i);
+                const monthKey = `${month.getFullYear()}-${month.getMonth() + 1}`;
+                const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'short' }).format(month);
+                
+                last6Months.push({
+                    month: monthName,
+                    expenses: expensesByMonth[monthKey] || 0,
+                    income: incomeByMonth[monthKey] || 0
+                });
+            }
+            
+            // 4. التنبؤ بالمصروفات المستقبلية (باستخدام الانحدار الخطي)
+            const expensesData = last6Months.map((m, i) => [i, m.expenses]);
+            const incomeData = last6Months.map((m, i) => [i, m.income]);
+            
+            // استخدام مكتبة الانحدار للتنبؤ
+            const expensesResult = regression.linear(expensesData);
+            const incomeResult = regression.linear(incomeData);
+            
+            // التنبؤ بالقيم المستقبلية
+            const nextThreeMonths = [];
+            for (let i = 1; i <= 3; i++) {
+                const nextMonth = new Date(currentDate);
+                nextMonth.setMonth(currentDate.getMonth() + i);
+                const monthName = new Intl.DateTimeFormat('ar-EG', { month: 'short' }).format(nextMonth);
+                
+                const predictedExpense = expensesResult.predict(expensesData.length - 1 + i)[1];
+                const predictedIncome = incomeResult.predict(incomeData.length - 1 + i)[1];
+                
+                nextThreeMonths.push({
+                    month: monthName,
+                    expenses: Math.max(0, predictedExpense),
+                    income: Math.max(0, predictedIncome)
+                });
+            }
+            
+            // 5. حساب التوفير المتوقع
+            const expectedSavings = nextThreeMonths.map(m => ({
+                month: m.month,
+                saving: Math.max(0, m.income - m.expenses)
+            }));
+            
+            // 6. عرض النتائج في واجهة المستخدم
+            
+            // 6.1 تحليل أنماط الإنفاق
+            let patternsHtml = `<p>أكثر 3 فئات تنفق عليها:</p><ul>`;
+            
+            topCategories.forEach(([category, amount]) => {
+                const percentage = (amount / expensesTotal * 100).toFixed(1);
+                patternsHtml += `<li><strong>${category}:</strong> ${amount.toFixed(2)} دينار (${percentage}%)</li>`;
+            });
+            
+            patternsHtml += `</ul>`;
+            
+            if (topCategories.length > 0) {
+                const topCategory = topCategories[0][0];
+                const percentage = (topCategories[0][1] / expensesTotal * 100).toFixed(1);
+                
+                if (percentage > 40) {
+                    patternsHtml += `<div class="alert alert-warning mt-2">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>تنبيه:</strong> تنفق أكثر من ${percentage}% من مصروفاتك على ${topCategory}. قد ترغب في مراجعة هذه النفقات.
+                    </div>`;
+                }
+            }
+            
+            document.getElementById('spendingPatterns').innerHTML = patternsHtml;
+            
+            // 6.2 التوفير المتوقع
+            let savingsHtml = `<p>التوفير المتوقع للأشهر القادمة:</p>`;
+            
+            expectedSavings.forEach(month => {
+                savingsHtml += `<div class="d-flex justify-content-between">
+                    <span>${month.month}</span>
+                    <strong>${month.saving.toFixed(2)} دينار</strong>
+                </div>`;
+            });
+            
+            const averageSaving = expectedSavings.reduce((sum, month) => sum + month.saving, 0) / expectedSavings.length;
+            
+            if (averageSaving <= 0) {
+                savingsHtml += `<div class="alert alert-danger mt-2">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>تحذير:</strong> التنبؤات تشير إلى عدم وجود توفير في الأشهر القادمة.
+                </div>`;
+            }
+            
+            document.getElementById('savingsPrediction').innerHTML = savingsHtml;
+            
+            // 6.3 المصروفات المتوقعة
+            let expensesHtml = `<p>المصروفات المتوقعة للأشهر القادمة:</p>`;
+            
+            nextThreeMonths.forEach(month => {
+                expensesHtml += `<div class="d-flex justify-content-between">
+                    <span>${month.month}</span>
+                    <strong>${month.expenses.toFixed(2)} دينار</strong>
+                </div>`;
+            });
+            
+            // حساب معدل النمو في المصروفات
+            const firstExpense = last6Months[0].expenses;
+            const lastExpense = last6Months[last6Months.length - 1].expenses;
+            const expenseGrowthRate = firstExpense > 0 ? ((lastExpense - firstExpense) / firstExpense) * 100 : 0;
+            
+            if (expenseGrowthRate > 20) {
+                expensesHtml += `<div class="alert alert-warning mt-2">
+                    <i class="fas fa-chart-line me-2"></i>
+                    <strong>ملاحظة:</strong> معدل نمو المصروفات لديك ${expenseGrowthRate.toFixed(1)}%، وهو معدل مرتفع.
+                </div>`;
+            }
+            
+            document.getElementById('expensesPrediction').innerHTML = expensesHtml;
+            
+            // 6.4 التوصيات الذكية
+            generateAIRecommendations(
+                topCategories,
+                expensesTotal,
+                incomeTotal,
+                lastExpense,
+                firstExpense,
+                nextThreeMonths,
+                expectedSavings
+            );
+            
+            // 7. رسم المخططات التنبؤية
+            
+            // 7.1 مخطط أنماط الإنفاق
+            const spendingCtx = document.getElementById('spendingPatternChart').getContext('2d');
+            const categoryLabels = topCategories.map(cat => cat[0]);
+            const categoryValues = topCategories.map(cat => cat[1]);
+            
+            new Chart(spendingCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryLabels,
+                    datasets: [{
+                        data: categoryValues,
+                        backgroundColor: ['#00aaff', '#ff6b6b', '#2ecc71', '#f39c12'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // 7.2 مخطط التوفير المتوقع
+            const savingsCtx = document.getElementById('savingsPredictionChart').getContext('2d');
+            const savingsLabels = expectedSavings.map(month => month.month);
+            const savingsValues = expectedSavings.map(month => month.saving);
+            
+            new Chart(savingsCtx, {
+                type: 'bar',
+                data: {
+                    labels: savingsLabels,
+                    datasets: [{
+                        label: 'التوفير المتوقع',
+                        data: savingsValues,
+                        backgroundColor: 'rgba(46, 204, 113, 0.5)',
+                        borderColor: '#2ecc71',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+            
+            // 7.3 مخطط المصروفات المتوقعة
+            const expensesCtx = document.getElementById('expensesPredictionChart').getContext('2d');
+            const expensesLabels = nextThreeMonths.map(month => month.month);
+            const expensesValues = nextThreeMonths.map(month => month.expenses);
+            const incomeValues = nextThreeMonths.map(month => month.income);
+            
+            new Chart(expensesCtx, {
+                type: 'line',
+                data: {
+                    labels: expensesLabels,
+                    datasets: [{
+                        label: 'المصروفات',
+                        data: expensesValues,
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        borderColor: '#ff6b6b',
+                        borderWidth: 2,
+                        fill: true
+                    }, {
+                        label: 'الدخل',
+                        data: incomeValues,
+                        backgroundColor: 'rgba(0, 170, 255, 0.1)',
+                        borderColor: '#00aaff',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // دالة لتوليد التوصيات الذكية
+        function generateAIRecommendations(
+            topCategories,
+            expensesTotal,
+            incomeTotal,
+            lastExpense,
+            firstExpense,
+            nextThreeMonths,
+            expectedSavings
+        ) {
+            const recommendations = [];
+            
+            // 1. التوصية بناءً على نسبة الإنفاق على الفئة الأعلى
+            if (topCategories.length > 0) {
+                const topCategory = topCategories[0][0];
+                const topAmount = topCategories[0][1];
+                const topPercentage = (topAmount / expensesTotal * 100);
+                
+                if (topPercentage > 40) {
+                    recommendations.push({
+                        title: 'تقليل الإنفاق على ' + topCategory,
+                        message: `تنفق ${topPercentage.toFixed(1)}% من مصروفاتك على ${topCategory}. حاول تقليل هذه النسبة إلى 30% أو أقل.`,
+                        type: 'warning'
+                    });
+                }
+            }
+            
+            // 2. التوصية بناءً على نسبة المصروفات للدخل
+            const expenseToIncomeRatio = expensesTotal / incomeTotal;
+            
+            if (expenseToIncomeRatio > 0.9) {
+                recommendations.push({
+                    title: 'المصروفات قريبة من الدخل',
+                    message: `تنفق ${(expenseToIncomeRatio * 100).toFixed(1)}% من دخلك. ينصح بالحفاظ على نسبة 70-80% كحد أقصى.`,
+                    type: 'danger'
+                });
+            } else if (expenseToIncomeRatio < 0.5) {
+                recommendations.push({
+                    title: 'معدل توفير ممتاز',
+                    message: `أنت توفر ${((1 - expenseToIncomeRatio) * 100).toFixed(1)}% من دخلك. استمر في هذا النمط الجيد!`,
+                    type: 'success'
+                });
+            }
+            
+            // 3. التوصية بناءً على معدل نمو المصروفات
+            const expenseGrowthRate = firstExpense > 0 ? ((lastExpense - firstExpense) / firstExpense) * 100 : 0;
+            
+            if (expenseGrowthRate > 20) {
+                recommendations.push({
+                    title: 'نمو سريع في المصروفات',
+                    message: `معدل نمو مصروفاتك مرتفع (${expenseGrowthRate.toFixed(1)}%). حاول مراجعة أسباب هذه الزيادة للحفاظ على التوازن المالي.`,
+                    type: 'warning'
+                });
+            } else if (expenseGrowthRate < 0) {
+                recommendations.push({
+                    title: 'انخفاض في المصروفات',
+                    message: `رائع! استطعت تقليل مصروفاتك بنسبة ${Math.abs(expenseGrowthRate).toFixed(1)}%. استمر في هذا الاتجاه الإيجابي.`,
+                    type: 'success'
+                });
+            }
+            
+            // 4. التوصية بناءً على التوفير المتوقع
+            const averageSaving = expectedSavings.reduce((sum, month) => sum + month.saving, 0) / expectedSavings.length;
+            const savingToIncomeRatio = averageSaving / (incomeTotal / 6);  // نسبة التوفير للدخل الشهري المتوسط
+            
+            if (savingToIncomeRatio <= 0.05) {
+                recommendations.push({
+                    title: 'التوفير المتوقع منخفض',
+                    message: `توقعات التوفير الخاصة بك منخفضة جداً. ننصح بمراجعة الميزانية وتقليل بعض المصروفات غير الضرورية.`,
+                    type: 'warning'
+                });
+            } else if (savingToIncomeRatio >= 0.3) {
+                recommendations.push({
+                    title: 'معدل توفير متوقع ممتاز',
+                    message: `من المتوقع أن توفر حوالي ${(savingToIncomeRatio * 100).toFixed(1)}% من دخلك الشهري. هذا معدل ممتاز للتوفير!`,
+                    type: 'success'
+                });
+            }
+            
+            // 5. عرض التوصيات في واجهة المستخدم
+            const recommendationsContainer = document.getElementById('aiRecommendations');
+            
+            if (recommendations.length === 0) {
+                recommendationsContainer.innerHTML = `
+                    <div class="ai-recommendation">
+                        <i class="fas fa-thumbs-up"></i>
+                        <strong>أداء مالي مستقر</strong>
+                        <p>وضعك المالي مستقر ومتوازن. استمر في الإدارة الجيدة لميزانيتك.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let recommendationsHtml = `<h5 class="mb-3"><i class="fas fa-robot me-2"></i> توصيات ذكية لتحسين وضعك المالي</h5>`;
+            
+            recommendations.forEach(rec => {
+                recommendationsHtml += `
+                    <div class="ai-recommendation">
+                        <i class="fas fa-lightbulb"></i>
+                        <strong>${rec.title}</strong>
+                        <p>${rec.message}</p>
+                    </div>
+                `;
+            });
+            
+            recommendationsContainer.innerHTML = recommendationsHtml;
+            
+            // تطبيق تأثيرات GSAP على التوصيات
+            gsap.from(".ai-recommendation", {
+                duration: 0.5,
+                y: 20,
+                opacity: 0,
+                stagger: 0.2,
+                ease: "power2.out",
+                delay: 0.3
+            });
+        }
+
+async function fetchBudgetSummary() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        console.log('User ID not found');
+        return { error: 'User not authenticated' };
+    }
+
+    try {
+        const response = await axios.get(`${url}api/budgets/summary?userId=${userId}`);
+        
+        // التحقق من بنية الاستجابة
+        if (response.data && response.data.success !== false) {
+            const { lastBudget, budgetCount } = response.data;
+            console.log(lastBudget);
+            
+            // تحديث المتغيرات العالمية
+            globalBudgetAmount = lastBudget ;
+            
+            // تحديث واجهة المستخدم
+            document.getElementById('budgetStatus').textContent = `${globalBudgetAmount.toFixed(2)} دينار`;
+            document.getElementById('budgetCount').textContent = `عدد الميزانيات: ${budgetCount || 0}`;
+            
+            // تحديث التفاعل مع المصروفات
+            updateBudgetExpenseInteraction(globalTotalExpenses, globalBudgetAmount);
+            
+            return { lastBudget: globalBudgetAmount, budgetCount };
+        } else {
+            console.error('Invalid response structure', response.data);
+            return { error: 'Invalid server response' };
+        }
+    } catch (error) {
+        console.error('Error fetching budget summary:', error);
+        
+        // تعيين قيم افتراضية
+        document.getElementById('budgetStatus').textContent = '0.00 دينار';
+        document.getElementById('budgetCount').textContent = 'عدد الميزانيات: 0';
+        
+        return { error: error.message };
+    }
+}        
+        
+        
+        
+        
+function updateOverviewCards(totalBalance, totalIncome, totalExpenses, lastBudget, budgetCount) {
+    // تحديث الرصيد
+    document.getElementById('totalBalance').textContent = `${totalBalance.toFixed(2)} دينار`;
+    
+    // تحديث الدخل
+    document.getElementById('totalIncome').textContent = `${totalIncome.toFixed(2)} دينار`;
+    
+    // تحديث المصروفات
+    document.getElementById('totalExpenses').textContent = `${totalExpenses.toFixed(2)} دينار`;
+    
+    // تحذير إذا تجاوزت المصروفات الدخل
+    if (totalExpenses > totalIncome) {
+        document.getElementById('expensesCard').classList.add('card-danger');
+        document.getElementById('expensesWarning').style.display = "block";
+        
+        // إرسال إشعار
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+            axios.post(`${url}api/notifications`, {
+                userId,
+                title: 'تحذير مالي',
+                message: 'المصروفات تجاوزت الدخل لهذا الشهر',
+                type: 'danger'
+            });
+        }
+    } else {
+        document.getElementById('expensesCard').classList.remove('card-danger');
+        document.getElementById('expensesWarning').style.display = "none";
+    }
+    
+    // تحديث الميزانية
+    updateBudgetExpenseInteraction(totalExpenses, lastBudget);
+    document.getElementById('budgetCount').textContent = `عدد الميزانيات: ${budgetCount || 0}`;
+}        
+        
+        
+        function updateCharts(transactions) {
+            const categories = {};
+            let incomeTotal = 0;
+            let expensesTotal = 0;
+
+            transactions.forEach(transaction => {
+                if (transaction.type === 'income') {
+                    incomeTotal += transaction.amount;
+                } else {
+                    expensesTotal += transaction.amount;
+                    categories[transaction.category] = (categories[transaction.category] || 0) + transaction.amount;
+                }
+            });
+
+            const pieChartData = {
+                labels: Object.keys(categories),
+                datasets: [{
+                    data: Object.values(categories),
+                    backgroundColor: ['#00aaff', '#ff4d4d', '#2ecc71', '#f39c12'],
+                }]
+            };
+
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: pieChartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                    },
+                },
+            });
+
+            const barChartData = {
+                labels: ['الدخل', 'المصروفات'],
+                datasets: [{
+                    label: 'المبلغ',
+                    data: [incomeTotal, expensesTotal],
+                    backgroundColor: ['#00aaff', '#ff4d4d'],
+                }],
+            };
+
+            const barCtx = document.getElementById('barChart').getContext('2d');
+            new Chart(barCtx, {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                    },
+                },
+            });
+        }
+
+        function updateTransactionsTable(transactions) {
+            const tableBody = document.getElementById('transactions-table-body');
+            tableBody.innerHTML = '';
+
+            transactions.slice(0, 5).forEach(transaction => {
+                const row = `
+                    <tr class="${transaction.amount > transaction.budget ? 'over-budget' : ''}">
+                        <td>${new Date(transaction.date).toLocaleDateString('ar-EG')}</td>
+                        <td>${transaction.description || '-'}</td>
+                        <td>${transaction.category}</td>
+                        <td>${transaction.amount.toFixed(2)} دينار</td>
+                        <td>${transaction.type === 'income' ? '<span class="badge-income">دخل</span>' : '<span class="badge-expense">مصروف</span>'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewTransaction('${transaction._id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="editTransaction('${transaction._id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        function viewTransaction(id) {
+            window.location.href = `Transctionshow.html?id=${id}`;
+        }
+
+        function editTransaction(id) {
+            window.location.href = `edit-transaction.html?id=${id}`;
+        }
+
+        function refreshData() {
+            // يمكنك هنا إضافة كود AJAX لجلب أحدث البيانات
+            const now = new Date();
+            // const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+            // const timeString = now.toLocaleTimeString('ar-EG', options);
+            // document.getElementById('lastUpdated').textContent = `اليوم، ${timeString}`;
+            location.reload();
+
+            // إضافة تأثير مرئي للتحديث
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.add('animate__animated', 'animate__pulse');
+                setTimeout(() => {
+                    card.classList.remove('animate__animated', 'animate__pulse');
+                }, 1000);
+            });
+
+            // إعادة جلب البيانات من الخادم
+            fetchData();
+            fetchBudgetSummary();
+        }
+
+
+
+        window.onload = function() {
+            fetchData();
+            fetchBudgetSummary();
+            setupNotificationSystem();
+            fetchUserData();
+            applyDarkLightMode();
+
+            // تطبيق تأثيرات GSAP
+            gsap.from(".card", {
+                duration: 1,
+                y: 50,
+                opacity: 0,
+                stagger: 0.2,
+                ease: "power2.out"
+            });
+
+            gsap.from("table tr", {
+                duration: 1,
+                x: -50,
+                opacity: 0,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+        };
+
+        window.onscroll = () => {
+            const backToTopButton = document.getElementById('backToTop');
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        };
+
+        document.getElementById('backToTop').onclick = () => {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        };
+
+        // تهيئة البحث في الجدول
+        document.getElementById('transactionSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#transactions-table-body tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+
+        function showUserNameonNav(){
+
+               // const user_Data = axios.get(`${url}users/${localStorage.getItem('userId')}`)
+               // .then((response) => {
+                    //console.log(response.data);
+                    const userData = localStorage.getItem('userData') ;
+                    const username = JSON.parse(userData);
+                    const user = username.username;
+                    //const user = response.data.user.username;
+                    document.getElementById("UserNameNav").textContent = ",,, مرحبا بك " + user + "!";
+                    
+                // }).catch((error) => {
+                //     console.error('Error fetching user data:', error);
+                // });
+        };
+        showUserNameonNav();
+
+
+
+    </script>
+    
+</body>
+</html>
