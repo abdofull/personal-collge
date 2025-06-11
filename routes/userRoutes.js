@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const subscribeController = require('../controllers/subscribeController'); 
 const {
     registerUser,
     loginUser,
@@ -72,8 +71,6 @@ router.post('/logout/:userId', deleteUserAccount);
 // توجيه لاسترجاع بيانات المستخدم
 router.get('/users/:userId', getUserProfile);
 
-// نقطة النهاية للاشتراك في الإشعارات
-router.post('/subscribe', subscribeController.subscribe);
 
 
 module.exports = router;

@@ -22,7 +22,6 @@ const Transaction = require('./routes/transactionRoutes');
 const budgetRoutes = require('./routes/budgetRoutes');
 const reportRoutes = require('./routes/Reports');
 const goalRoutes = require('./routes/goalRoutes');
-const categoryRoutes = require('./routes/categoryRoutes');
 //const postRoutes = require('./routes/postRoutes'); // استيراد الرواتر للمنشورات
 const notificationRoutes = require('./routes/notificationRoutes');
 const Goal = require('./routes/goalRoutes');
@@ -67,7 +66,6 @@ app.use('/', Users);
 app.use('/api/transactions', Transaction);
 app.use('/api/budgets', budgetRoutes);
 app.use('/api/reports', reportRoutes);// إعداد مسار الفئات
-app.use('/api/categories', categoryRoutes);
 app.use('/api/notifications', notificationRoutes);// إعداد مسار الإشعارات
 app.use('/api/goals', goalRoutes);// إعداد مسار الأهداف
 app.use('/api/educational-notifications' , require('./routes/educationalNotifications'));// إعداد مسار الإشعارات التعليمية
