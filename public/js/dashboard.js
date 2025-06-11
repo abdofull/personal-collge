@@ -127,3 +127,5 @@ window.onload = function() {
 
 // استدعاء الدالة عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', loadEducationalTips);
+
+

@@ -2,7 +2,38 @@ const Notification = require('../models/Notification');
 const ApiError = require('../utils/apierror');
 const asyncHandler = require('express-async-handler');
 const Goal = require('../models/Goal');
+const admin = require('firebase-admin');
+const User = require('../models/User');
 
+
+
+async function sendFcmNotification(userId, title, message) {
+    try {
+        // ابحث عن المستخدم في قاعدة البيانات
+        const user = await User.findById(userId);
+
+        if (!user || !user.fcmTokens || user.fcmTokens.length === 0) {
+            console.log('المستخدم غير موجود أو ليس لديه رموز تسجيل.');
+            return;
+        }
+
+        const notificationMessage = {
+            notification: {
+                title: title,
+                body: message
+            },
+            tokens: user.fcmTokens
+        };
+
+        const response = await admin.messaging().sendMulticast(notificationMessage);
+        console.log(response.successCount + ' تم إرسال الإشعارات بنجاح.');
+        if (response.failureCount > 0) {
+            console.log(response.errors);
+        }
+    } catch (error) {
+        console.error('خطأ في إرسال إشعار FCM:', error);
+    }
+};
 
 
 // إنشاء إشعار جديد
@@ -17,6 +48,9 @@ exports.createNotification = asyncHandler(async (req, res, next) => {
         relatedEntity,
         entityId
     });
+
+        // إرسال إشعار FCM
+        await sendFcmNotification(userId, title, message);
 
     res.status(201).json({
         success: true,
@@ -123,6 +157,10 @@ exports.createSystemNotification = async (userId, title, message, type = 'info',
             relatedEntity,
             entityId
         });
+
+                // إرسال إشعار FCM
+                await sendFcmNotification(userId, title, message);
+
     } catch (error) {
         console.error('فشل إنشاء إشعار النظام:', error);
     }
@@ -148,6 +186,9 @@ exports.checkGoalProgress = async () => {
                 relatedEntity: 'goal',
                 entityId: goal._id
             });
+
+             // إرسال إشعار FCM
+             await sendFcmNotification(goal.userId, notification.title, notification.message);
         }
 
         // أهداف اكتملت تلقائياً
@@ -165,6 +206,9 @@ exports.checkGoalProgress = async () => {
                 relatedEntity: 'goal',
                 entityId: goal._id
             });
+
+            // إرسال إشعار FCM
+            await sendFcmNotification(goal.userId, notification.title, notification.message);
             
             await Goal.findByIdAndUpdate(goal._id, { notifiedCompleted: true });
         }

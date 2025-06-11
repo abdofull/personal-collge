@@ -1,0 +1,703 @@
+        /* متغيرات الألوان لتكون متوافقة مع لوحة التحكم */
+        :root {
+            --primary-color: #5D5CDE; /* اللون الأساسي الموحد */
+            --primary-light: rgba(93, 92, 222, 0.1); /* نفس اللون الأساسي بشفافية */
+            --primary-dark: #4a49b9; /* نسخة أغمق من اللون الأساسي */
+            --secondary-color: #2a2f40; /* اللون الثانوي الداكن */
+            --dark-color: #1c1f2b; /* لون الخلفية الداكن */
+            --light-color: #eaeaea; /* لون النص الفاتح */
+            --success-color: #28a745; /* لون النجاح الأخضر */
+            --danger-color: #dc3545; /* لون الخطأ الأحمر */
+            --warning-color: #ffc107; /* لون التحذير الأصفر */
+            --info-color: #17a2b8; /* لون المعلومات */
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* ظل البطاقة */
+            --transition-speed: 0.3s; /* سرعة التحويل */
+        }
+        
+        /* تصميم عام للصفحة */
+        body {
+            font-family: 'Tajawal', sans-serif; /* استخدام خط Tajawal للغة العربية */
+            background-color: var(--dark-color); /* لون خلفية الصفحة */
+            color: var(--light-color); /* لون النص الرئيسي */
+            margin: 0; /* إزالة الهوامش الافتراضية */
+            padding: 0; /* إزالة الحشو الافتراضي */
+            overflow-x: hidden; /* منع التمرير الأفقي */
+        }
+        
+        /* تصميم شريط التنقل العلوي */
+        .navbar {
+            background-color: var(--secondary-color); /* لون خلفية الشريط */
+            padding: 1rem; /* حشو داخلي للشريط */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3); /* إضافة ظل خفيف */
+            position: fixed; /* تثبيت الشريط */
+            top: 0; /* من الأعلى */
+            left: 0; /* من اليسار */
+            right: 0; /* من اليمين */
+            z-index: 1000; /* مستوى الطبقة */
+        }
+        
+        /* تصميم عنوان التطبيق في الشريط العلوي */
+        .navbar-brand {
+            font-size: 1.5rem; /* حجم الخط */
+            font-weight: 700; /* سماكة الخط */
+            color: var(--primary-color); /* لون النص */
+            display: flex; /* استخدام تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+        }
+        
+        /* تصميم الأيقونة بجوار عنوان التطبيق */
+        .navbar-brand i {
+            margin-left: 10px; /* مسافة بين الأيقونة والنص */
+            font-size: 1.8rem; /* حجم الأيقونة */
+        }
+        
+        /* تصميم روابط القائمة في شريط التنقل */
+        .navbar-nav .nav-link {
+            color: var(--light-color); /* لون النص */
+            font-size: 1rem; /* حجم الخط */
+            margin-right: 1rem; /* مسافة بين العناصر */
+            transition: all var(--transition-speed) ease; /* تأثير انتقالي عند التحويم */
+            padding: 0.5rem 1rem; /* حشو داخلي للروابط */
+            border-radius: 8px; /* زوايا مدورة */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+        }
+        
+        /* تصميم الأيقونات في روابط القائمة*/
+        .navbar-nav .nav-link i {
+            margin-left: 8px; /* مسافة بين الأيقونة والنص */
+            font-size: 1.1rem; /* حجم الأيقونة */
+        }
+        
+        /* تأثيرات التحويم على روابط القائمة */
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+            color: var(--primary-color); /* تغيير لون النص عند التحويم */
+            background-color: var(--primary-light); /* لون خلفية خفيف عند التحويم */
+            transform: translateY(-2px); /* تحريك العنصر لأعلى قليلاً */
+        }
+        
+        /* تصميم المحتوى الرئيسي للصفحة */
+        .content {
+            padding: 2rem; /* حشو داخلي للمحتوى */
+            margin-top: 80px; /* هامش علوي لتجنب تداخل شريط التنقل */
+        }
+        
+        /* تصميم بطاقة النموذج */
+        .card {
+            border: none; /* إزالة الحدود الافتراضية */
+            border-radius: 15px; /* زوايا مدورة */
+            padding: 1.5rem; /* حشو داخلي */
+            background: var(--secondary-color); /* لون الخلفية */
+            box-shadow: var(--card-shadow); /* إضافة ظل */
+            color: var(--light-color); /* لون النص */
+            margin-bottom: 1.5rem; /* مسافة من الأسفل */
+            transition: all var(--transition-speed) ease; /* تأثير انتقالي */
+            overflow: hidden; /* قص المحتوى الزائد */
+        }
+        
+        /* تأثير التحويم على البطاقة */
+        .card:hover {
+            transform: translateY(-5px); /* تحريك البطاقة لأعلى قليلاً */
+            box-shadow: 0 15px 30px rgba(93, 92, 222, 0.2); /* تغيير الظل عند التحويم */
+        }
+        
+        /* شريط ملون أعلى البطاقة */
+        .card::before {
+            content: ''; /* محتوى زائف للعنصر */
+            position: absolute; /*موضع مطلق */
+            top: 0; /* من الأعلى */
+            right: 0; /* من اليمين */
+            width: 100%; /* عرض كامل */
+            height: 5px; /* ارتفاع صغير */
+            background: linear-gradient(90deg, var(--primary-color), #6665eb); /* تدرج لوني */
+            border-radius: 2px 2px 0 0; /* زوايا مدورة للأعلى فقط */
+        }
+        
+        /* تصميم حقول الإدخال في النموذج */
+        .form-control {
+            background-color: #1e212e; /* لون خلفية الحقل */
+            border: 1px solid #2a2f40; /* لون حدود الحقل */
+            color: var(--light-color); /* لون النص */
+            padding: 0.75rem 1rem; /* حشو داخلي */
+            border-radius: 8px; /* زوايا مدورة */
+            transition: all var(--transition-speed) ease; /* تأثير انتقالي */
+            font-size: 16px; /* حجم النص للمدخلات */
+        }
+        
+        /* تأثير التركيز على حقول الإدخال */
+        .form-control:focus {
+            border-color: var(--primary-color); /* تغيير لون الحدود */
+            box-shadow: 0 0 0 0.25rem rgba(93, 92, 222, 0.25); /* إضافة ظل */
+            background-color: #1e212e; /* الحفاظ على لون الخلفية */
+            color: var(--light-color); /* الحفاظ على لون النص */
+        }
+        
+        /* تصميم زر الإرسال */
+        .btn-submit {
+            background-color: var(--primary-color); /* لون الخلفية */
+            border: none; /* إزالة الحدود */
+            color: white; /* لون النص */
+            padding: 0.75rem 1.5rem; /* حشو داخلي */
+            border-radius: 8px; /* زوايا مدورة */
+            font-weight: 600; /* سماكة الخط */
+            transition: all var(--transition-speed) ease; /* تأثير انتقالي */
+            width: 100%; /* عرض كامل */
+        }
+        
+        /* تأثير التحويم على زر الإرسال */
+        .btn-submit:hover {
+            background-color: var(--primary-dark); /* تغيير لون الخلفية */
+            transform: translateY(-2px); /* تحريك الزر لأعلى قليلاً */
+            box-shadow: 0 4px 10px rgba(93, 92, 222, 0.3); /* إضافة ظل */
+        }
+        
+        /* تصميم العناوين */
+        .section-title {
+            position: relative; /* تموضع نسبي */
+            padding-bottom: 10px; /* حشو من الأسفل */
+            margin-bottom: 2rem; /* مسافة من الأسفل */
+            color: var(--light-color); /* لون النص */
+            font-weight: 700; /* سماكة الخط */
+            display: inline-block; /* عرض داخلي */
+        }
+        
+        /* شريط ملون تحت العناوين */
+        .section-title::after {
+            content: ''; /* محتوى زائف */
+            position: absolute; /* تموضع مطلق */
+            bottom: 0; /* من الأسفل */
+            right: 0; /* من اليمين */
+            width: 80px; /* عرض معين */
+            height: 4px; /* ارتفاع صغير */
+            background: linear-gradient(90deg, var(--primary-color), transparent); /* تدرج لوني */
+            border-radius: 2px; /* زوايا مدورة قليلاً */
+        }
+        
+        /* تصميم رسائل الخطأ */
+        .error-message {
+            color: var(--danger-color); /* لون أحمر للخطأ */
+            font-size: 0.875rem; /* حجم صغير للنص */
+            margin-top: 0.25rem; /* مسافة من الأعلى */
+            display: none; /* مخفي بشكل افتراضي */
+        }
+        
+        /* تصميم عناصر المستخدم في شريط التنقل */
+        .user-profile {
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+            margin-right: 1rem; /* مسافة من اليمين */
+        }
+        
+        /* تصميم صورة المستخدم الدائرية */
+        .user-avatar {
+            width: 40px; /* عرض ثابت */
+            height: 40px; /* ارتفاع ثابت */
+            border-radius: 50%; /* جعلها دائرية */
+            background-color: var(--primary-color); /* لون الخلفية */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط المحتوى عمودياً */
+            justify-content: center; /* توسيط المحتوى أفقياً */
+            margin-left: 10px; /* مسافة من اليسار */
+            color: white; /* لون النص */
+            font-weight: bold; /* نص غامق */
+        }
+        
+        /* تصميم معلومات المستخدم */
+        .user-info {
+            display: flex; /* تخطيط مرن */
+            flex-direction: column; /* ترتيب العناصر عمودياً */
+        }
+        
+        /* تصميم اسم المستخدم */
+        .user-name {
+            font-weight: 600; /* نص غامق قليلاً */
+            font-size: 0.9rem; /* حجم مناسب */
+        }
+        
+        /* تصميم دور المستخدم */
+        .user-role {
+            font-size: 0.8rem; /* حجم أصغر */
+            color: rgba(255, 255, 255, 0.7); /* لون شبه شفاف */
+        }
+
+        /* أنماط جديدة للتكامل مع الميزانية */
+        .budget-section {
+            background-color: rgba(42, 47, 64, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(93, 92, 222, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .budget-section:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(42, 47, 64, 0.9);
+        }
+
+        /* التصميم الجديد لاختيار نوع المعاملة */
+        .transaction-type-selector {
+            display: flex;
+            margin-bottom: 1.5rem;
+            background-color: rgba(30, 33, 46, 0.7);
+            border-radius: 12px;
+            padding: 5px;
+            position: relative;
+            overflow: hidden;
+            max-width: 300px;
+        }
+
+        .transaction-type-selector .type-option {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 10px;
+            position: relative;
+            z-index: 2;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .transaction-type-selector .slider {
+            position: absolute;
+            height: calc(100% - 10px);
+            top: 5px;
+            width: calc(50% - 5px);
+            border-radius: 10px;
+            background-color: var(--primary-color);
+            transition: all var(--transition-speed) ease;
+            z-index: 1;
+        }
+
+        .transaction-type-selector input[type="radio"] {
+            display: none;
+        }
+
+        .transaction-type-selector input[type="radio"]:checked + label {
+            color: white;
+            font-weight: 600;
+        }
+
+        .transaction-type-selector #expense:checked ~ .slider {
+            transform: translateX(calc(-100% + 10px));
+        }
+
+        /* تصميم أيقونات نوع المعاملة */
+        .type-icon {
+            margin-left: 8px;
+            font-size: 1.1rem;
+        }
+
+        /* تصميم محسن لبنود الميزانية */
+        .budget-item {
+            background-color: rgba(30, 33, 46, 0.5);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            border-right: 3px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .budget-item:hover {
+            background-color: rgba(30, 33, 46, 0.8);
+            transform: translateX(-5px);
+        }
+
+        .budget-item.selected {
+            background-color: rgba(93, 92, 222, 0.2);
+            border-right-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .budget-item .item-name {
+            font-weight: 500;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .budget-item .item-name::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin-left: 8px;
+            opacity: 0;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .budget-item.selected .item-name::before {
+            opacity: 1;
+        }
+
+        .budget-item .remaining-amount {
+            font-size: 0.9rem;
+            background-color: rgba(30, 33, 46, 0.9);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .budget-item .remaining-good {
+            color: var(--success-color);
+        }
+
+        .budget-item .remaining-warning {
+            color: var(--warning-color);
+        }
+
+        .budget-item .remaining-danger {
+            color: var(--danger-color);
+        }
+
+        /* تصميم محسن لاختيار الفئة */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .category-item {
+            background-color: rgba(30, 33, 46, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            border: 2px solid transparent;
+        }
+
+        .category-item:hover {
+            background-color: rgba(30, 33, 46, 0.8);
+            transform: translateY(-3px);
+        }
+
+        .category-item.selected {
+            background-color: rgba(93, 92, 222, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .category-item i {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        /* عنوان قسم في البطاقة */
+        .card-section-title {
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-section-title i {
+            margin-left: 10px;
+            color: var(--primary-color);
+        }
+
+        /* تقسيم قسم الملخص */
+        .summary-section {
+            background-color: rgba(30, 33, 46, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .impact-positive {
+            color: var(--success-color);
+        }
+
+        .impact-negative {
+            color: var(--danger-color);
+        }
+
+        .budget-preview-container {
+            margin-top: 20px;
+        }
+
+        .budget-progress {
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 8px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        .budget-progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+            transition: width var(--transition-speed) ease;
+        }
+
+        .budget-preview-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* مؤشر لأقسام النموذج */
+        .form-steps {
+            display: flex;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .form-step {
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+            opacity: 0.7;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .form-step.active {
+            opacity: 1;
+        }
+
+        .step-number {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            font-size: 0.9rem;
+            border: 2px solid var(--primary-color);
+        }
+
+        .form-step.active .step-number {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .step-title {
+            font-weight: 500;
+        }
+
+        .step-connector {
+            flex-grow: 1;
+            height: 2px;
+            background-color: rgba(93, 92, 222, 0.3);
+            margin: 0 15px;
+        }
+
+        /* عنصر لعرض الملف المختار */
+        .file-preview {
+            margin-top: 10px;
+            background-color: rgba(30, 33, 46, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            display: none;
+        }
+
+        .file-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .file-preview-name {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .file-preview-name i {
+            margin-left: 8px;
+            color: var(--primary-color);
+        }
+
+        .file-preview-remove {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: var(--danger-color);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .file-preview-remove:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .file-preview-info {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* أنماط زر التبديل */
+        #themeToggle {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        #themeToggle i {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            font-size: 1.3rem;
+            margin-right: 5px;
+            transform: translateY(-50%);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .light-mode #themeToggle i {
+            transform: translateY(-50%) rotate(180deg);
+            color: var(--primary-color);
+        }
+
+        /* أنماط الوضع النهاري */
+        body.light-mode {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .light-mode .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .light-mode .navbar-nav .nav-link {
+            color: #555;
+        }
+
+        .light-mode .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(93, 92, 222, 0.1);
+        }
+
+        .light-mode .card {
+            background: #ffffff;
+            color: #333;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .light-mode .form-control {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .light-mode .form-control:focus {
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        .light-mode .user-role {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .light-mode .budget-section,
+        .light-mode .summary-section {
+            background-color: rgba(240, 240, 240, 0.7);
+        }
+
+        .light-mode .transaction-type-selector,
+        .light-mode .budget-item,
+        .light-mode .category-item,
+        .light-mode .file-preview {
+            background-color: rgba(240, 240, 240, 0.7);
+        }
+
+        .light-mode .budget-item:hover,
+        .light-mode .category-item:hover {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        .light-mode .budget-item .remaining-amount {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        .light-mode .summary-row {
+            border-bottom-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .light-mode .budget-progress {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* تصميم متجاوب للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .transaction-type-selector {
+                max-width: 100%;
+            }
+
+            .category-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .budget-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .budget-item .remaining-amount {
+                margin-top: 8px;
+                align-self: flex-end;
+            }
+
+            .form-steps {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+
+            .step-title {
+                font-size: 0.9rem;
+            }
+        }

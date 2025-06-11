@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        unique: true,
+        // unique: true,
         trim: true,
         minlength: 3,
         maxlength: 30
@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
     profileImage: { // رابط الصورة
         type: String,
         default: '' // القيمة الافتراضية فارغة
+
     },
     createdAt: {
         type: Date,
@@ -51,7 +52,13 @@ const userSchema = new mongoose.Schema({
         push: { type: Boolean, default: true },
         budgetAlerts: { type: Boolean, default: true },
         balanceAlerts: { type: Boolean, default: true }
+    },
+
+    fcmTokens: { // رموز FCM
+        type: [String],
+        default: []
     }
+
 });
 
 // دالة لتشفير كلمة المرور قبل حفظ المستخدم

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const subscribeController = require('../controllers/subscribeController'); 
 const {
     registerUser,
     loginUser,
@@ -12,7 +13,7 @@ const {
     getUserProfile
 } = require('../controllers/userController');
 const { body, param , validationResult } = require('express-validator');
-const upload = require('../middleware/uploadMiddleware'); // استيراد multer
+const { upload } = require('../middleware/uploadMiddleware'); // استيراد multer
 const validationMiddleware = require('../middleware/vallidatorMiddlware');
 
 // 1. إنشاء مستخدم جديد (مع تحميل الصورة)
@@ -70,6 +71,9 @@ router.post('/logout/:userId', deleteUserAccount);
 
 // توجيه لاسترجاع بيانات المستخدم
 router.get('/users/:userId', getUserProfile);
+
+// نقطة النهاية للاشتراك في الإشعارات
+router.post('/subscribe', subscribeController.subscribe);
 
 
 module.exports = router;

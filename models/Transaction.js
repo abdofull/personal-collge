@@ -49,11 +49,11 @@ const transactionSchema = new mongoose.Schema({
         budgetItemName: {
             type : String
         }, // إضافة هذا الحقل لربط المعاملة ببند الميزانية
-        goalId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Goal',
-            default: null // ← هذا الحقل الجديد الوحيد
-        }
+        // goalId: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: 'Goal',
+        //     default: null // ← هذا الحقل الجديد الوحيد
+        // }
 },{timestamps: true}); // إضافة timestamps لتسجيل تاريخ الإنشاء والتحديث تلقائيًا
 
 // تصدير نموذج المعاملة لاستخدامه في أجزاء أخرى من التطبيق.

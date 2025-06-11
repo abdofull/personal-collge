@@ -51,6 +51,22 @@ exports.addTransaction = async (req, res) => {
                 });
             }
 
+                const newSpentAmount = itemExists.spentAmount + amount;
+    if (newSpentAmount > itemExists.allocatedAmount) {
+        // إنشاء إشعار تجاوز الميزانية
+        await Notification.create({
+            userId,
+            title: 'تنبيه تجاوز الميزانية',
+            message: `تم تجاوز الميزانية المخصصة لبند ${budgetItemName}. المبلغ المخصص: ${itemExists.allocatedAmount}, المبلغ المصروف: ${newSpentAmount}`,
+            type: 'warning',
+            relatedEntity: 'budget',
+            entityId: budgetId
+        });
+    }
+
+
+
+
             // تحديث الميزانية
             const updateResult = await Budget.updateOne(
                 { 
@@ -60,9 +76,10 @@ exports.addTransaction = async (req, res) => {
                 { 
                     $inc: { 
                         "items.$.spentAmount": amount,
-                        "totalExpenses": amount 
+                        // "totalExpenses": amount 
                     } 
                 }
+  
             );
 
             if (updateResult.modifiedCount === 0) {

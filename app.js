@@ -2,7 +2,20 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
+
+
+const admin = require('firebase-admin');
+
+//const serviceAccount = require("./config/contennt-app-firebase-adminsdk-fbsvc-5edc1d42ea.json");
+
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount)
+// });
+
+
+
 const dotenv = require('dotenv');
+const path = require('path');
 const bodyParser = require('body-parser');
 const User = require('./models/User');
 const Transaction = require('./routes/transactionRoutes');
@@ -13,13 +26,15 @@ const categoryRoutes = require('./routes/categoryRoutes');
 //const postRoutes = require('./routes/postRoutes'); // استيراد الرواتر للمنشورات
 const notificationRoutes = require('./routes/notificationRoutes');
 const Goal = require('./routes/goalRoutes');
+const postRoutes = require('./routes/postRoutes');
 const { checkGoalProgress } = require('./controllers/notificationController');
-const { seed } = require('./public/js/seedEducationalNotifications');
+const { seed } = require('./middleware/seedEducationalNotifications');
+const Notification = require('./models/Notification');
 const schedule = require('node-schedule');
 const EducationalNotification = require('./models/EducationalNotification');
 const ApiError = require("./utils/apierror");
 const Users = require("./routes/userRoutes");
-//const globalError = require("./middleware/errormiddleware");
+const {globleError} = require("./middleware/errormiddleware");
 app.use('/uploads', express.static('uploads')); // خدمة ملفات الصور
 
 dotenv.config();
@@ -45,6 +60,8 @@ async function initializeData() {
 
 
 checkGoalProgress();
+// جعل مجلد uploads متاحًا للوصول العام
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/', Users);
 app.use('/api/transactions', Transaction);
@@ -55,7 +72,8 @@ app.use('/api/notifications', notificationRoutes);// إعداد مسار الإ�
 app.use('/api/goals', goalRoutes);// إعداد مسار الأهداف
 app.use('/api/educational-notifications' , require('./routes/educationalNotifications'));// إعداد مسار الإشعارات التعليمية
 //app.use('/api/posts', postRoutes); // ربط الرواتر
-app.use('/api/goals', goalRoutes);// إعداد مسار الأهداف
+app.use('/api/posts', postRoutes);// إعداد مسار المنشورات
+
 
 //app.use('/api/goals', Goal);
 
@@ -66,43 +84,44 @@ app.all("*", (req, res , next) => {
 });
 
 //هنا يتم استدعاء الخطأ الذي يحدث في حالة حدوث خطأ في الطلب الذي يتم ارساله من العميل الى السيرفر
-//app.use(globalError);
+app.use(globleError);
 
 
 // جدولة إرسال نصائح يومية
 function scheduleDailyTips() {
-    // تشغيل كل يوم في الساعة 8 صباحًا
-    const job = schedule.scheduleJob('0 8 * * *', async () => {
+  // تشغيل كل يوم في الساعة 8 صباحًا
+  const job = schedule.scheduleJob('0 8 * * *', async () => {
       try {
-        // 1. جلب نصيحة عشوائية
-        const tips = await EducationalNotification.aggregate([{ $sample: { size: 1 } }]);
-        const randomTip = tips[0];
-        
-        if (!randomTip) return;
-  
-        // 2. جلب جميع المستخدمين
-        const users = await User.find({});
-        
-        // 3. إرسال الإشعار لكل مستخدم
-        users.forEach(async (user) => {
-          await Notification.create({
-            userId: user._id,
-            title: randomTip.title,
-            message: randomTip.message,
-            type: 'info',
-            relatedEntity: 'educational-tip',
-            entityId: randomTip._id
+          // 1. جلب نصيحة عشوائية
+          const tips = await EducationalNotification.aggregate([{ $sample: { size: 1 } }]);
+          const randomTip = tips[0];
+          
+          if (!randomTip) return;
+
+          // 2. جلب جميع المستخدمين
+          const users = await User.find({});
+          
+          // 3. إرسال الإشعار لكل مستخدم
+          users.forEach(async (user) => {
+              const notification = await Notification.create({
+                  userId: user._id,
+                  title: randomTip.title,
+                  message: randomTip.message,
+                  type: 'info',
+                  relatedEntity: 'educational-tip',
+                  entityId: randomTip._id
+              });
+
+              // إرسال إشعار FCM
+              await sendFcmNotification(user._id, notification.title, notification.message);
           });
           
-          // هنا يمكنك إضافة إرسال إيميل أو رسالة SMS إذا أردت
-        });
-        
-        console.log(`✅ تم إرسال النصيحة اليومية لـ ${users.length} مستخدم`);
+          console.log(`✅ تم إرسال النصيحة اليومية لـ ${users.length} مستخدم`);
       } catch (error) {
-        console.error('❌ فشل إرسال النصائح اليومية:', error);
+          console.error('❌ فشل إرسال النصائح اليومية:', error);
       }
-    });
-  }
+  });
+};
 
 
 app.listen(process.env.PORT, () => {

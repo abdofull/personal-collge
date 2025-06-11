@@ -3,10 +3,16 @@ const mongoose = require('mongoose');
 const PostSchema = new mongoose.Schema({
     title: { type: String, required: false },
     content: { type: String, required: true },
-    image: { type: String, required: false }, // رابط الصورة
+    image: 
+    { 
+        type: String, 
+        required: false 
+
+    },
+    
     user: {
         username: { type: String, required: true },
-        avatar: { type: String, required: true },
+        profileImage: { type: String },
     },
     comments: [
         {
@@ -16,6 +22,9 @@ const PostSchema = new mongoose.Schema({
         },
     ],
     reactions: { type: Number, default: 0 },
-}, { timestamps: true });
+}, { 
+    timestamps: true,
+    toJSON: { getters: true } // لتفعيل الـ getters عند تحويل النموذج لـ JSON
+});
 
 module.exports = mongoose.model('Post', PostSchema);

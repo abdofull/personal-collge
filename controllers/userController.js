@@ -17,6 +17,7 @@ const generateToken = (id) => {
 
 // إنشاء مستخدم جديد
 exports.registerUser = async (req, res, next) => {
+
     const { username, email, password } = req.body;
 
     // تحقق من وجود البريد الإلكتروني
@@ -25,11 +26,11 @@ exports.registerUser = async (req, res, next) => {
         return next(new ApiError(400, 'البريد الإلكتروني مستخدم بالفعل!'));
     }
 
-    // تحقق من وجود اسم المستخدم
-    const existingUsername = await User.findOne({ username });
-    if (existingUsername) {
-        return next(new ApiError(400, 'اسم المستخدم مستخدم بالفعل!'));
-    }
+    // // تحقق من وجود اسم المستخدم
+    // const existingUsername = await User.findOne({ username });
+    // if (existingUsername) {
+    //     return next(new ApiError(400, 'اسم المستخدم مستخدم بالفعل!'));
+    // }
 
     const profileImage = req.file ? req.file.path : ''; // إذا تم تحميل صورة
 
@@ -101,6 +102,7 @@ exports.loginUser = async (req, res, next) => {
             id: user._id,
             username: user.username,
             email: user.email,
+            profileImage: user.profileImage,
         },
         token,
     });

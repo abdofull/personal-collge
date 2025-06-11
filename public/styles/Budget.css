@@ -1,0 +1,732 @@
+        /* متغيرات الألوان لتكون متوافقة مع لوحة التحكم */
+        :root {
+            --primary-color: #5D5CDE; /* اللون الأساسي */
+            --primary-light: rgba(93, 92, 222, 0.1); /* نفس اللون بشفافية */
+            --secondary-color: #2a2f40; /* اللون الثانوي */
+            --dark-color: #1c1f2b; /* لون الخلفية */
+            --light-color: #eaeaea; /* لون النص */
+            --success-color: #28a745; /* لون النجاح */
+            --danger-color: #dc3545; /* لون الخطأ */
+            --warning-color: #ffc107; /* لون التحذير */
+            --info-color: #17a2b8; /* لون المعلومات */
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* ظل البطاقة */
+            --transition-speed: 0.3s; /* سرعة التحويل */
+        }
+        
+        /* تصميم عام للصفحة */
+        body {
+            font-family: 'Tajawal', sans-serif; /* استخدام خط Tajawal */
+            background-color: var(--dark-color); /* لون الخلفية */
+            color: var(--light-color); /* لون النص */
+            margin: 0; /* إزالة الهوامش الافتراضية */
+            padding: 0; /* إزالة الحشو الافتراضي */
+            overflow-x: hidden; /* منع التمرير الأفقي */
+        }
+        
+        /* تصميم شريط التنقل العلوي */
+        .navbar {
+            background-color: var(--secondary-color); /* لون الخلفية */
+            padding: 1rem; /* حشو داخلي */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3); /* إضافة ظل */
+            position: fixed; /* تثبيت الشريط */
+            top: 0; /* من الأعلى */
+            left: 0; /* من اليسار */
+            right: 0; /* من اليمين */
+            z-index: 1000; /* مستوى الطبقة */
+        }
+        
+        /* تصميم عنوان التطبيق في الشريط */
+        .navbar-brand {
+            font-size: 1.5rem; /* حجم الخط */
+            font-weight: 700; /* سماكة الخط */
+            color: var(--primary-color); /* لون النص */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+        }
+        
+        /* تصميم الأيقونة بجوار العنوان */
+        .navbar-brand i {
+            margin-left: 10px; /* مسافة من اليسار */
+            font-size: 1.8rem; /* حجم الأيقونة */
+        }
+        
+        /* تصميم روابط القائمة */
+        .navbar-nav .nav-link {
+            color: var(--light-color); /* لون النص */
+            font-size: 1rem; /* حجم الخط */
+            margin-right: 1rem; /* مسافة بين العناصر */
+            transition: all var(--transition-speed) ease; /* تأثير تحويم */
+            padding: 0.5rem 1rem; /* حشو داخلي */
+            border-radius: 8px; /* زوايا مدورة */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+        }
+        
+        /* تصميم الأيقونات في القائمة */
+        .navbar-nav .nav-link i {
+            margin-left: 8px; /* مسافة من اليسار */
+            font-size: 1.1rem; /* حجم الأيقونة */
+        }
+        
+        /* تأثيرات التحويم على الروابط */
+        .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+            color: var(--primary-color); /* تغيير لون النص */
+            background-color: var(--primary-light); /* لون خلفية خفيف */
+            transform: translateY(-2px); /* تحريك العنصر لأعلى قليلاً */
+        }
+        
+        /* تصميم المحتوى الرئيسي */
+        .content {
+            padding: 2rem; /* حشو داخلي */
+            margin-top: 80px; /* هامش علوي لتجنب تداخل شريط التنقل */
+        }
+        
+        /* تصميم البطاقات */
+        .card {
+            border: none; /* إزالة الحدود */
+            border-radius: 15px; /* زوايا مدورة */
+            padding: 1.5rem; /* حشو داخلي */
+            background: var(--secondary-color); /* لون الخلفية */
+            box-shadow: var(--card-shadow); /* إضافة ظل */
+            color: var(--light-color); /* لون النص */
+            margin-bottom: 1.5rem; /* مسافة من الأسفل */
+            transition: all var(--transition-speed) ease; /* تأثير تحويم */
+            overflow: hidden; /* قص المحتوى الزائد */
+        }
+        
+        /* تأثير التحويم على البطاقات */
+        .card:hover {
+            transform: translateY(-5px); /* تحريك البطاقة لأعلى قليلاً */
+            box-shadow: 0 15px 30px rgba(93, 92, 222, 0.2); /* تغيير الظل */
+        }
+        
+        /* شريط ملون أعلى البطاقات */
+        .card::before {
+            content: ''; /* محتوى زائف */
+            position: absolute; /* تموضع مطلق */
+            top: 0; /* من الأعلى */
+            right: 0; /* من اليمين */
+            width: 100%; /* عرض كامل */
+            height: 5px; /* ارتفاع صغير */
+            background: linear-gradient(90deg, var(--primary-color), #6665eb); /* تدرج لوني */
+        }
+        
+        /* تصميم حقول الإدخال */
+        .form-control {
+            background-color: #1e212e; /* لون الخلفية */
+            border: 1px solid #2a2f40; /* لون الحدود */
+            color: var(--light-color); /* لون النص */
+            padding: 0.75rem 1rem; /* حشو داخلي */
+            border-radius: 8px; /* زوايا مدورة */
+            transition: all var(--transition-speed) ease; /* تأثير تحويم */
+            font-size: 16px; /* حجم النص للمدخلات */
+        }
+        
+        /* تأثير التركيز على حقول الإدخال */
+        .form-control:focus {
+            border-color: var(--primary-color); /* تغيير لون الحدود */
+            box-shadow: 0 0 0 0.25rem rgba(93, 92, 222, 0.25); /* إضافة ظل */
+            background-color: #1e212e; /* الحفاظ على لون الخلفية */
+            color: var(--light-color); /* الحفاظ على لون النص */
+        }
+        
+        /* تصميم الأزرار */
+        .btn-primary {
+            background-color: var(--primary-color); /* لون الخلفية */
+            border-color: var(--primary-color); /* لون الحدود */
+            border-radius: 8px; /* زوايا مدورة */
+            padding: 0.75rem 1.5rem; /* حشو داخلي */
+            font-weight: 600; /* سماكة الخط */
+            transition: all var(--transition-speed) ease; /* تأثير تحويم */
+        }
+        
+        /* تأثير التحويم على الأزرار */
+        .btn-primary:hover {
+            background-color: #4a49b9; /* تغيير لون الخلفية */
+            border-color: #4a49b9; /* تغيير لون الحدود */
+            transform: translateY(-2px); /* تحريك الزر لأعلى قليلاً */
+            box-shadow: 0 4px 10px rgba(93, 92, 222, 0.3); /* إضافة ظل */
+        }
+        
+        /* تصميم العناوين */
+        .section-title {
+            position: relative; /* تموضع نسبي */
+            padding-bottom: 10px; /* حشو من الأسفل */
+            margin-bottom: 2rem; /* مسافة من الأسفل */
+            color: var(--light-color); /* لون النص */
+            font-weight: 700; /* سماكة الخط */
+            display: inline-block; /* عرض داخلي */
+        }
+        
+        /* شريط ملون تحت العناوين */
+        .section-title::after {
+            content: ''; /* محتوى زائف */
+            position: absolute; /* تموضع مطلق */
+            bottom: 0; /* من الأسفل */
+            right: 0; /* من اليمين */
+            width: 80px; /* عرض معين */
+            height: 4px; /* ارتفاع صغير */
+            background: linear-gradient(90deg, var(--primary-color), transparent); /* تدرج لوني */
+            border-radius: 2px; /* زوايا مدورة قليلاً */
+        }
+        
+        /* تصميم عناصر المستخدم في الشريط العلوي */
+        .user-profile {
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط العناصر عمودياً */
+            margin-right: 1rem; /* مسافة من اليمين */
+        }
+        
+        /* تصميم صورة المستخدم الدائرية */
+        .user-avatar {
+            width: 40px; /* عرض ثابت */
+            height: 40px; /* ارتفاع ثابت */
+            border-radius: 50%; /* جعلها دائرية */
+            background-color: var(--primary-color); /* لون الخلفية */
+            display: flex; /* تخطيط مرن */
+            align-items: center; /* توسيط المحتوى عمودياً */
+            justify-content: center; /* توسيط المحتوى أفقياً */
+            margin-left: 10px; /* مسافة من اليسار */
+            color: white; /* لون النص */
+            font-weight: bold; /* نص غامق */
+        }
+        
+        /* تصميم معلومات المستخدم */
+        .user-info {
+            display: flex; /* تخطيط مرن */
+            flex-direction: column; /* ترتيب العناصر عمودياً */
+        }
+        
+        /* تصميم اسم المستخدم */
+        .user-name {
+            font-weight: 600; /* نص غامق */
+            font-size: 0.9rem; /* حجم الخط */
+        }
+        
+        /* تصميم دور المستخدم */
+        .user-role {
+            font-size: 0.8rem; /* حجم أصغر */
+            color: rgba(255, 255, 255, 0.7); /* لون شبه شفاف */
+        }
+
+        /* أنماط جديدة للبطاقات والميزانية */
+        .budget-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 150px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .icon {
+            position: absolute;
+            bottom: -15px;
+            left: -10px;
+            font-size: 6rem;
+            opacity: 0.1;
+            color: var(--light-color);
+        }
+
+        .stat-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .text-gradient {
+            background: linear-gradient(45deg, var(--primary-color), #8a89ff);
+            /* -webkit-background-clip: text; */
+            -webkit-text-fill-color: transparent;
+            display: inline;
+        }
+
+        .blue-card {
+            background: linear-gradient(45deg, #1a2980, #26d0ce);
+            color: white;
+        }
+
+        .purple-card {
+            background: linear-gradient(45deg, #4a00e0, #8e2de2);
+            color: white;
+        }
+
+        .green-card {
+            background: linear-gradient(45deg, #134e5e, #71b280);
+            color: white;
+        }
+
+        .orange-card {
+            background: linear-gradient(45deg, #f46b45, #eea849);
+            color: white;
+        }
+
+        /* تصميم بنود الميزانية الجديدة */
+        .budget-item {
+            background-color: rgba(30, 33, 46, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-right: 4px solid var(--primary-color);
+            transition: all var(--transition-speed) ease;
+            position: relative;
+        }
+
+        .budget-item:hover {
+            background-color: rgba(30, 33, 46, 0.9);
+            transform: translateX(-5px);
+        }
+
+        .budget-item .item-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .budget-item .item-details {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .budget-item .item-details .detail {
+            margin-left: 15px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .budget-item .progress-container {
+            margin-top: 15px;
+        }
+
+        .budget-item .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 5px;
+        }
+
+        .budget-item .progress-bar {
+            border-radius: 4px;
+        }
+
+        .progress-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        /* تصميم نموذج إنشاء الميزانية الجديد */
+        .form-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .budget-item-form {
+            background-color: rgba(30, 33, 46, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-right: 4px solid #8a89ff;
+            position: relative;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .budget-item-form:hover {
+            background-color: rgba(30, 33, 46, 0.9);
+        }
+
+        .budget-item-form .delete-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(220, 53, 69, 0.2);
+            border: none;
+            color: var(--danger-color);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .budget-item-form .delete-btn:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .add-item-btn {
+            background-color: rgba(93, 92, 222, 0.1);
+            color: var(--primary-color);
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+            transition: all var(--transition-speed) ease;
+            margin-bottom: 20px;
+        }
+
+        .add-item-btn:hover {
+            background-color: rgba(93, 92, 222, 0.2);
+            transform: scale(1.02);
+        }
+
+        /* شريط التقدم الرئيسي للميزانية */
+        .main-progress {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: rgba(30, 33, 46, 0.8);
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .main-progress h5 {
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .main-progress .progress {
+            height: 15px;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .main-progress .progress-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        /* كارت تفاصيل الميزانية */
+        .budget-detail-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+            margin-bottom: 20px;
+        }
+
+        /* تصميم للجدول الجديد */
+        .budget-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .budget-table th {
+            padding: 15px;
+            text-align: right;
+            color: var(--light-color);
+            opacity: 0.8;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .budget-table td {
+            padding: 15px;
+            background-color: rgba(30, 33, 46, 0.5);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .budget-table tr td:first-child {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .budget-table tr td:last-child {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .budget-table tbody tr {
+            transition: all var(--transition-speed) ease;
+        }
+
+        .budget-table tbody tr:hover td {
+            background-color: rgba(30, 33, 46, 0.8);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+
+        .budget-table .badge {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .budget-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .budget-action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 5px;
+            background-color: rgba(255,255,255,0.1);
+            color: var(--light-color);
+            border: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .budget-action-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .view-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* مساحة للمخططات البيانية */
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            background-color: rgba(30, 33, 46, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 20px;
+        }
+
+        /* تصميم معلومات بنود الميزانية في المشاهدة */
+        .budget-view-item {
+            background-color: rgba(30, 33, 46, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-right: 4px solid;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .budget-view-item:hover {
+            transform: translateX(-5px);
+            background-color: rgba(30, 33, 46, 0.7);
+        }
+
+        .budget-view-item.good {
+            border-right-color: var(--success-color);
+        }
+
+        .budget-view-item.warning {
+            border-right-color: var(--warning-color);
+        }
+
+        .budget-view-item.danger {
+            border-right-color: var(--danger-color);
+        }
+
+        .budget-view-item .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .budget-view-item .item-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .budget-view-item .item-status {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .budget-view-item .progress {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+
+        /*============================
+          أنماط زر التبديل بين المظاهر
+        ============================*/
+        #themeToggle {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-speed) ease;
+            background-color: rgba(93, 92, 222, 0.1);
+            color: var(--light-color);
+        }
+        
+        #themeToggle:hover {
+            background-color: rgba(93, 92, 222, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        #themeToggle i {
+            font-size: 1.2rem;
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .light-mode #themeToggle i {
+            transform: rotate(180deg);
+        }
+        
+        /* أنماط الوضع النهاري */
+        body.light-mode {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .light-mode .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .light-mode .navbar-nav .nav-link {
+            color: #555;
+        }
+
+        .light-mode .navbar-nav .nav-link:hover {
+            color: var(--primary-color);
+            background-color: rgba(93, 92, 222, 0.1);
+        }
+
+        .light-mode .card {
+            background: #ffffff;
+            color: #333;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .light-mode .chart-container,
+        .light-mode .main-progress,
+        .light-mode .budget-item-form,
+        .light-mode .budget-item {
+            background-color: rgba(240, 240, 240, 0.7);
+        }
+
+        .light-mode .budget-table td {
+            background-color: rgba(240, 240, 240, 0.7);
+        }
+
+        .light-mode .budget-table tbody tr:hover td {
+            background-color: rgba(240, 240, 240, 0.9);
+        }
+
+        .light-mode .section-title {
+            color: #333;
+        }
+
+        .light-mode .form-control {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .light-mode .form-control:focus {
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        .light-mode .user-role {
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .budget-details-custom {
+    color: #1a237e !important;
+    font-size: 18px;
+}
+
+        /* تصميم متجاوب للشاشات الصغيرة */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .budget-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .budget-item .item-details {
+                flex-direction: column;
+            }
+            
+            .budget-item .item-details .detail {
+                margin-bottom: 5px;
+                margin-left: 0;
+            }
+
+            .budget-table th:nth-child(3),
+            .budget-table td:nth-child(3),
+            .budget-table th:nth-child(5),
+            .budget-table td:nth-child(5) {
+                display: none;
+            }
+        }
+
+        /* تنسيق في حالة المطبعة (طباعة) */
+        @media print {
+            .navbar, .footer, .btn, .chart-container {
+                display: none !important;
+            }
+            
+            body {
+                background-color: white !important;
+                color: black !important;
+            }
+            
+            .card {
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+            }
+        }

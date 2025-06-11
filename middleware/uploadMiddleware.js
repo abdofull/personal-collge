@@ -1,16 +1,31 @@
 const multer = require('multer');
 const path = require('path');
 
-// إعداد multer لتخزين الصور
-const storage = multer.diskStorage({
+// إعداد multer لرفع صور المستخدمين
+const userStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/profileImages/'); // مجلد تخزين الصور
+        cb(null, 'uploads/profileImages/'); // مجلد تخزين صور المستخدمين
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // اسم الملف
+        cb(null, Date.now() + '-user-' + path.extname(file.originalname)); // اسم الملف
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: userStorage });
 
-module.exports = upload; // تصدير upload لاستخدامه في الراوتر
+// إعداد multer لرفع صور البوستات
+const postStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/posts/'); // مجلد تخزين صور البوستات
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-post-' + path.extname(file.originalname)); // اسم الملف
+    }
+});
+
+const uploadPostImage = multer({ storage: postStorage });
+
+module.exports = {
+     upload ,
+     uploadPostImage
+};

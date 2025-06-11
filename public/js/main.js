@@ -98,11 +98,20 @@ function logout() {
                     localStorage.removeItem('backgroundColor'); // حذف لون الخفية  
                     localStorage.removeItem('theme'); // حذف الوضع
 
+                    // تحديث واجهة المستخدم
+                    updateAuthButtons();
+
                     // إعادة توجيه المستخدم إلى صفحة تسجيل الدخول أو الصفحة الرئيسية
-                    Swal.fire({
+                                      Swal.fire({
                         icon: 'success',
                         title: 'تم تسجيل الخروج بنجاح',
-                        text: 'تم حذف جميع البيانات المرتبطة بحسابك.',
+                        text: 'نتمنى أن نراك مرة أخرى قريباً!',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        background: '#1A1E2D',
+                        color: '#F8F9FA',
+                        iconColor: '#00BF63',
+                        confirmButtonColor: '#3A7BD5',
                     }).then(() => {
                         setTimeout(() => {
                             window.location.href = 'index.html'; // إعادة التوجيه
@@ -123,6 +132,11 @@ function logout() {
         }
     });
 }
+
+
+
+
+
 
 //لتعديل لون الخلفية
 // common.js
@@ -203,11 +217,87 @@ function loadTheme() {
     updateThemeIcon(isLightMode);
 }
 
+
+
+                // تطبيق الوضع الداكن/الفاتح
+        function applyDarkLightMode() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+        }
+
+
+function applyConsistentBackground() {
+    const color = localStorage.getItem('backgroundColor');
+    const isLightMode = document.body.classList.contains('light-mode');
+
+    // إذا لم يختر المستخدم لون خلفية، استخدم الافتراضي حسب الوضع
+    let bgColor = color;
+    let cardColor = color;
+
+    if (!color) {
+        bgColor = isLightMode ? '#f5f5f5' : '#1c1f2b'; // نفس ألوان body في CSS
+        cardColor = isLightMode ? '#fff' : '#2a2f40';   // نفس ألوان الكروت في CSS
+    } else {
+        // إذا كان اللون المختار فاتح جدًا في الوضع الليلي، غمّقه قليلًا للكروت
+        if (!isLightMode && isColorLight(color)) {
+            cardColor = shadeColor(color, -15); // غمّق اللون قليلاً
+        }
+        // إذا كان اللون المختار غامق جدًا في الوضع النهاري، افتحه قليلًا للكروت
+        if (isLightMode && !isColorLight(color)) {
+            cardColor = shadeColor(color, 25); // افتح اللون قليلاً
+        }
+    }
+
+    document.body.style.backgroundColor = bgColor;
+
+    // طبّق اللون على جميع الكروت والمحتوى الرئيسي
+    document.querySelectorAll('.card, .content, .main-progress, .summary-section, .budget-section').forEach(el => {
+        el.style.backgroundColor = cardColor;
+    });
+}
+
+// دالة مساعدة: تحديد إذا كان اللون فاتحًا
+function isColorLight(color) {
+    // يدعم hex فقط (#fff أو #ffffff)
+    let c = color.substring(1); // احذف #
+    if (c.length === 3) c = c.split('').map(x => x + x).join('');
+    const rgb = parseInt(c, 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >> 8) & 0xff;
+    const b = (rgb >> 0) & 0xff;
+    // معادلة YIQ
+    return ((r*299)+(g*587)+(b*114))/1000 > 180;
+}
+
+// دالة مساعدة: تغميق أو تفتيح اللون
+function shadeColor(color, percent) {
+    let c = color.substring(1);
+    if (c.length === 3) c = c.split('').map(x => x + x).join('');
+    let num = parseInt(c,16),
+        amt = Math.round(2.55 * percent),
+        R = (num >> 16) + amt,
+        G = (num >> 8 & 0x00FF) + amt,
+        B = (num & 0x0000FF) + amt;
+    return "#" + (
+        0x1000000 +
+        (R<255?R<0?0:R:255)*0x10000 +
+        (G<255?G<0?0:G:255)*0x100 +
+        (B<255?B<0?0:B:255)
+    ).toString(16).slice(1);
+}
+
 // تهيئة الوضع عند تحميل الصفحة
 document.addEventListener('DOMContentLoaded', function() {
     loadTheme();
-    
-    // إضافة حدث النقر لزر التبديل (إذا وجد)
+    applyConsistentBackground();    // إضافة حدث النقر لزر التبديل (إذا وجد)
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', function(e) {
