@@ -45,10 +45,7 @@ app.use(bodyParser.json());
 
 db();
 
-// تعريف المسار الرئيسي
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+
 
 async function initializeData() {
     try {
