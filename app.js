@@ -34,13 +34,14 @@ const EducationalNotification = require('./models/EducationalNotification');
 const ApiError = require("./utils/apierror");
 const Users = require("./routes/userRoutes");
 const {globleError} = require("./middleware/errormiddleware");
+app.use(cors());
+
 // تقديم الملفات الثابتة من مجلد public
 app.use(express.static(path.join(__dirname, 'public')));
 dotenv.config();
 const db = require('./config/db');
 
 // Middleware
-app.use(cors());
 app.use(bodyParser.json());
 
 db();
