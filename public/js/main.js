@@ -1,4 +1,4 @@
-const url = 'http://localhost:9050/';
+const url = 'https://personal-accountant.onrender.com';
 
 // استدعاء دالة جلب بيانات المستخدم عند تحميل الصفحة
 async function fetchUserData() {
