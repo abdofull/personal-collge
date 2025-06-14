@@ -13,10 +13,7 @@ exports.createPost = async (req, res) => {
     try {
         const { title, content, user } = req.body;
         
-        let imagePath = '';
-        if (req.file) {
-            imagePath = req.file.path; // مسار الصورة المحفوظة
-        }
+        let imagePath = req.file ? `/uploads/posts/${req.file.filename}` : ''; // مسار الصورة المحفوظة
 
         const newPost = new Post({
             title,
@@ -87,11 +84,11 @@ exports.getAllPosts = async (req, res) => {
         
         // تحسين مسارات الصور إذا كانت محلية
         const processedPosts = posts.map(post => {
-            if (post.image && !post.image.startsWith('http')) {
-                post.image = post.image.replace(/\\/g, '/').replace('public/', '');
+            if (post.image && !post.image.startsWith("http")) {
+                post.image = `/uploads/posts/${path.basename(post.image)}`;
             }
-            if (post.user.profileImage && !post.user.profileImage.startsWith('http')) {
-                post.user.profileImage = post.user.profileImage.replace(/\\/g, '/').replace('public/', '');
+            if (post.user.profileImage && !post.user.profileImage.startsWith("http")) {
+                post.user.profileImage = `/uploads/profileImages/${path.basename(post.user.profileImage)}`;
             }
             return post;
         });

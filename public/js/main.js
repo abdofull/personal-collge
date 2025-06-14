@@ -1,4 +1,4 @@
-const url = 'https://personal-accountant.onrender.com';
+const url = 'http://localhost:9050/';
 
 // استدعاء دالة جلب بيانات المستخدم عند تحميل الصفحة
 async function fetchUserData() {
@@ -175,7 +175,7 @@ function showNotification(message,type) {
     setTimeout(() => {
         notification.style.opacity = '0';
         setTimeout(() => notificationContainer.removeChild(notification), 300); // إزالة العنصر بعد التلاشي
-    }, 12000);
+    }, 3000);
 }
 
 // أضف هذه الدوال في ملف main.js أو في قسم script في نهاية الملف
