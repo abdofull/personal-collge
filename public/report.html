@@ -1031,7 +1031,7 @@
                 // إظهار حالة التحميل
                 setLoadingState(true);
                 
-                const response = await axios.get(`http://localhost:9050/api/transactions?userId=${userId}`);
+                const response = await axios.get(`${url}transactions?userId=${userId}`);
                 const transactions = response.data;
                 
                 // إخفاء حالة التحميل

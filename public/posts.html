@@ -173,7 +173,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- <script src="./js/main.js"></script> -->
+    <script src="./js/main.js"></script>
 
     <script>
         // متغيرات عامة
@@ -183,7 +183,6 @@
         let isLoggedIn = false;
         let currentUser = null;
         let posts = [];
-        const url = 'http://localhost:9050'; // يجب تحديث هذا الرابط حسب احتياجاتك
 
         // دالة التحقق من حالة تسجيل الدخول
         async function checkLoginStatus() {
@@ -233,7 +232,7 @@
                 `;
                 
                 // بناء رابط API
-                let apiUrl = `${url}/api/posts?page=${page}&limit=${postsPerPage}`;
+                let apiUrl = `${url}api/posts?page=${page}&limit=${postsPerPage}`;
                 
                 // إضافة معلمات الترتيب
                 if (sort === 'oldest') {
@@ -318,7 +317,7 @@ function displayPosts(posts) {
         // إعداد صورة المنشور إذا وجدت
         let imageHTML = '';
         if (post.image) {
-            const imagePath = post.image.startsWith('http') ? post.image : `${url}/${post.image}`;
+            const imagePath = post.image.startsWith('http') ? post.image : `${url}${post.image}`;
             imageHTML = `<img src="${imagePath}" alt="" class="post-image">`;
         }
         
@@ -327,7 +326,7 @@ function displayPosts(posts) {
         const profileImage = user.profile_image || user.profileImage;
         
         if (profileImage) {
-            const avatarPath = profileImage.startsWith('http') ? profileImage : `${url}/${profileImage}`;
+            const avatarPath = profileImage.startsWith('http') ? profileImage : `${url}${profileImage}`;
             avatarHTML = `<img src="${avatarPath}" alt="${user.username || 'مستخدم'}" class="user-avatar">`;
         } else {
             const firstLetter = (user.username || 'مستخدم').charAt(0);
@@ -568,7 +567,7 @@ function displayPosts(posts) {
                 const token = localStorage.getItem('token');
                 
                 const response = await axios.delete(
-                    `${url}/api/posts/${postId}`,
+                    `${url}api/posts/${postId}`,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`
@@ -623,7 +622,7 @@ function displayPosts(posts) {
             
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`${url}/api/posts/${postId}`, {
+                const response = await axios.get(`${url}api/posts/${postId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -685,7 +684,7 @@ function displayPosts(posts) {
                     }
                     
                     const updateResponse = await axios.put(
-                        `${url}/api/posts/${postId}`,
+                        `${url}api/posts/${postId}`,
                         formData,
                         {
                             headers: {
@@ -735,7 +734,7 @@ function displayPosts(posts) {
                 const token = localStorage.getItem('token');
                 
                 const response = await axios.post(
-                    `${url}/api/posts/${postId}/comments`,
+                    `${url}api/posts/${postId}/comments`,
                     { user: currentUser.username, content },
                     {
                         headers: {
@@ -784,7 +783,7 @@ function displayPosts(posts) {
                 const token = localStorage.getItem('token');
                 
                 const response = await axios.post(
-                    `${url}/api/posts/${postId}/reactions`,
+                    `${url}api/posts/${postId}/reactions`,
                     {},
                     {
                         headers: {
@@ -874,7 +873,7 @@ function displayPosts(posts) {
                 postFormData.append('user[profileImage]', currentUser.profileImage || '');
                 
                 const response = await axios.post(
-                    `${url}/api/posts`,
+                    `${url}api/posts`,
                     postFormData,
                     {
                         headers: {
