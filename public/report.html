@@ -23,7 +23,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="./js/main.js"></script>
-    
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2805599213893082"
+     crossorigin="anonymous"></script>
     
     <style>
         /* استيراد الخطوط */
@@ -1023,7 +1024,7 @@
             const userId = localStorage.getItem('userId');
             if (!userId) {
                 showErrorMessage('يجب تسجيل الدخول أولاً');
-                setTimeout(() => window.location.href = 'index.html', 2000);
+                setTimeout(() => window.location.href = 'index.html', 1500);
                 return [];
             }
             
@@ -1031,7 +1032,7 @@
                 // إظهار حالة التحميل
                 setLoadingState(true);
                 
-                const response = await axios.get(`${url}transactions?userId=${userId}`);
+                const response = await axios.get(`${url}api/transactions?userId=${userId}`);
                 const transactions = response.data;
                 
                 // إخفاء حالة التحميل
