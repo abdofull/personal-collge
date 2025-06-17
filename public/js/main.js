@@ -99,7 +99,7 @@ function logout() {
                     localStorage.removeItem('theme'); // حذف الوضع
 
                     // تحديث واجهة المستخدم
-                    updateAuthButtons();
+                    //updateAuthButtons();
 
                     // إعادة توجيه المستخدم إلى صفحة تسجيل الدخول أو الصفحة الرئيسية
                                       Swal.fire({

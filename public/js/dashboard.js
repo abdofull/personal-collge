@@ -74,44 +74,46 @@ async function rateTip(tipId, action) {
             }
         });
 
-        // استخدم response.data.message إذا وجد أو رسالة افتراضية
-        // const message = response.data?.message || 'شكراً لتقييمك!';
-        // showNotification(message, 'success');
+        let message;
+        if (action === 'like') {
+            message = 'شكرًا! نحن سعداء أنك وجدت النصيحة مفيدة! 🎉';
+        } else if (action === 'dislike') {
+            message = 'شكرًا على ملاحظتك! سنعمل على تحسين النصائح المستقبلية. 🙁';
+        }
+
         Swal.fire({
             position: "top-end",
-            // icon: "success",
-            title: "'شكراً لتقييمك! 🎉😎",
+            title: message,
             showConfirmButton: false,
-            timer: 1000
-          });
-        
+            timer: 2000
+        });
+
         loadEducationalTips(); // تحديث واجهة النصائح
     } catch (error) {
-        // عرض رسالة الخطأ من السيرفر أو رسالة افتراضية
         const errorMsg = error.response?.data?.message || 'حدث خطأ أثناء التقييم';
         showNotification(errorMsg, 'error');
     }
-}
-
-// دالة تطبيق النصيحة
-async function markTipAsApplied(tipId) {
-    try {
-        const response = await axios.post(`${url}api/educational-notifications/${tipId}/apply`);
-        showNotification(`لقد كسبت ${response.data.points} نقطة!`, 'success');
-        loadEducationalTips();
-    } catch (error) {
-        showNotification(error.response?.data?.message || 'حدث خطأ', 'error');
-    }
 };
 
-async function loadUserPoints() {
-    try {
-        const response = await axios.get(`${url}api/user/points`);
-        document.getElementById('userPoints').textContent = response.data.points;
-    } catch (error) {
-        console.error('فشل تحميل النقاط:', error);
-    }
-}
+// دالة تطبيق النصيحة
+// async function markTipAsApplied(tipId) {
+//     try {
+//         const response = await axios.post(`${url}api/educational-notifications/${tipId}/apply`);
+//         showNotification(`لقد كسبت ${response.data.points} نقطة!`, 'success');
+//         loadEducationalTips();
+//     } catch (error) {
+//         showNotification(error.response?.data?.message || 'حدث خطأ', 'error');
+//     }
+// };
+
+// async function loadUserPoints() {
+//     try {
+//         const response = await axios.get(`${url}api/user/points`);
+//         document.getElementById('userPoints').textContent = response.data.points;
+//     } catch (error) {
+//         console.error('فشل تحميل النقاط:', error);
+//     }
+// }
 
 // استدعاء الدالة عند تحميل الصفحة
 window.onload = function() {

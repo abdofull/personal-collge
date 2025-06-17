@@ -1114,3 +1114,227 @@
     color: #777;
     font-size: 12px;
 }
+/* أنماط أزرار التحكم في المنشورات */
+.post-controls {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.post-control-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.post-control-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.post-control-btn.edit-btn:hover {
+    background: rgba(40, 167, 69, 0.3);
+    color: #28a745;
+}
+
+.post-control-btn.delete-btn:hover {
+    background: rgba(220, 53, 69, 0.3);
+    color: #dc3545;
+}
+
+/* أنماط قسم التعليقات */
+.comments-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.comments-section.show {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.comments-list {
+    margin-bottom: 15px;
+}
+
+.comment {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.comment-header strong {
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.comment-content {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+/* أنماط إضافة التعليقات */
+.add-comment-section {
+    margin-top: 15px;
+}
+
+.comment-input-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.comment-input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 10px 15px;
+    color: #fff;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.comment-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.comment-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.add-comment-btn {
+    background: var(--primary-color);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-comment-btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.1);
+}
+
+.login-to-comment {
+    text-align: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+}
+
+.login-to-comment a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-to-comment a:hover {
+    text-decoration: underline;
+}
+
+/* أنماط الصورة الرمزية */
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+    text-transform: uppercase;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+}
+
+/* تحسينات الاستجابة للأجهزة المحمولة */
+@media (max-width: 768px) {
+    .post-controls {
+        gap: 5px;
+    }
+    
+    .post-control-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .comment-input-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .comment-input {
+        width: 100%;
+    }
+    
+    .add-comment-btn {
+        align-self: flex-end;
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* أنماط نموذج التعديل في SweetAlert */
+.edit-post-form .form-group {
+    text-align: right;
+    direction: rtl;
+}
+
+.edit-post-form .form-control {
+    text-align: right;
+    direction: rtl;
+}
+
+.edit-post-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+

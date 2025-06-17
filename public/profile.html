@@ -124,7 +124,7 @@
             <div class="profile-cover"></div>
             <div class="profile-avatar-container">
                 <div class="profile-avatar" id="profileAvatar">
-                    <img id="profileImage" src="default-image.png" alt="صورة المستخدم">
+                    <img id="profileImage"  alt="صورة المستخدم">
                 </div>
                 <div class="profile-avatar-edit" id="avatarEditBtn" title="تغيير الصورة الشخصية">
                     <i class="fas fa-camera"></i>
@@ -944,14 +944,13 @@
                 
                 // تحديث تاريخ الإنضمام
                 const createdAt = new Date(userData.createdAt);
-                const formattedDate = new Intl.DateTimeFormat('ar-SA', { 
+                const formattedDate = new Intl.DateTimeFormat('ar-EG', { 
                     year: 'numeric', 
                     month: 'long', 
                     day: 'numeric' 
                 }).format(createdAt);
-                
-                document.getElementById('profileDate').textContent = formattedDate;
-                
+
+                document.getElementById('profileDate').textContent = formattedDate;                
                 
             } catch (error) {
                 console.error('حدث خطأ أثناء تحميل بيانات المستخدم:', error);

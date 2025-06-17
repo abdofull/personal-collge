@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script src="./js/main.js"></script>
+    <!-- <script src="./js/main.js"></script> -->
     <link rel="stylesheet" href="./styles/add-goal.css">
      
 
@@ -254,12 +254,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-
+        // أضف هذا في الأعلى قبل استخدام goalId
+        const urlParams = new URLSearchParams(window.location.search);
+        const goalId = urlParams.get('id'); 
         // دالة التحميل الأولية
         window.onload = function() {
             checkAuth();
             fetchUserData();           
             setupEventListeners();
+            // loadUserInfo()
             setDefaultEndDate();
             applyDarkLightMode();
 
@@ -271,6 +274,8 @@
                 ease: "power2.out"
             });
         };
+
+        
 
         // التحقق من تسجيل الدخول
         function checkAuth() {
@@ -293,21 +298,21 @@
         }
 
         // تحميل معلومات المستخدم
-        // async function loadUserInfo() {
-        //     const userId = localStorage.getItem('userId');
-        //     if (!userId) return;
+        async function loadUserInfo() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
 
-        //     try {
-        //         const response = await axios.get(`${url}users/${userId}`);
-        //         const userData = response.data.user;
+            try {
+                const response = await axios.get(`${url}users/${userId}`);
+                const userData = response.data.user;
                 
-        //         // تحديث اسم المستخدم في الواجهة
-        //         document.getElementById('userDisplayName').textContent = userData.username || 'مستخدم';
-        //         document.querySelector('.user-avatar').textContent = (userData.username || 'م').charAt(0);
-        //     } catch (error) {
-        //         console.error('خطأ في تحميل بيانات المستخدم:', error);
-        //     }
-        // }
+                // تحديث اسم المستخدم في الواجهة
+                // document.getElementById('userDisplayName').textContent = userData.username || 'مستخدم';
+                // document.querySelector('.user-avatar').textContent = (userData.username || 'م').charAt(0);
+            } catch (error) {
+                console.error('خطأ في تحميل بيانات المستخدم:', error);
+            }
+        }
 
         // إعداد أحداث المستمعين
         function setupEventListeners() {
@@ -389,88 +394,46 @@
         }
 
         // تقديم نموذج الهدف
-        async function submitGoalForm(event) {
-            event.preventDefault();
-            
-            // التحقق من صحة النموذج
-            const form = event.target;
-            if (!form.checkValidity()) {
-                event.stopPropagation();
-                form.classList.add('was-validated');
-                return;
-            }
-            
-            // جمع بيانات النموذج
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                showErrorMessage('غير مسجل الدخول. يرجى تسجيل الدخول وإعادة المحاولة.');
-                return;
-            }
-            
-            // بناء كائن البيانات
-            const goalData = {
-                userId: userId,
-                title: document.getElementById('goalTitle').value,
-                description: document.getElementById('goalDescription').value || '',
-                targetAmount: parseFloat(document.getElementById('goalAmount').value),
-                currentAmount: parseFloat(document.getElementById('goalStartAmount').value) || 0,
-                endDate: document.getElementById('goalEndDate').value,
-                type: document.getElementById('goalType').value,
-                priority: document.getElementById('goalPriority').value,
-                linkedAccount: document.getElementById('linkedAccount').value || ''
-            };
-            
-            // التحقق من صحة التاريخ المستهدف
-            const today = new Date();
-            const endDate = new Date(goalData.endDate);
-            if (endDate <= today) {
-                showErrorMessage('يجب أن يكون التاريخ المستهدف في المستقبل.');
-                return;
-            }
-            
-            // عرض مؤشر التحميل
-            const loadingBtn = document.getElementById('submitBtn');
-            loadingBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> جاري الحفظ...';
-            loadingBtn.disabled = true;
-            
-            try {
-                // إرسال البيانات إلى الخادم
-                const response = await axios.post(`${url}api/goals`, goalData);
-                
-                // التعامل مع الاستجابة
-                if (response.data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'تم إنشاء الهدف بنجاح',
-                        text: 'تم إنشاء الهدف المالي الجديد بنجاح.',
-                        confirmButtonText: 'العودة إلى قائمة الأهداف',
-                        customClass: {
-                            popup: 'rtl-popup'
-                        }
-                    }).then(() => {
-                        window.location.href = 'goals.html';
-                    });
-                } else {
-                    showErrorMessage('حدث خطأ أثناء إنشاء الهدف. يرجى المحاولة مرة أخرى.');
-                }
-            } catch (error) {
-                console.error('خطأ في إنشاء الهدف:', error);
-                
-                // التعامل مع رسائل الخطأ المحددة من الخادم
-                let errorMessage = 'حدث خطأ أثناء إنشاء الهدف. يرجى المحاولة مرة أخرى.';
-                
-                if (error.response && error.response.data && error.response.data.message) {
-                    errorMessage = error.response.data.message;
-                }
-                
-                showErrorMessage(errorMessage);
-            } finally {
-                // إعادة زر الإرسال إلى حالته الطبيعية
-                loadingBtn.innerHTML = '<i class="fas fa-save"></i> حفظ الهدف';
-                loadingBtn.disabled = false;
-            }
-        }
+async function submitGoalForm(event) {
+    event.preventDefault();
+    
+    // جمع بيانات النموذج
+    const goalData = {
+        userId: localStorage.getItem('userId'),
+        title: document.getElementById('goalTitle').value,
+        description: document.getElementById('goalDescription').value || '',
+        targetAmount: parseFloat(document.getElementById('goalAmount').value),
+        currentAmount: parseFloat(document.getElementById('goalStartAmount').value) || 0,
+        endDate: document.getElementById('goalEndDate').value,
+        type: document.getElementById('goalType').value,
+        priority: document.getElementById('goalPriority').value,
+        linkedAccount: document.getElementById('linkedAccount').value || ''
+    };
 
+    try {
+        // إرسال البيانات إلى الخادم
+        const response = await axios.put(`${url}api/goals/${goalId}`, goalData); // استخدم PUT للتحديث
+        
+        if (response.data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'تم تعديل الهدف بنجاح',
+                text: 'تم تعديل الهدف المالي بنجاح.',
+                confirmButtonText: 'العودة إلى قائمة الأهداف',
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            }).then(() => {
+                window.location.href = 'goals.html';
+            });
+        } else {
+            showErrorMessage('حدث خطأ أثناء تعديل الهدف. يرجى المحاولة مرة أخرى.');
+        }
+    } catch (error) {
+        showErrorMessage(error.response?.data?.message || 'حدث خطأ أثناء تعديل الهدف.');
+    }
+}        
+        
         // عرض رسالة خطأ
         function showErrorMessage(message) {
             Swal.fire({

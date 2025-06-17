@@ -32,7 +32,7 @@ exports.registerUser = async (req, res, next) => {
     //     return next(new ApiError(400, 'اسم المستخدم مستخدم بالفعل!'));
     // }
 
-    const profileImage = req.file ? `/uploads/profileImages/${req.file.filename}` : ""; // إذا تم تحميل صورة
+    const profileImage = req.file ? `../public/uploads/profileImages/${req.file.filename}` : ""; // إذا تم تحميل صورة
 
     try {
         const user = await User.create({ username, email, password, profileImage });
@@ -67,7 +67,7 @@ exports.updateProfileImage = async (req, res, next) => {
         return next(new ApiError(404, 'المستخدم غير موجود!'));
     }
 
-    user.profileImage = `/uploads/profileImages/${req.file.filename}`; // تحديث رابط الصورة
+    user.profileImage = `../public/uploads/profileImages/${req.file.filename}`; // تحديث رابط الصورة
     await user.save();
 
     res.status(200).json({
@@ -231,7 +231,6 @@ exports.changePassword = async (req, res, next) => {
 };
 
 // حذف حساب المستخدم بكامل التقارير والميزانيات والمعاملات
-
 // حذف حساب المستخدم
 exports.deleteUserAccount = async (req, res, next) => {
     const { userId } = req.params; // الحصول على userId من المعلمات

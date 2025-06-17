@@ -1,103 +1,482 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8"> <!-- تعيين ترميز الأحرف إلى UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- تعيين عرض الصفحة ليتناسب مع الأجهزة المختلفة -->
-    
-    <title>صفحة المساعدة والدعم - [اسم الموقع]</title> <!-- عنوان الصفحة -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600&display=swap" rel="stylesheet"> <!-- استيراد خط "تاجوال" -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> <!-- استيراد مكتبة Tailwind CSS لتنسيق الصفحة -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2805599213893082"
-     crossorigin="anonymous"></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- استيراد أيقونات Font Awesome -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدعم والمساعدة - محاسبي الشخصي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'arabic': ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#5D5CDE',
+                        secondary: '#4F46E5',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    }
+                }
+            },
+            darkMode: 'class'
+        }
+    </script>
     <style>
         body {
-            font-family: 'Tajawal', sans-serif; /* تعيين خط الصفحة */
-            background: linear-gradient(135deg, #f0f4c3, #e1bee7); /* خلفية متدرجة زاهية */
-            transition: background 0.5s; /* إضافة تأثير انتقال للخلفية */
+            font-family: 'Tajawal', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
         .faq-item {
-            transition: transform 0.3s; /* تأثير حركة عند التحويم */
+            transition: all 0.3s ease;
         }
-        .faq-item:hover {
-            transform: scale(1.05); /* تكبير العنصر عند التحويم */
-        }
-        .send-button {
-            transition: background-color 0.3s; /* تأثير حركة عند تغيير لون الزر */
-        }
-        .send-button:hover {
-            background-color: #4caf50; /* تغيير لون الزر عند التحويم */
-        }
-        .navbar {
-            background-color: #007bff;
-        }
-        .navbar-brand, .navbar-nav .nav-link {
-            color: white;
+        .step-circle {
+            background: linear-gradient(135deg, #5D5CDE, #4F46E5);
         }
     </style>
 </head>
-<body>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
-    <div class="container mx-auto mt-10 max-w-4xl"> <!-- حاوية مركزية لاحتواء المحتوى -->
-        <h2 class="text-3xl font-semibold text-center mb-6">المساعدة والدعم</h2> <!-- عنوان الصفحة -->
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-6">
+                <i class="fas fa-calculator text-6xl mb-4 opacity-90"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">مركز الدعم والمساعدة</h1>
+            <p class="text-xl opacity-90 max-w-2xl mx-auto">نحن هنا لمساعدتك في إدارة أموالك بسهولة وفعالية</p>
+        </div>
+    </header>
 
-        <div class="bg-white shadow-md rounded px-8 py-6 mb-6"> <!-- حاوية للأسئلة الشائعة -->
-            <h3 class="text-2xl font-semibold mb-4">الأسئلة الشائعة (FAQ)</h3> <!-- عنوان القسم -->
-            <div class="faq-item mb-4"> <!-- عنصر سؤال -->
-                <h4 class="font-semibold"><i class="fas fa-question-circle"></i> كيف يمكنني إنشاء حساب؟</h4> <!-- سؤال -->
-                <p class="text-gray-600">يمكنك إنشاء حساب من خلال الضغط على زر "تسجيل" في الصفحة الرئيسية وملء النموذج المطلوب.</p> <!-- إجابة -->
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
+        
+        <!-- Quick Help Cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 card-hover border-t-4 border-primary">
+                <div class="text-primary text-3xl mb-4">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">البدء السريع</h3>
+                <p class="text-gray-600 dark:text-gray-300">تعلم كيفية إعداد حسابك واستخدام المنصة خلال دقائق</p>
             </div>
-            <div class="faq-item mb-4"> <!-- عنصر سؤال -->
-                <h4 class="font-semibold"><i class="fas fa-question-circle"></i> ماذا أفعل إذا نسيت كلمة المرور؟</h4> <!-- سؤال -->
-                <p class="text-gray-600">يمكنك إعادة تعيين كلمة المرور من خلال رابط "نسيت كلمة المرور" في صفحة تسجيل الدخول.</p> <!-- إجابة -->
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 card-hover border-t-4 border-success">
+                <div class="text-success text-3xl mb-4">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">أدلة شاملة</h3>
+                <p class="text-gray-600 dark:text-gray-300">دليل مفصل لجميع الميزات والأدوات المتاحة</p>
             </div>
-            <!-- إضافة المزيد من الأسئلة حسب الحاجة -->
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 card-hover border-t-4 border-warning">
+                <div class="text-warning text-3xl mb-4">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">دعم فوري</h3>
+                <p class="text-gray-600 dark:text-gray-300">فريق الدعم متاح للإجابة على جميع استفساراتك</p>
+            </div>
         </div>
 
-        <div class="bg-white shadow-md rounded px-8 py-6 mb-6"> <!-- حاوية لدليل الاستخدام -->
-            <h3 class="text-2xl font-semibold mb-4">دليل استخدام الموقع</h3> <!-- عنوان القسم -->
-            <p class="text-gray-600 mb-4">إليك خطوات استخدام الموقع:</p>
-            <ol class="list-decimal list-inside mb-4"> <!-- قائمة مرقمة -->
-                <li>قم بإنشاء حساب جديد.</li>
-                <li>قم بتسجيل الدخول إلى حسابك.</li>
-                <li>استعرض المحتوى المتاح.</li>
-                <li>استخدم خاصية البحث للعثور على ما تحتاجه.</li>
-            </ol>
-            <p class="text-gray-600">إذا كنت بحاجة إلى المزيد من المساعدة، لا تتردد في التواصل معنا.</p> <!-- نص معلومات إضافية -->
+        <!-- Getting Started Guide -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-12">
+            <h2 class="text-3xl font-bold mb-8 text-center">
+                <i class="fas fa-play-circle text-primary mr-3"></i>
+                دليل البدء السريع
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4 space-x-reverse">
+                        <div class="step-circle text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">1</div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">إنشاء الحساب</h4>
+                            <p class="text-gray-600 dark:text-gray-300">ابدأ بإنشاء حساب جديد أو تسجيل الدخول إلى حسابك الموجود</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4 space-x-reverse">
+                        <div class="step-circle text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">2</div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">إعداد البروفايل</h4>
+                            <p class="text-gray-600 dark:text-gray-300">قم بتحديث معلوماتك الشخصية وتفضيلاتك من صفحة البروفايل</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4 space-x-reverse">
+                        <div class="step-circle text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">3</div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">استكشاف لوحة التحكم</h4>
+                            <p class="text-gray-600 dark:text-gray-300">تعرف على الإجراءات السريعة وأدوات الإدارة المالية</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4 space-x-reverse">
+                        <div class="step-circle text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">4</div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">إضافة أول معاملة</h4>
+                            <p class="text-gray-600 dark:text-gray-300">ابدأ بتسجيل معاملاتك المالية لتتبع دخلك ومصروفاتك</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4 space-x-reverse">
+                        <div class="step-circle text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">5</div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">إنشاء ميزانية</h4>
+                            <p class="text-gray-600 dark:text-gray-300">حدد ميزانيتك الشهرية وراقب التزامك بها</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4 space-x-reverse">
+                        <div class="step-circle text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm">6</div>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-2">متابعة التقارير</h4>
+                            <p class="text-gray-600 dark:text-gray-300">استعرض تقاريرك المالية وحلل عاداتك في الإنفاق</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="bg-white shadow-md rounded px-8 py-6 mb-6"> <!-- حاوية لتواصل معنا -->
-            <h3 class="text-2xl font-semibold mb-4">تواصل معنا</h3> <!-- عنوان القسم -->
-            <form id="contactForm"> <!-- نموذج تواصل -->
-                <label for="name" class="block mb-2">الاسم:</label> <!-- تسمية حقل الاسم -->
-                <input type="text" id="name" class="border rounded w-full py-2 px-3 mb-4" placeholder="أدخل اسمك هنا" required /> <!-- حقل إدخال الاسم -->
+        <!-- Features Guide -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-12">
+            <h2 class="text-3xl font-bold mb-8 text-center">
+                <i class="fas fa-cogs text-primary mr-3"></i>
+                دليل الميزات
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="text-4xl text-success mb-4">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h4 class="font-semibold mb-2">إضافة معاملة</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">سجل مصروفاتك ودخلك بسهولة مع إمكانية التصنيف</p>
+                </div>
+                
+                <div class="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="text-4xl text-primary mb-4">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h4 class="font-semibold mb-2">إنشاء ميزانية</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">ضع حدود إنفاق لكل فئة وراقب التزامك</p>
+                </div>
+                
+                <div class="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="text-4xl text-warning mb-4">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h4 class="font-semibold mb-2">إنشاء هدف</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">حدد أهدافك المالية وتتبع تقدمك نحو تحقيقها</p>
+                </div>
+                
+                <div class="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="text-4xl text-danger mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="font-semibold mb-2">عرض تقرير</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">احصل على تقارير مفصلة عن وضعك المالي</p>
+                </div>
+            </div>
+        </div>
 
-                <label for="email" class="block mb-2">البريد الإلكتروني:</label> <!-- تسمية حقل البريد الإلكتروني -->
-                <input type="email" id="email" class="border rounded w-full py-2 px-3 mb-4" placeholder="أدخل بريدك الإلكتروني هنا" required /> <!-- حقل إدخال البريد الإلكتروني -->
+        <!-- FAQ Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-12">
+            <h2 class="text-3xl font-bold mb-8 text-center">
+                <i class="fas fa-question-circle text-primary mr-3"></i>
+                الأسئلة الشائعة
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="faq-item border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <button class="faq-header w-full text-right p-4 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 flex justify-between items-center">
+                        <span>كيف يمكنني إنشاء حساب جديد؟</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content p-4 border-t border-gray-200 dark:border-gray-600 hidden">
+                        <p class="text-gray-600 dark:text-gray-300">يمكنك إنشاء حساب جديد من خلال النقر على زر "تسجيل حساب جديد" في الصفحة الرئيسية، ثم ملء النموذج بالمعلومات المطلوبة مثل الاسم والبريد الإلكتروني وكلمة المرور.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <button class="faq-header w-full text-right p-4 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 flex justify-between items-center">
+                        <span>كيف يمكنني تصنيف معاملاتي المالية؟</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content p-4 border-t border-gray-200 dark:border-gray-600 hidden">
+                        <p class="text-gray-600 dark:text-gray-300">عند إضافة معاملة جديدة، يمكنك اختيار الفئة المناسبة من القائمة المنسدلة مثل "طعام"، "مواصلات"، "ترفيه"، "راتب"، إلخ. كما يمكنك إنشاء فئات مخصصة حسب احتياجاتك.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <button class="faq-header w-full text-right p-4 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 flex justify-between items-center">
+                        <span>ما الفرق بين الميزانية والهدف المالي؟</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content p-4 border-t border-gray-200 dark:border-gray-600 hidden">
+                        <p class="text-gray-600 dark:text-gray-300">الميزانية تساعدك في تحديد حدود الإنفاق الشهرية لكل فئة، بينما الهدف المالي يساعدك في ادخار مبلغ معين لشراء شيء محدد أو لمناسبة خاصة في المستقبل.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <button class="faq-header w-full text-right p-4 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 flex justify-between items-center">
+                        <span>كيف يمكنني الوصول إلى التقارير المالية؟</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content p-4 border-t border-gray-200 dark:border-gray-600 hidden">
+                        <p class="text-gray-600 dark:text-gray-300">يمكنك الوصول إلى التقارير من خلال النقر على زر "عرض تقرير" في لوحة التحكم. ستجد تقارير شهرية وسنوية تشمل الرسوم البيانية والإحصائيات التفصيلية لمعاملاتك.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item border border-gray-200 dark:border-gray-600 rounded-lg">
+                    <button class="faq-header w-full text-right p-4 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 flex justify-between items-center">
+                        <span>هل يمكنني تصدير بياناتي المالية؟</span>
+                        <i class="fas fa-chevron-down transition-transform"></i>
+                    </button>
+                    <div class="faq-content p-4 border-t border-gray-200 dark:border-gray-600 hidden">
+                        <p class="text-gray-600 dark:text-gray-300">نعم، يمكنك تصدير بياناتك المالية بصيغ مختلفة مثل Excel أو PDF من خلال قسم التقارير. هذا يساعدك في حفظ نسخة احتياطية أو مشاركة البيانات مع محاسبك.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                <label for="message" class="block mb-2">الرسالة:</label> <!-- تسمية حقل الرسالة -->
-                <textarea id="message" class="border rounded w-full py-2 px-3 mb-4" placeholder="اكتب رسالتك هنا" required></textarea> <!-- حقل إدخال الرسالة -->
-
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded send-button">إرسال</button> <!-- زر إرسال -->
-            </form>
+        <!-- Contact Form -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold mb-8 text-center">
+                <i class="fas fa-envelope text-primary mr-3"></i>
+                تواصل معنا
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">معلومات الاتصال</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <div class="text-primary text-xl">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <span>toodaylibya348@myaccounting.com</span>
+                        </div>
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <div class="text-primary text-xl">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <!-- <span>ساعات العمل: الأحد - الخميس، 9 صباحاً - 6 مساءً</span> -->
+                        </div>
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <div class="text-primary text-xl">
+                                <i class="fas fa-reply"></i>
+                            </div>
+                            <span>نرد عادة خلال 24 ساعة</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h4 class="font-semibold mb-4">نصائح للحصول على أفضل دعم:</h4>
+                        <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                            <li class="flex items-start space-x-2 space-x-reverse">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>اكتب وصفاً مفصلاً للمشكلة</span>
+                            </li>
+                            <li class="flex items-start space-x-2 space-x-reverse">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>أرفق لقطات شاشة إن أمكن</span>
+                            </li>
+                            <li class="flex items-start space-x-2 space-x-reverse">
+                                <i class="fas fa-check text-success mt-1"></i>
+                                <span>اذكر متصفحك ونوع جهازك</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <form id="contactForm" class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium mb-2">الاسم الكامل</label>
+                            <input type="text" id="name" name="name" required 
+                                   class="w-full text-base px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
+                                   placeholder="أدخل اسمك الكامل">
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium mb-2">البريد الإلكتروني</label>
+                            <input type="email" id="email" name="email" required 
+                                   class="w-full text-base px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors"
+                                   placeholder="أدخل بريدك الإلكتروني">
+                        </div>
+                        
+                        <div>
+                            <label for="subject" class="block text-sm font-medium mb-2">موضوع الرسالة</label>
+                            <select id="subject" name="subject" required 
+                                    class="w-full text-base px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors">
+                                <option value="">اختر موضوع الرسالة</option>
+                                <option value="technical">مشكلة تقنية</option>
+                                <option value="account">مشكلة في الحساب</option>
+                                <option value="feature">طلب ميزة جديدة</option>
+                                <option value="billing">استفسار مالي</option>
+                                <option value="general">استفسار عام</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="message" class="block text-sm font-medium mb-2">الرسالة</label>
+                            <textarea id="message" name="message" rows="5" required 
+                                      class="w-full text-base px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors resize-none"
+                                      placeholder="اكتب رسالتك هنا بالتفصيل..."></textarea>
+                        </div>
+                        
+                        <button type="submit" 
+                                class="w-full bg-primary hover:bg-secondary text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 space-x-reverse">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>إرسال الرسالة</span>
+                        </button>
+                    </form>
+                    
+                    <div id="successMessage" class="hidden mt-4 p-4 bg-success/10 border border-success/20 rounded-lg">
+                        <div class="flex items-center space-x-2 space-x-reverse text-success">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="font-medium">تم إرسال رسالتك بنجاح!</span>
+                        </div>
+                        <p class="text-sm text-success/80 mt-1">سيتم الرد عليك في أقرب وقت ممكن.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script>
-        // إضافة وظيفة لإرسال النموذج
-        document.getElementById('contactForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // منع إعادة تحميل الصفحة
-            const name = document.getElementById('name').value; // الحصول على قيمة الاسم
-            const email = document.getElementById('email').value; // الحصول على قيمة البريد الإلكتروني
-            const message = document.getElementById('message').value; // الحصول على قيمة الرسالة
-            
-            // عرض رسالة نجاح
-            alert(`شكراً لك، ${name}! سيتم الرد على رسالتك قريباً.`);
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-4">
+                <i class="fas fa-calculator text-3xl text-primary"></i>
+            </div>
+            <h3 class="text-xl font-semibold mb-2">محاسبي الشخصي</h3>
+            <p class="text-gray-400 mb-4">منصتك الموثوقة لإدارة الأموال الشخصية</p>
+            <div class="flex justify-center space-x-4 space-x-reverse">
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                    <i class="fab fa-facebook text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                    <i class="fab fa-twitter text-xl"></i>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-primary transition-colors">
+                    <i class="fab fa-linkedin text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
 
-            // يمكنك هنا إضافة كود لإرسال البيانات إلى الخادم باستخدام AJAX أو Fetch API
-            // reset the form
-            document.getElementById('contactForm').reset(); // إعادة تعيين النموذج
+    <script>
+        // Dark mode detection
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // FAQ functionality
+        document.querySelectorAll('.faq-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('i');
+                
+                // Toggle content
+                content.classList.toggle('hidden');
+                
+                // Rotate icon
+                if (content.classList.contains('hidden')) {
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    icon.style.transform = 'rotate(180deg)';
+                }
+                
+                // Close other FAQs
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    if (item !== header.parentElement) {
+                        const otherContent = item.querySelector('.faq-content');
+                        const otherIcon = item.querySelector('.faq-header i');
+                        otherContent.classList.add('hidden');
+                        otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+        });
+
+        // Contact form functionality
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const subject = formData.get('subject');
+            const message = formData.get('message');
+            
+            // Simulate form submission
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            
+            // Show loading state
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>جاري الإرسال...</span>';
+            submitButton.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                // Show success message
+                document.getElementById('successMessage').classList.remove('hidden');
+                
+                // Reset form
+                this.reset();
+                
+                // Reset button
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+                
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    document.getElementById('successMessage').classList.add('hidden');
+                }, 5000);
+                
+                // Scroll to success message
+                document.getElementById('successMessage').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 2000);
+        });
+
+        // Smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
     </script>
 </body>

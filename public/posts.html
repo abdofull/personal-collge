@@ -174,8 +174,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="./js/main.js"></script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2805599213893082"
-     crossorigin="anonymous"></script>
+
     <script>
         // متغيرات عامة
         let currentPage = 1;
@@ -191,21 +190,37 @@
             const userId = localStorage.getItem('userId');
 
             if (token && userId) {
-                isLoggedIn = true;
-                currentUser = {
-                    id: userId,
-                    username: localStorage.getItem('username') || 'مستخدم',
-                    profileImage: localStorage.getItem('profileImage') || null,
-                    role: localStorage.getItem('role') || 'مستخدم'
-                };
-                updateUserInterface(true);
-                return true;
-            } else {
-                isLoggedIn = false;
-                currentUser = null;
-                updateUserInterface(false);
-                return false;
+                try {
+                    // جلب بيانات المستخدم من الخادم
+                    const response = await axios.get(`${url}users/${userId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.data && response.data.user) {
+                        isLoggedIn = true;
+                        currentUser = {
+                            id: userId,
+                            username: response.data.user.username,
+                            profileImage: response.data.user.profileImage,
+                            role: response.data.user.role || 'مستخدم'
+                        };
+                        updateUserInterface(true);
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('خطأ في جلب بيانات المستخدم:', error);
+                    // في حالة الخطأ، امسح البيانات المحلية
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userId');
+                }
             }
+            
+            isLoggedIn = false;
+            currentUser = null;
+            updateUserInterface(false);
+            return false;
         }
 
         // دالة تحديث واجهة المستخدم بناءً على حالة تسجيل الدخول
@@ -271,115 +286,167 @@
         }
 
         // دالة عرض المنشورات
-function displayPosts(posts) {
-    const postsContainer = document.getElementById('postsContainer');
-    
-    if (!posts || posts.length === 0) {
-        postsContainer.innerHTML = `
-            <div class="no-posts-message">
-                <i class="fas fa-comments"></i>
-                <h4>لا توجد منشورات حالياً</h4>
-                <p>كن أول من يشارك في المنتدى! شارك أفكارك وتجاربك المالية مع المجتمع.</p>
-                ${isLoggedIn ? '<button class="btn btn-primary mt-3" onclick="focusOnPostForm()"><i class="fas fa-pen ms-2"></i> إنشاء منشور جديد</button>' : ''}
-            </div>
-        `;
-        return;
-    }
-
-    let postsHTML = '';
-    
-    posts.forEach(post => {
-        // معالجة بيانات المستخدم
-        let user = post.user;
-        
-        // إذا كانت بيانات المستخدم سلسلة JSON
-        if (typeof user === 'string') {
-            try {
-                user = JSON.parse(user);
-            } catch (e) {
-                console.error('Failed to parse user JSON:', e);
-                user = {};
+        function displayPosts(posts) {
+            const postsContainer = document.getElementById('postsContainer');
+            
+            if (!posts || posts.length === 0) {
+                postsContainer.innerHTML = `
+                    <div class="no-posts-message">
+                        <i class="fas fa-comments"></i>
+                        <h4>لا توجد منشورات حالياً</h4>
+                        <p>كن أول من يشارك في المنتدى! شارك أفكارك وتجاربك المالية مع المجتمع.</p>
+                        ${isLoggedIn ? '<button class="btn btn-primary mt-3" onclick="focusOnPostForm()"><i class="fas fa-pen ms-2"></i> إنشاء منشور جديد</button>' : ''}
+                    </div>
+                `;
+                return;
             }
+
+            let postsHTML = '';
+            
+            posts.forEach(post => {
+                // معالجة بيانات المستخدم بشكل آمن
+                let user = {};
+                
+                if (post.user) {
+                    if (typeof post.user === 'string') {
+                        try {
+                            user = JSON.parse(post.user);
+                        } catch (e) {
+                            console.error('Failed to parse user JSON:', e);
+                            user = { username: 'مستخدم' };
+                        }
+                    } else if (typeof post.user === 'object') {
+                        user = post.user;
+                    }
+                } else {
+                    user = { username: 'مستخدم' };
+                }
+                
+                // تنسيق التاريخ
+                const postDate = new Date(post.createdAt);
+                const formattedDate = postDate.toLocaleDateString('ar-EG', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // إعداد صورة المنشور إذا وجدت
+                let imageHTML = '';
+                if (post.image) {
+                    const imagePath = post.image.startsWith('http') ? post.image : `${url}${post.image}`;
+                    imageHTML = `<img src="${imagePath}" alt="" class="post-image">`;
+                }
+                
+                // إعداد الصورة الرمزية للمستخدم
+                let avatarHTML = '';
+                const profileImage = user.profileImage || user.profile_image;
+                
+                if (profileImage) {
+                    const avatarPath = profileImage.startsWith('http') ? profileImage : `${url}${profileImage}`;
+                    avatarHTML = `<img src="${avatarPath}" alt="${user.username || 'مستخدم'}" class="user-avatar">`;
+                } else {
+                    const firstLetter = (user.username || 'مستخدم').charAt(0).toUpperCase();
+                    avatarHTML = `<div class="avatar-placeholder">${firstLetter}</div>`;
+                }
+                
+                // إعداد اسم المستخدم
+                const username = user.username || user.name || 'مستخدم';
+                
+                // إعداد عدد التعليقات
+                const commentsCount = post.comments ? post.comments.length : 0;
+                
+                // إعداد أزرار التحكم (تعديل/حذف) للمستخدم صاحب المنشور
+                let postControlsHTML = '';
+                if (isLoggedIn && currentUser && post.userId && 
+                    (currentUser.id === post.userId || currentUser.username === username)) {
+                    postControlsHTML = `
+                        <div class="post-controls">
+                            <button class="post-control-btn edit-btn" data-post-id="${post._id}" title="تعديل المنشور">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="post-control-btn delete-btn" data-post-id="${post._id}" title="حذف المنشور">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                // بناء HTML للتعليقات
+                let commentsHTML = '';
+                if (post.comments && post.comments.length > 0) {
+                    commentsHTML = '<div class="comments-list">';
+                    post.comments.forEach(comment => {
+                        commentsHTML += `
+                            <div class="comment">
+                                <div class="comment-header">
+                                    <strong>${comment.user || 'مستخدم'}</strong>
+                                    <span class="comment-date">${new Date(comment.createdAt).toLocaleDateString('ar-EG')}</span>
+                                </div>
+                                <div class="comment-content">${comment.content}</div>
+                            </div>
+                        `;
+                    });
+                    commentsHTML += '</div>';
+                }
+                
+                // بناء HTML للمنشور
+                postsHTML += `
+                    <div class="post-card" id="post-${post._id}">
+                        <div class="post-header">
+                            <div class="post-avatar">
+                                ${avatarHTML}
+                            </div>
+                            <div class="post-user-info">
+                                <div class="post-username">${username}</div>
+                                <div class="post-date">${formattedDate}</div>
+                            </div>
+                            ${postControlsHTML}
+                        </div>
+                        <div class="post-content">
+                            ${post.title ? `<h2 class="post-title">${post.title}</h2>` : ''}
+                            <div class="post-text">${post.content}</div>
+                            ${imageHTML}
+                        </div>
+                        <div class="post-footer">
+                            <div class="post-reactions">
+                                <span class="reactions-count">${post.reactions || 0}</span> إعجاب
+                            </div>
+                            <div class="post-actions">
+                                <button class="post-action-btn like-btn ${isLoggedIn ? '' : 'disabled'}" data-post-id="${post._id}" ${!isLoggedIn ? 'disabled' : ''}>
+                                    <i class="fas fa-thumbs-up"></i> إعجاب
+                                </button>
+                                <button class="post-action-btn comment-btn" data-post-id="${post._id}">
+                                    <i class="fas fa-comment"></i> التعليقات (${commentsCount})
+                                </button>
+                            </div>
+                        </div>
+                        <div class="comments-section" id="comments-${post._id}">
+                            ${commentsHTML}
+                            ${isLoggedIn ? `
+                                <div class="add-comment-section">
+                                    <div class="comment-input-container">
+                                        <input type="text" class="comment-input" data-post-id="${post._id}" placeholder="اكتب تعليقك هنا...">
+                                        <button class="add-comment-btn" data-post-id="${post._id}">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div class="login-to-comment mt-3">
+                                    <small><a href="login.html">تسجيل الدخول</a> لإضافة تعليق</small>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            postsContainer.innerHTML = postsHTML;
+            addEventListenersToPostActions();
+            animatePostsAppearance();
         }
-        
-        // إذا لم تكن بيانات المستخدم موجودة
-        user = user || {};
-        
-        // تنسيق التاريخ
-        const postDate = new Date(post.createdAt);
-        const formattedDate = postDate.toLocaleDateString('ar-EG', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        
-        // إعداد صورة المنشور إذا وجدت
-        let imageHTML = '';
-        if (post.image) {
-            const imagePath = post.image.startsWith('http') ? post.image : `${url}${post.image}`;
-            imageHTML = `<img src="${imagePath}" alt="" class="post-image">`;
-        }
-        
-        // إعداد الصورة الرمزية للمستخدم
-        let avatarHTML = '';
-        const profileImage = user.profile_image || user.profileImage;
-        
-        if (profileImage) {
-            const avatarPath = profileImage.startsWith('http') ? profileImage : `${url}${profileImage}`;
-            avatarHTML = `<img src="${avatarPath}" alt="${user.username || 'مستخدم'}" class="user-avatar">`;
-        } else {
-            const firstLetter = (user.username || 'مستخدم').charAt(0);
-            avatarHTML = `<div class="avatar-placeholder">${firstLetter}</div>`;
-        }
-        
-        // إعداد اسم المستخدم
-        const username = user.username || user.name || 'مستخدم';
-        
-        // إعداد عدد التعليقات
-        const commentsCount = post.comments ? post.comments.length : 0;
-        
-        // بناء HTML للمنشور
-        postsHTML += `
-            <div class="post-card" id="post-${post._id}">
-                <div class="post-header">
-                    <div class="post-avatar">
-                        ${avatarHTML}
-                    </div>
-                    <div class="post-user-info">
-                        <div class="post-username">${username}</div>
-                        <div class="post-date">${formattedDate}</div>
-                    </div>
-                </div>
-                <div class="post-content">
-                    ${post.title ? `<h2 class="post-title">${post.title}</h2>` : ''}
-                    <div class="post-text">${post.content}</div>
-                    ${imageHTML}
-                </div>
-                <div class="post-footer">
-                    <div class="post-reactions">
-                        <span class="reactions-count">${post.reactions || 0}</span> إعجاب
-                    </div>
-                    <div class="post-actions">
-                        <button class="post-action-btn like-btn ${isLoggedIn ? '' : 'disabled'}" data-post-id="${post._id}" ${!isLoggedIn ? 'disabled' : ''}>
-                            <i class="fas fa-thumbs-up"></i> إعجاب
-                        </button>
-                        <button class="post-action-btn comment-btn" data-post-id="${post._id}">
-                            <i class="fas fa-comment"></i> التعليقات (${commentsCount})
-                        </button>
-                    </div>
-                </div>
-                <!-- باقي عناصر المنشور -->
-            </div>
-        `;
-    });
-    
-    postsContainer.innerHTML = postsHTML;
-    addEventListenersToPostActions();
-    animatePostsAppearance();
-}        
-        
         
         // دالة تحديث التنقل بين الصفحات
         function updatePagination(currentPage, totalItems, itemsPerPage) {
@@ -622,6 +689,7 @@ function displayPosts(posts) {
             }
             
             try {
+                // جلب بيانات المنشور الحالي
                 const token = localStorage.getItem('token');
                 const response = await axios.get(`${url}api/posts/${postId}`, {
                     headers: {
@@ -631,6 +699,7 @@ function displayPosts(posts) {
                 
                 const post = response.data;
                 
+                // إنشاء نموذج التعديل
                 const { value: formValues } = await Swal.fire({
                     title: 'تعديل المنشور',
                     html: `
@@ -676,6 +745,7 @@ function displayPosts(posts) {
                 });
                 
                 if (formValues) {
+                    // إعداد FormData للإرسال
                     const formData = new FormData();
                     formData.append('title', formValues.title);
                     formData.append('content', formValues.content);
@@ -684,6 +754,7 @@ function displayPosts(posts) {
                         formData.append('image', formValues.image);
                     }
                     
+                    // إرسال طلب التحديث
                     const updateResponse = await axios.put(
                         `${url}api/posts/${postId}`,
                         formData,
@@ -846,44 +917,38 @@ function displayPosts(posts) {
                 const originalText = submitButton.innerHTML;
                 submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري النشر...';
                 submitButton.disabled = true;
-                
-                const token = localStorage.getItem('token');
-                
-                const postTitle = document.getElementById('postTitle').value;
-                const postContent = document.getElementById('postContent').value;
-                const postImage = document.getElementById('postImage').files[0];
-                
-                if (!postContent) {
+
+                const title = document.getElementById('postTitle').value.trim();
+                const content = document.getElementById('postContent').value.trim();
+                const imageFile = document.getElementById('postImage').files[0];
+
+                if (!content) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'تنبيه!',
-                        text: 'يجب إدخال محتوى المنشور.',
+                        title: 'تحذير',
+                        text: 'يرجى كتابة محتوى المنشور.',
                         confirmButtonText: 'حسناً'
                     });
-                    submitButton.innerHTML = originalText;
-                    submitButton.disabled = false;
                     return;
                 }
+
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('content', content);
+                formData.append('user', currentUser.username);
                 
-                const postFormData = new FormData();
-                if (postTitle) postFormData.append('title', postTitle);
-                postFormData.append('content', postContent);
-                if (postImage) postFormData.append('image', postImage);
-                
-                postFormData.append('user[username]', currentUser.username);
-                postFormData.append('user[profileImage]', currentUser.profileImage || '');
-                
-                const response = await axios.post(
-                    `${url}api/posts`,
-                    postFormData,
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'multipart/form-data'
-                        }
+                if (imageFile) {
+                    formData.append('image', imageFile);
+                }
+
+                const token = localStorage.getItem('token');
+                const response = await axios.post(`${url}api/posts`, formData, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'multipart/form-data'
                     }
-                );
-                
+                });
+                console.log(response.data);
                 if (response.data) {
                     document.getElementById('postForm').reset();
                     document.getElementById('fileName').textContent = 'لم يتم اختيار ملف';
@@ -1033,3 +1098,4 @@ function displayPosts(posts) {
     </script>
 </body>
 </html>
+
