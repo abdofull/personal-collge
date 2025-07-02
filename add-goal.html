@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>إضافة هدف مالي جديد</title>
+    <link rel="stylesheet" href="public/styles/add-goal.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="public/js/main.js"></script>
+    <link rel="stylesheet" href="public/styles/add-goal.css">
+     
+
+
+</head>
+<body>
+
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <!-- عنوان التطبيق مع الأيقونة -->
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-bullseye"></i>
+                إضافة هدف
+            </a>
+
+            <li class="nav-item" style="margin-right: 20px;">
+                <a class="nav-link" id="themeToggle" href="#" style="font-size: 20px;">
+                    <i class="fas fa-moon"></i>
+                </a>
+            </li>
+            
+            <!-- زر القائمة المنسدلة للشاشات الصغيرة -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style='background-color:rgb(216, 149, 149)'>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- عناصر القائمة -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- رابط لوحة التحكم -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-chart-line"></i> لوحة التحكم
+                        </a>
+                    </li>
+                    
+                    <!-- رابط المعاملات -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="Transctionshow.html">
+                            <i class="fas fa-exchange-alt"></i> المعاملات
+                        </a>
+                    </li>
+                    
+                    <!-- رابط الميزانية (الصفحة الحالية) -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="Budget.html">
+                            <i class="fas fa-wallet"></i> الميزانية
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="goals.html">
+                            <i class="fas fa-bullseye"></i> الخطط والأهداف
+                        </a>
+                    </li>
+                    
+                    <!-- رابط التقارير -->
+                    <li class="nav-item">
+                        <a class="nav-link active" href="report.html">
+                            <i class="fas fa-chart-line"></i> التقارير
+                        </a>
+                    </li>
+                    
+
+                    
+                    <!-- رابط تسجيل الخروج -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="logout()" style="color: var(--danger-color);">
+                            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- قسم معلومات المستخدم -->
+                <div class="d-flex align-items-center">
+                    <a class="nav-link" href="profile.html">
+                        <div id="user-info" class="d-flex align-items-center">
+                            <div class="user-avatar">م</div>
+                            <div class="user-info">
+                                <span class="user-name"></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="section-title animate__animated animate__fadeIn">إضافة هدف مالي جديد</h1>
+            <div>
+                <button class="btn btn-outline-secondary ms-2" onclick="window.location.href='goals.html'">
+                    <i class="fas fa-arrow-right"></i> العودة
+                </button>
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeInUp">
+            <h4 class="mb-4">تفاصيل الهدف المالي</h4>
+
+            <form id="newGoalForm">
+                <!-- الخطوة 1: اختيار نوع الهدف -->
+                <div class="mb-4">
+                    <label class="form-label">نوع الهدف المالي</label>
+                    <div class="d-flex flex-wrap justify-content-center goal-types-container">
+                        <div class="goal-type-option selected" data-type="saving">
+                            <i class="fas fa-piggy-bank"></i>
+                            <span>التوفير</span>
+                        </div>
+                        <div class="goal-type-option" data-type="debt">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            <span>سداد الديون</span>
+                        </div>
+                        <div class="goal-type-option" data-type="investment">
+                            <i class="fas fa-chart-line"></i>
+                            <span>الاستثمار</span>
+                        </div>
+                        <div class="goal-type-option" data-type="purchase">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>المشتريات</span>
+                        </div>
+                        <div class="goal-type-option" data-type="other">
+                            <i class="fas fa-star"></i>
+                            <span>أخرى</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="goalType" name="type" value="saving">
+                </div>
+
+                <!-- المعلومات الأساسية -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="goalTitle" class="form-label">عنوان الهدف <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="goalTitle" name="title" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="goalAmount" class="form-label">المبلغ المستهدف <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="goalAmount" name="targetAmount" min="1" step="0.01" required>
+                            <span class="input-group-text">دينار</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="goalDescription" class="form-label">وصف الهدف</label>
+                    <textarea class="form-control" id="goalDescription" name="description" rows="3"></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="goalStartAmount" class="form-label">المبلغ الأولي (إن وجد)</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="goalStartAmount" name="currentAmount" min="0" step="0.01" value="0">
+                            <span class="input-group-text">دينار</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="goalEndDate" class="form-label">التاريخ المستهدف <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="goalEndDate" name="endDate" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="goalPriority" class="form-label">الأولوية</label>
+                        <select class="form-select" id="goalPriority" name="priority">
+                            <option value="high">عالية</option>
+                            <option value="medium" selected>متوسطة</option>
+                            <option value="low">منخفضة</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="linkedAccount" class="form-label">حساب مرتبط (اختياري)</label>
+                        <select class="form-select" id="linkedAccount" name="linkedAccount">
+                            <option value="">بدون حساب مرتبط</option>
+                            <!-- سيتم ملء هذا القسم ديناميكياً إذا كان هناك حسابات -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- معلومات الحساب -->
+                <div class="goal-calculation p-3 mt-4">
+                    <h5>معلومات المساهمة</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1">المساهمة الشهرية المقترحة:</p>
+                            <p class="value" id="monthlyContribution">0 دينار</p>
+                            <small class="text-muted">هذا المبلغ سيساعدك في تحقيق هدفك بحلول التاريخ المحدد</small>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1">المدة المتبقية:</p>
+                            <p class="value" id="timeRemaining">0 أشهر</p>
+                            <small class="text-muted">الوقت المتبقي لتحقيق هدفك بناءً على تاريخ الانتهاء</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- أزرار التحكم -->
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='goals.html'">إلغاء</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-save"></i> حفظ الهدف
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- التذييل -->
+    <footer class="footer animate__animated animate__fadeIn">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-end">
+                    <h6>روابط سريعة</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-muted">لوحة التحكم</a></li>
+                        <li><a href="goals.html" class="text-muted">الخطط والأهداف</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6 text-center text-md-start">
+                    <h6>اتصل بنا</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope me-2"></i> info@example.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +962 7 0000 0000</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="mt-3 mb-3" style="border-color: rgba(255,255,255,0.1);">
+            <p class="mb-0">© 2023 نظام إدارة المالية الشخصية. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // متغيرات النظام
+        //const url = 'http://localhost:9050/'; // URL الخادم - تأكد من تعديله حسب إعدادات الخادم الخاص بك
+
+        // دالة التحميل الأولية
+        window.onload = function() {
+            checkAuth();
+            fetchUserData();           
+            setupEventListeners();
+            setDefaultEndDate();
+            applyDarkLightMode();
+
+            // تطبيق تأثيرات GSAP
+            gsap.from(".card", {
+                duration: 1,
+                y: 50,
+                opacity: 0,
+                ease: "power2.out"
+            });
+        };
+
+        // التحقق من تسجيل الدخول
+        function checkAuth() {
+            const userId = localStorage.getItem('userId');
+            const token = localStorage.getItem('token');
+            
+            if (!userId || !token) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مسجل الدخول',
+                    text: 'يجب تسجيل الدخول للوصول إلى هذه الصفحة',
+                    confirmButtonText: 'تسجيل الدخول',
+                    customClass: {
+                        popup: 'rtl-popup'
+                    }
+                }).then(() => {
+                    window.location.href = 'login.html';
+                });
+            }
+        }
+
+        // تحميل معلومات المستخدم
+        // async function loadUserInfo() {
+        //     const userId = localStorage.getItem('userId');
+        //     if (!userId) return;
+
+        //     try {
+        //         const response = await axios.get(`${url}users/${userId}`);
+        //         const userData = response.data.user;
+                
+        //         // تحديث اسم المستخدم في الواجهة
+        //         document.getElementById('userDisplayName').textContent = userData.username || 'مستخدم';
+        //         document.querySelector('.user-avatar').textContent = (userData.username || 'م').charAt(0);
+        //     } catch (error) {
+        //         console.error('خطأ في تحميل بيانات المستخدم:', error);
+        //     }
+        // }
+
+        // إعداد أحداث المستمعين
+        function setupEventListeners() {
+            // أحداث نوع الهدف
+            document.querySelectorAll('.goal-type-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // إزالة الحالة النشطة من جميع الخيارات
+                    document.querySelectorAll('.goal-type-option').forEach(opt => opt.classList.remove('selected'));
+                    
+                    // إضافة الحالة النشطة للخيار المحدد
+                    this.classList.add('selected');
+                    
+                    // تحديث قيمة النوع المخفية
+                    document.getElementById('goalType').value = this.getAttribute('data-type');
+                });
+            });
+            
+            // تحديث الحسابات المرتبطة (إذا كانت متوفرة)
+            fetchUserAccounts();
+            
+            // أحداث حساب المساهمة الشهرية والمدة المتبقية
+            document.getElementById('goalAmount').addEventListener('input', calculateContribution);
+            document.getElementById('goalStartAmount').addEventListener('input', calculateContribution);
+            document.getElementById('goalEndDate').addEventListener('change', calculateContribution);
+            
+            // تقديم النموذج
+            document.getElementById('newGoalForm').addEventListener('submit', submitGoalForm);
+        }
+
+        // تعيين تاريخ انتهاء افتراضي (بعد سنة من اليوم)
+        function setDefaultEndDate() {
+            const today = new Date();
+            const nextYear = new Date(today.setFullYear(today.getFullYear() + 1));
+            const dateStr = nextYear.toISOString().split('T')[0];
+            document.getElementById('goalEndDate').value = dateStr;
+            
+            // حساب المساهمة الشهرية
+            calculateContribution();
+        }
+
+        // حساب المساهمة الشهرية والمدة المتبقية
+        function calculateContribution() {
+            const targetAmount = parseFloat(document.getElementById('goalAmount').value) || 0;
+            const startAmount = parseFloat(document.getElementById('goalStartAmount').value) || 0;
+            const endDateStr = document.getElementById('goalEndDate').value;
+            
+            if (!targetAmount || !endDateStr) {
+                document.getElementById('monthlyContribution').textContent = '0 دينار';
+                document.getElementById('timeRemaining').textContent = '0 أشهر';
+                return;
+            }
+            
+            const today = new Date();
+            const endDate = new Date(endDateStr);
+            
+            // التحقق من صحة التاريخ
+            if (endDate <= today) {
+                document.getElementById('monthlyContribution').textContent = 'الرجاء اختيار تاريخ مستقبلي';
+                document.getElementById('timeRemaining').textContent = '0 أشهر';
+                return;
+            }
+            
+            // حساب المدة بالأشهر
+            const monthsDiff = (endDate.getFullYear() - today.getFullYear()) * 12 + (endDate.getMonth() - today.getMonth());
+            
+            // حساب المبلغ المتبقي والمساهمة الشهرية
+            const remainingAmount = targetAmount - startAmount;
+            const monthlyContribution = remainingAmount <= 0 ? 0 : Math.ceil(remainingAmount / monthsDiff);
+            
+            // تحديث الواجهة
+            document.getElementById('monthlyContribution').textContent = `${monthlyContribution.toLocaleString()} دينار`;
+            document.getElementById('timeRemaining').textContent = `${monthsDiff} شهر`;
+        }
+
+        // جلب حسابات المستخدم (إذا كانت متوفرة)
+        async function fetchUserAccounts() {
+            // هذه الدالة يمكن تطويرها إذا كان هناك نظام حسابات في المشروع
+            // يمكن أن تجلب حسابات المستخدم المتوفرة لربطها بالهدف
+        }
+
+        // تقديم نموذج الهدف
+        async function submitGoalForm(event) {
+            event.preventDefault();
+            
+            // التحقق من صحة النموذج
+            const form = event.target;
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+            
+            // جمع بيانات النموذج
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                showErrorMessage('غير مسجل الدخول. يرجى تسجيل الدخول وإعادة المحاولة.');
+                return;
+            }
+            
+            // بناء كائن البيانات
+            const goalData = {
+                userId: userId,
+                title: document.getElementById('goalTitle').value,
+                description: document.getElementById('goalDescription').value || '',
+                targetAmount: parseFloat(document.getElementById('goalAmount').value),
+                currentAmount: parseFloat(document.getElementById('goalStartAmount').value) || 0,
+                endDate: document.getElementById('goalEndDate').value,
+                type: document.getElementById('goalType').value,
+                priority: document.getElementById('goalPriority').value,
+                linkedAccount: document.getElementById('linkedAccount').value || ''
+            };
+            
+            // التحقق من صحة التاريخ المستهدف
+            const today = new Date();
+            const endDate = new Date(goalData.endDate);
+            if (endDate <= today) {
+                showErrorMessage('يجب أن يكون التاريخ المستهدف في المستقبل.');
+                return;
+            }
+            
+            // عرض مؤشر التحميل
+            const loadingBtn = document.getElementById('submitBtn');
+            loadingBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> جاري الحفظ...';
+            loadingBtn.disabled = true;
+            
+            try {
+                // إرسال البيانات إلى الخادم
+                const response = await axios.post(`${url}api/goals`, goalData);
+                
+                // التعامل مع الاستجابة
+                if (response.data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم إنشاء الهدف بنجاح',
+                        text: 'تم إنشاء الهدف المالي الجديد بنجاح.',
+                        confirmButtonText: 'العودة إلى قائمة الأهداف',
+                        customClass: {
+                            popup: 'rtl-popup'
+                        }
+                    }).then(() => {
+                        window.location.href = 'goals.html';
+                    });
+                } else {
+                    showErrorMessage('حدث خطأ أثناء إنشاء الهدف. يرجى المحاولة مرة أخرى.');
+                }
+            } catch (error) {
+                console.error('خطأ في إنشاء الهدف:', error);
+                
+                // التعامل مع رسائل الخطأ المحددة من الخادم
+                let errorMessage = 'حدث خطأ أثناء إنشاء الهدف. يرجى المحاولة مرة أخرى.';
+                
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                }
+                
+                showErrorMessage(errorMessage);
+            } finally {
+                // إعادة زر الإرسال إلى حالته الطبيعية
+                loadingBtn.innerHTML = '<i class="fas fa-save"></i> حفظ الهدف';
+                loadingBtn.disabled = false;
+            }
+        }
+
+        // عرض رسالة خطأ
+        function showErrorMessage(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: message,
+                customClass: {
+                    popup: 'rtl-popup'
+                }
+            });
+        }
+
+        // تطبيق الوضع الداكن/الفاتح
+        function applyDarkLightMode() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

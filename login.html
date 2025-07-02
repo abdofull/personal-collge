@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <!-- تعريف الترميز وضبط العرض -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- عنوان الصفحة -->
+    <title>تسجيل الدخول - المحاسب الشخصي</title>
+    
+    <!-- استيراد المكتبات الخارجية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
+    <script src="public/js/main.js"></script>
+    <link rel="stylesheet" href="public/styles/login.css">
+    
+
+</head>
+<body>
+    <!-- زر تبديل وضع الإضاءة/الظلام -->
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- عنصر الكانفاس للرسومات ثلاثية الأبعاد في الخلفية -->
+    <canvas id="background-canvas"></canvas>
+    
+    <!-- حاوية الإشعارات -->
+    <div class="notification-container" id="notificationContainer">
+        <!-- الإشعارات ستظهر هنا -->
+    </div>
+    
+    <!-- الحاوية الرئيسية للنموذج -->
+    <div class="container">
+        <!-- أشكال زخرفية متحركة -->
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        
+        <!-- عنوان النموذج مع أيقونة -->
+        <div class="icon-container">
+            <i class="fas fa-sign-in-alt icon"></i>
+        </div>
+        <h2 class="form-title">تسجيل الدخول</h2>
+        
+        <!-- نموذج تسجيل الدخول -->
+        <form id="loginForm">
+            <!-- حقل البريد الإلكتروني -->
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+                <input type="email" class="form-control" id="email" required placeholder="أدخل بريدك الإلكتروني">
+            </div>
+            
+            <!-- حقل كلمة المرور -->
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" class="form-control" id="password" required placeholder="أدخل كلمة المرور">
+            </div>
+            
+            <!-- زر إرسال النموذج -->
+            <button type="submit" class="btn btn-login btn-block">تسجيل الدخول</button>
+            
+            <!-- رابط لصفحة التسجيل -->
+            <p class="mt-3 text-center">ليس لديك حساب؟ <a href="signup.html" style="color: var(--primary-color); font-weight: 600;">إنشاء حساب</a></p>
+        </form>
+    </div>
+
+    <!-- تذييل الصفحة -->
+    <footer class="footer">
+        <p>© 2023 المحاسب الشخصي. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <!-- استيراد المكتبات الخارجية للجافاسكريبت -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        /**
+         * متغيرات النظام
+         * url: عنوان الخادم الأساسي
+         */
+        // const url = 'http://localhost:9050/';
+
+        /**
+         * نموذج تسجيل الدخول (Login Module)
+         * مسؤول عن معالجة تسجيل دخول المستخدم وإرسال البيانات إلى الخادم
+         */
+        const LoginModule = (() => {
+            // متغيرات خاصة بالوحدة
+            const loginForm = document.getElementById('loginForm');
+            
+            /**
+             * دالة إرسال طلب تسجيل الدخول إلى الخادم
+             * @param {string} email - البريد الإلكتروني للمستخدم
+             * @param {string} password - كلمة المرور
+             * @returns {Promise} استجابة الخادم
+             */
+            async function sendLoginRequest(email, password) {
+                return await axios.post(`${url}login`, { email, password });
+            }
+            
+            /**
+             * دالة تخزين بيانات المستخدم في التخزين المحلي
+             * @param {object} responseData - بيانات المستخدم من الخادم
+             */
+            function storeUserData(responseData) {
+                console.log('تخزين بيانات المستخدم:', responseData);
+                // تخزين التوكن
+                localStorage.setItem('token', responseData.token);
+                
+                // تخزين معرف المستخدم
+                localStorage.setItem('userId', responseData.user.id);
+                
+                // تخزين بيانات المستخدم ككائن
+                const userData = {
+                    username: responseData.user.username,
+                    profileImage: responseData.user.profileImage,
+                    email: responseData.user.email,
+                    createdAt: responseData.user.createdAt
+                };
+                
+                localStorage.setItem('userData', JSON.stringify(userData));
+            }
+            
+            /**
+             * دالة معالجة إرسال نموذج تسجيل الدخول
+             * @param {Event} e - حدث إرسال النموذج
+             */
+            async function handleLogin(e) {
+                // منع إعادة تحميل الصفحة
+                e.preventDefault();
+                
+                // استخراج قيم حقول النموذج
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // التحقق من وجود البيانات
+                if (!email || !password) {
+                    // عرض رسالة خطأ إذا كانت الحقول فارغة
+                    UIModule.showNotification('error', 'يرجى ملء جميع الحقول!');
+                    return;
+                }
+                
+                try {
+                    // إرسال طلب تسجيل الدخول
+                    const response = await sendLoginRequest(email, password);
+                    
+                    // عرض رسالة نجاح
+                    UIModule.showNotification('success', response.data.message);
+                    
+                    // تخزين بيانات المستخدم
+                    if (response.data.token) {
+                        storeUserData(response.data);
+                        
+                        // إعادة توجيه المستخدم إلى الصفحة الرئيسية
+                        setTimeout(() => {
+                            window.location.href = 'test.html';
+                        }, 10000);
+                    }
+                } catch (error) {
+                    // استخراج رسالة الخطأ من الاستجابة
+                    const errorMessage = error.response?.data?.message || 'حدث خطأ في تسجيل الدخول، يرجى المحاولة مرة أخرى';
+                    
+                    // عرض رسالة الخطأ
+                    UIModule.showNotification('error', errorMessage);
+                }
+            }
+            
+            /**
+             * دالة تهيئة الوحدة
+             */
+            function init() {
+                // إضافة مستمع حدث لإرسال النموذج
+                if (loginForm) {
+                    loginForm.addEventListener('submit', handleLogin);
+                }
+            }
+            
+            // واجهة الوحدة العامة
+            return {
+                init
+            };
+        })();
+
+        /**
+         * وحدة واجهة المستخدم (UI Module)
+         * مسؤولة عن عناصر واجهة المستخدم وتفاعلاتها
+         */
+        const UIModule = (() => {
+            /**
+             * دالة عرض الإشعارات
+             * @param {string} type - نوع الإشعار (success, error)
+             * @param {string} message - رسالة الإشعار
+             */
+            function showNotification(type, message) {
+                // إنشاء عنصر الإشعار
+                const notification = document.createElement('div');
+                notification.classList.add('notification');
+                notification.classList.add(type);
+                
+                // تحديد أيقونة وفقًا لنوع الإشعار
+                const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+                
+                // إضافة محتوى الإشعار
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <i class="fas fa-${icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        ${message}
+                    </div>
+                `;
+                
+                // إضافة الإشعار للحاوية
+                const container = document.getElementById('notificationContainer');
+                container.appendChild(notification);
+                
+                // إزالة الإشعار بعد 5 ثوانٍ
+                setTimeout(() => {
+                    notification.style.animation = 'fadeOut 0.5s forwards';
+                    setTimeout(() => {
+                        if (container.contains(notification)) {
+                            container.removeChild(notification);
+                        }
+                    }, 500);
+                }, 2000);
+            }
+            
+            /**
+             * دالة تبديل وضع الظلام/الإضاءة
+             */
+            function toggleDarkMode() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                const icon = document.querySelector('.theme-toggle i');
+                
+                // تغيير أيقونة الزر بناءً على وضع العرض
+                if (isDark) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+                
+                // إعادة إنشاء الجزيئات لتحديث الألوان
+                if (particles) {
+                    scene.remove(particles);
+                    createParticles();
+                }
+            }
+            
+            /**
+             * دالة تهيئة واجهة المستخدم
+             */
+            function init() {
+                // التحقق من وضع الظلام المفضل للمستخدم
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                    document.querySelector('.theme-toggle i').classList.remove('fa-moon');
+                    document.querySelector('.theme-toggle i').classList.add('fa-sun');
+                }
+                
+                // إضافة الاستماع لتغيير وضع الظلام المفضل
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                    if (event.matches) {
+                        document.documentElement.classList.add('dark');
+                        document.querySelector('.theme-toggle i').classList.remove('fa-moon');
+                        document.querySelector('.theme-toggle i').classList.add('fa-sun');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        document.querySelector('.theme-toggle i').classList.remove('fa-sun');
+                        document.querySelector('.theme-toggle i').classList.add('fa-moon');
+                    }
+                    
+                    // تحديث ألوان الجزيئات
+                    if (particles) {
+                        scene.remove(particles);
+                        createParticles();
+                    }
+                });
+                
+                // إضافة مستمع أحداث لزر تبديل السمة
+                document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+            }
+            
+            // واجهة الوحدة العامة
+            return {
+                showNotification,
+                toggleDarkMode,
+                init
+            };
+        })();
+
+        /**
+         * وحدة الرسومات ثلاثية الأبعاد (GraphicsModule)
+         * مسؤولة عن إنشاء وإدارة تأثيرات الخلفية ثلاثية الأبعاد
+         */
+        const GraphicsModule = (() => {
+            // متغيرات عامة لـ Three.js
+            let scene, camera, renderer, particles;
+            
+            // متغيرات لتتبع موضع الماوس
+            let mouseX = 0, mouseY = 0;
+            
+            /**
+             * دالة تهيئة المشهد الثلاثي الأبعاد
+             */
+            function initThreeJS() {
+                // إنشاء المشهد
+                scene = new THREE.Scene();
+                
+                // إعداد الكاميرا
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.z = 30;
+                
+                // إعداد العارض
+                renderer = new THREE.WebGLRenderer({ 
+                    canvas: document.getElementById('background-canvas'),
+                    alpha: true 
+                });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                
+                // إنشاء الجزيئات المتحركة في الخلفية
+                createParticles();
+                
+                // بدء حلقة الرسم المتحرك
+                animate();
+                
+                // معالجة تغيير حجم النافذة
+                window.addEventListener('resize', onWindowResize);
+                
+                // استشعار حركة الماوس
+                document.addEventListener('mousemove', (event) => {
+                    mouseX = (event.clientX - window.innerWidth / 2) / 50;
+                    mouseY = (event.clientY - window.innerHeight / 2) / 50;
+                });
+            }
+            
+            /**
+             * دالة إنشاء الجزيئات المتحركة
+             */
+            function createParticles() {
+                // إنشاء هندسة الجزيئات
+                const particlesGeometry = new THREE.BufferGeometry();
+                const particlesCount = 500;
+                
+                // إنشاء مصفوفة للإحداثيات
+                const positions = new Float32Array(particlesCount * 3);
+                const colors = new Float32Array(particlesCount * 3);
+                
+                // اختيار اللون الرئيسي استنادًا إلى وضع الظلام
+                const isDark = document.documentElement.classList.contains('dark');
+                const primaryColor = isDark ? 
+                    new THREE.Color(0x7877E8) : new THREE.Color(0x5D5CDE);
+                
+                // توزيع الجزيئات بشكل عشوائي في المشهد
+                for(let i = 0; i < particlesCount * 3; i += 3) {
+                    // الإحداثيات
+                    positions[i] = (Math.random() - 0.5) * 100;  // x
+                    positions[i + 1] = (Math.random() - 0.5) * 100;  // y
+                    positions[i + 2] = (Math.random() - 0.5) * 100;  // z
+                    
+                    // الألوان
+                    colors[i] = primaryColor.r + (Math.random() - 0.5) * 0.2;
+                    colors[i + 1] = primaryColor.g + (Math.random() - 0.5) * 0.2;
+                    colors[i + 2] = primaryColor.b + (Math.random() - 0.5) * 0.2;
+                }
+                
+                // إضافة الإحداثيات إلى الهندسة
+                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                
+                // إنشاء المادة للجزيئات
+                const particlesMaterial = new THREE.PointsMaterial({
+                    size: 0.2,
+                    sizeAttenuation: true,
+                    transparent: true,
+                    opacity: 0.6,
+                    vertexColors: true
+                });
+                
+                // إنشاء عرض الجزيئات
+                particles = new THREE.Points(particlesGeometry, particlesMaterial);
+                
+                // إضافة الجزيئات إلى المشهد
+                scene.add(particles);
+            }
+            
+            /**
+             * تحديث المشهد عند تغيير حجم النافذة
+             */
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            
+            /**
+             * حلقة الرسم المتحرك
+             */
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // تحريك الجزيئات ببطء
+                if (particles) {
+                    particles.rotation.x += 0.0005;
+                    particles.rotation.y += 0.0008;
+                }
+                
+                // تحريك الكاميرا قليلاً استجابةً لحركة الماوس
+                if (mouseX && mouseY) {
+                    camera.position.x += (mouseX - camera.position.x) * 0.01;
+                    camera.position.y += (-mouseY - camera.position.y) * 0.01;
+                    camera.lookAt(scene.position);
+                }
+                
+                // عرض المشهد
+                if (renderer && scene && camera) {
+                    renderer.render(scene, camera);
+                }
+            }
+            
+            /**
+             * دالة تصدير الجزيئات للوحدات الأخرى
+             */
+            function getParticles() {
+                return particles;
+            }
+            
+            /**
+             * دالة تصدير المشهد للوحدات الأخرى
+             */
+            function getScene() {
+                return scene;
+            }
+            
+            /**
+             * دالة تهيئة وحدة الرسومات
+             */
+            function init() {
+                initThreeJS();
+            }
+            
+            // واجهة الوحدة العامة
+            return {
+                init,
+                createParticles,
+                getParticles,
+                getScene
+            };
+        })();
+
+        /**
+         * الوحدة الرئيسية للتطبيق (App Module)
+         * مسؤولة عن تهيئة وتنسيق الوحدات الأخرى
+         */
+        const AppModule = (() => {
+            /**
+             * دالة تهيئة جميع مكونات التطبيق
+             */
+            function init() {
+                // تهيئة واجهة المستخدم
+                UIModule.init();
+                
+                // تهيئة وحدة تسجيل الدخول
+                LoginModule.init();
+                
+                // تهيئة وحدة الرسومات ثلاثية الأبعاد
+                GraphicsModule.init();
+            }
+            
+            // واجهة الوحدة العامة
+            return {
+                init
+            };
+        })();
+
+        // تعريف متغيرات عالمية لاستخدامها بين الوحدات
+        let particles = null;
+        let scene = null;
+
+        /**
+         * دالة إنشاء الجزيئات - معرّفة للوصول العام بين الوحدات
+         */
+        function createParticles() {
+            GraphicsModule.createParticles();
+            particles = GraphicsModule.getParticles();
+            scene = GraphicsModule.getScene();
+        }
+
+        // تنفيذ عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة التطبيق
+            AppModule.init();
+        });
+    </script>
+</body>
+</html>
