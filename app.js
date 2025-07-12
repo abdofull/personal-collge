@@ -12,7 +12,6 @@ const budgetRoutes = require('./routes/budgetRoutes');
 const reportRoutes = require('./routes/Reports');
 const goalRoutes = require('./routes/goalRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
-const postRoutes = require('./routes/postRoutes');
 const { checkGoalProgress } = require('./controllers/notificationController');
 const { seed } = require('./middleware/seedEducationalNotifications');
 const Notification = require('./models/Notification');
@@ -20,6 +19,7 @@ const schedule = require('node-schedule');
 const EducationalNotification = require('./models/EducationalNotification');
 const ApiError = require("./utils/apierror");
 const Users = require("./routes/userRoutes");
+const postRoutes = require('./routes/postRoutes');
 const { globleError } = require("./middleware/errormiddleware");
 
 const app = express();
@@ -68,8 +68,8 @@ app.use('/api/budgets', budgetRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/goals', goalRoutes);
-app.use('/api/educational-notifications', require('./routes/educationalNotifications'));
 app.use('/api/posts', postRoutes);
+app.use('/api/educational-notifications', require('./routes/educationalNotifications'));
 
 // في حال ذهب المستخدم إلى رابط غير موجود
 app.all("*", (req, res, next) => {

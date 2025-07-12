@@ -1,29 +1,73 @@
 const mongoose = require('mongoose');
 
-const PostSchema = new mongoose.Schema({
-    title: { type: String, required: false },
-    content: { type: String, required: true },
-    image: { 
-        type: String, 
-        required: false 
+// تعريف هيكل البيانات للمنشور
+const postSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 200
     },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // إضافة userId للتحقق من الملكية
-    user: {
-        username: { type: String, required: true },
-        profileImage: { type: String },
+    content: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 2000
     },
-    comments: [
-        {
-            user: { type: String, required: true },
-            content: { type: String, required: true },
-            createdAt: { type: Date, default: Date.now }, // تغيير date إلى createdAt للتوحيد
+    image: {
+        type: String,
+        default: '' // الصورة اختيارية
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    likes: [{
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
         },
-    ],
-    reactions: { type: Number, default: 0 },
-}, { 
-    timestamps: true,
-    toJSON: { getters: true }
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    comments: [{
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        content: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: 500
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-module.exports = mongoose.model('Post', PostSchema);
+// تحديث updatedAt عند التعديل
+postSchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
+});
+
+// إنشاء النموذج
+const Post = mongoose.model('Post', postSchema);
+
+module.exports = Post;
 
