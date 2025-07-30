@@ -543,12 +543,14 @@
 
                 // حفظ البيانات في localStorage
                 const { user, token } = response.data;
-                
+                console.log(user);
                 localStorage.setItem('token', token);
-                localStorage.setItem('userId', user.id);
+                // localStorage.setItem('userId', user.id);
                 localStorage.setItem('userData', JSON.stringify(user));
-                
+                const Data = JSON.parse(localStorage.getItem("userData"));
+                localStorage.setItem('userId',Data.id);
                 // حفظ الصورة الشخصية إذا كانت متوفرة
+
                 if (user.profileImage) {
                     localStorage.setItem('userProfileImage', user.profileImage);
                 }

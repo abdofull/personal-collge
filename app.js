@@ -38,12 +38,15 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 dotenv.config();
 
+
 const db = require('./config/db');
 db();
+
 
 // Middleware لتحليل بيانات JSON
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 
 // دالة لتهيئة البيانات الأولية
 async function initializeData() {

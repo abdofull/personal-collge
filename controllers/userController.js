@@ -57,7 +57,10 @@ exports.registerUser = async (req, res, next) => {
 // دالة لتحديث صورة المستخدم
 exports.updateProfileImage = async (req, res, next) => {
     const { userId } = req.params;
-
+    // تحقق من وجود userId
+    if(userId === 'null'){
+        return res.status(400).json({message: "معرف المستخدم غير صالح"});
+    }
     if (!req.file) {
         return next(new ApiError(400, 'لم يتم تحميل أي صورة!'));
     }

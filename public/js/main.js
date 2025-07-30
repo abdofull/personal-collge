@@ -1,5 +1,5 @@
-const url = 'https://personal-accountant2.onrender.com/';
-// const url = 'http://localhost:9050/';
+// const url = 'https://personal-accountant2.onrender.com/';
+const url = 'http://localhost:9050/';
 // استدعاء دالة جلب بيانات المستخدم عند تحميل الصفحة
 async function fetchUserData() {
   try {
@@ -97,6 +97,8 @@ function logout() {
                     localStorage.removeItem('initialBalance'); // حذف الرصيد الأولي
                     localStorage.removeItem('backgroundColor'); // حذف لون الخفية  
                     localStorage.removeItem('theme'); // حذف الوضع
+                    localStorage.removeItem('lastNotificationFetch'); // 
+                    localStorage.removeItem('tempProfileImage'); // حذف بيانات الإشعارات 
 
                     // تحديث واجهة المستخدم
                     //updateAuthButtons();

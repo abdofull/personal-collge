@@ -358,7 +358,7 @@
     <!-- التذييل -->
     <footer class="footer text-center py-3 mt-5" style="background-color: var(--secondary-color); color: var(--light-color);">
         <div class="container">
-            <p class="mb-0">© 2023 نظام إدارة المالية الشخصية. جميع الحقوق محفوظة.</p>
+            <p class="mb-0">© 2025 نظام إدارة المالية الشخصية. جميع الحقوق محفوظة.</p>
         </div>
     </footer>
 
@@ -839,63 +839,56 @@
                     return;
                 }
                 
-                // التحقق من نوع الملف
                 if (!file.type.startsWith('image/')) {
                     showNotification('يرجى اختيار صورة صالحة', 'error');
                     return;
                 }
-                
-                // التحقق من حجم الملف (الحد الأقصى 5 ميجابايت)
                 if (file.size > 5 * 1024 * 1024) {
                     showNotification('حجم الصورة كبير جداً. يرجى اختيار صورة أقل من 5 ميجابايت', 'error');
                     return;
                 }
                 
-                // عرض معاينة الصورة قبل الرفع
+                // عرض معاينة الصورة قبل الرفع مع إصلاح الخطأ
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('profileImage').src = e.target.result;
+                    const img = document.getElementById('profileImage');
+                    if (img) {
+                        img.src = e.target.result;
+                    }
                 };
                 reader.readAsDataURL(file);
                 
                 // تحميل الصورة
                 const formData = new FormData();
                 formData.append('profileImage', file);
-                
                 showNotification('جارٍ رفع الصورة...', 'info');
                 
-                // إرسال الصورة إلى الخادم
                 const response = await axios.put(`${url}updateProfileImage/${userId}`, formData, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-                console.log(response.data.user.profileImage);
                 showNotification('تم تحديث الصورة الشخصية بنجاح', 'success');
-                
-                // تحديث الصورة في localStorage
                 const userData = JSON.parse(localStorage.getItem('userData'));
                 userData.profileImage = response.data.user.profileImage;
                 localStorage.setItem('userData', JSON.stringify(userData));
-                // تحديث الصورة في الناف بار
                 fetchUserData();
-                
             } catch (error) {
                 console.error('حدث خطأ أثناء رفع الصورة الشخصية:', error);
-                
                 let errorMessage = 'حدث خطأ أثناء رفع الصورة الشخصية';
                 if (error.response && error.response.data && error.response.data.message) {
                     errorMessage = error.response.data.message;
                 }
-                
                 showNotification(errorMessage, 'error');
-                
-                // إعادة الصورة الافتراضية في حالة الفشل
-                document.getElementById('profileImage').src = 'default-image.png';
+                const img = document.getElementById('profileImage');
+                if (img) {
+                    img.src = 'default-image.png';
+                }
             }
-        }
-
+        }        
+        
+        
         // حفظ التفضيلات
         function savePreferences() {
 

@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <!-- <script src="./js/main.js"></script> -->
+    <script src="./js/main.js"></script>
     <link rel="stylesheet" href="./styles/add-goal.css">
      
 
@@ -191,13 +191,7 @@
                             <option value="low">منخفضة</option>
                         </select>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="linkedAccount" class="form-label">حساب مرتبط (اختياري)</label>
-                        <select class="form-select" id="linkedAccount" name="linkedAccount">
-                            <option value="">بدون حساب مرتبط</option>
-                            <!-- سيتم ملء هذا القسم ديناميكياً إذا كان هناك حسابات -->
-                        </select>
-                    </div>
+
                 </div>
 
                 <!-- معلومات الحساب -->
@@ -235,15 +229,15 @@
                 <div class="col-md-6 text-center text-md-end">
                     <h6>روابط سريعة</h6>
                     <ul class="list-unstyled">
-                        <li><a href="index.html" class="text-muted">لوحة التحكم</a></li>
+                        <li><a href="index.html" class="text-muted">الصفحة الرئيسية</a></li>
                         <li><a href="goals.html" class="text-muted">الخطط والأهداف</a></li>
                     </ul>
                 </div>
                 <div class="col-md-6 text-center text-md-start">
                     <h6>اتصل بنا</h6>
                     <ul class="list-unstyled">
-                        <li><i class="fas fa-envelope me-2"></i> info@example.com</li>
-                        <li><i class="fas fa-phone me-2"></i> +962 7 0000 0000</li>
+                        <li><i class="fas fa-envelope me-2"></i> toodalibya348@gmail.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +218 911186075</li>
                     </ul>
                 </div>
             </div>
@@ -394,9 +388,10 @@
         }
 
         // تقديم نموذج الهدف
+// ...existing code...
 async function submitGoalForm(event) {
     event.preventDefault();
-    
+
     // جمع بيانات النموذج
     const goalData = {
         userId: localStorage.getItem('userId'),
@@ -407,34 +402,34 @@ async function submitGoalForm(event) {
         endDate: document.getElementById('goalEndDate').value,
         type: document.getElementById('goalType').value,
         priority: document.getElementById('goalPriority').value,
-        linkedAccount: document.getElementById('linkedAccount').value || ''
+        // linkedAccount: document.getElementById('linkedAccount').value || ''
     };
 
     try {
-        // إرسال البيانات إلى الخادم
-        const response = await axios.put(`${url}api/goals/${goalId}`, goalData); // استخدم PUT للتحديث
-        
+        // إرسال البيانات إلى الخادم لإضافة هدف جديد
+        const response = await axios.post(`${url}api/goals`, goalData);
+
         if (response.data.success) {
             Swal.fire({
                 icon: 'success',
-                title: 'تم تعديل الهدف بنجاح',
-                text: 'تم تعديل الهدف المالي بنجاح.',
+                title: 'تم إضافة الهدف بنجاح',
+                text: 'تم إضافة الهدف المالي بنجاح.',
                 confirmButtonText: 'العودة إلى قائمة الأهداف',
-                customClass: {
-                    popup: 'rtl-popup'
-                }
+                customClass: { popup: 'rtl-popup' }
             }).then(() => {
                 window.location.href = 'goals.html';
             });
         } else {
-            showErrorMessage('حدث خطأ أثناء تعديل الهدف. يرجى المحاولة مرة أخرى.');
+            showErrorMessage('حدث خطأ أثناء إضافة الهدف. يرجى المحاولة مرة أخرى.');
         }
     } catch (error) {
-        showErrorMessage(error.response?.data?.message || 'حدث خطأ أثناء تعديل الهدف.');
+        showErrorMessage(error.response?.data?.message || 'حدث خطأ أثناء إضافة الهدف.');
     }
-}        
-        
-        // عرض رسالة خطأ
+}
+// ...existing code...        
+
+
+// عرض رسالة خطأ
         function showErrorMessage(message) {
             Swal.fire({
                 icon: 'error',

@@ -182,7 +182,9 @@ const tips = [
         message: "قم بمراجعة شاملة لوضعك المالي في نهاية كل عام.",
         category: "عام",
         priority: 5
-    }
+    
+    },
+
 ];
 
 exports.seed = async ()=> {

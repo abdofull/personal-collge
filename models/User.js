@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
         // unique: true,
         trim: true,
         minlength: 3,
-        maxlength: 30
+        maxlength: 30,
+        
     },
     email: {
         type: String,
@@ -54,10 +55,6 @@ const userSchema = new mongoose.Schema({
         balanceAlerts: { type: Boolean, default: true }
     },
 
-    fcmTokens: { // رموز FCM
-        type: [String],
-        default: []
-    }
 
 });
 

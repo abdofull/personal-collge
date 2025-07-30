@@ -51,8 +51,10 @@ exports.addTransaction = async (req, res) => {
                 });
             }
 
-                const newSpentAmount = itemExists.spentAmount + amount;
-    if (newSpentAmount > itemExists.allocatedAmount) {
+            // يأخذ قيمة المصروف الحالي للبند itemExists.spentAmount ويضيف إليها amount المبلغ الجديد الذي يريد المستخدم صرفه
+            // الناتج من العملية هو اجمالي المصروفات بعد إضافة معاملة جديدة
+        const newSpentAmount = itemExists.spentAmount + amount;
+        if (newSpentAmount > itemExists.allocatedAmount) {// إذا كان المبلغ المصروف الجديد يتجاوز المبلغ المخصص للبند
         // إنشاء إشعار تجاوز الميزانية
         await Notification.create({
             userId,
@@ -71,11 +73,11 @@ exports.addTransaction = async (req, res) => {
             const updateResult = await Budget.updateOne(
                 { 
                     _id: budgetId,
-                    "items.itemName": budgetItemName
+                    "items.itemName": budgetItemName //يتم البحث بداخل البنود عن البند المحدد
                 },
                 { 
                     $inc: { 
-                        "items.$.spentAmount": amount,
+                        "items.$.spentAmount": amount,//علامة $ تشير للبند الذي تم ايجاده في الإستعلام , يتم زيادة قيمة البند بالقيمة المصروفات التي تم إدخالها 
                         // "totalExpenses": amount 
                     } 
                 }

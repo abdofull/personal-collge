@@ -113,7 +113,7 @@
         </div>
     </nav>
 
-    <div id="notificationContainer"></div>
+    <div id="notificationContainer"> </div>
     <!-- زر الرجوع إلى الأعلى -->
     <button id="backToTop" class="back-to-top">
         <i class="fas fa-arrow-up"></i>
@@ -211,7 +211,7 @@
                         <h5>إجمالي الدخل</h5>
                         <p id="totalIncome">0.00 دينار</p>
                         <div class="progress">
-                            <div class="progress-bar bg-success" style="width: 65%"></div>
+                            <div class="progress-bar bg-success" style="width: 0%"></div>
                         </div>
                         <small class="text-muted"></small>
                     </div>
@@ -224,7 +224,7 @@
                         <h5>إجمالي المصروفات</h5>
                         <p id="totalExpenses">0.00 دينار</p>
                         <div class="progress">
-                            <div class="progress-bar bg-danger" style="width: 35%"></div>
+                            <div class="progress-bar bg-danger" style="width: 0%"></div>
                         </div>
                         <small class="text-muted"></small>
                         <p class="warning-text" id="expensesWarning" style="display: none;">تحذير: المصروفات تجاوزت الدخل !</p>
@@ -238,9 +238,9 @@
                         <h5>الميزانية</h5>
                         <p id="budgetStatus">0.00 دينار</p>
                         <div class="progress budget-progress">
-                            <div class="progress-bar budget-progress-bar" id="budgetProgressBar" style="width: 75%"></div>
-                            <div class="budget-threshold warning" id="warningThreshold" style="left: 70%"></div>
-                            <div class="budget-threshold danger" id="dangerThreshold" style="left: 90%"></div>
+                            <div class="progress-bar budget-progress-bar" id="budgetProgressBar" style="width: 0%"></div>
+                            <div class="budget-threshold warning" id="warningThreshold" style="left: 0%"></div>
+                            <div class="budget-threshold danger" id="dangerThreshold" style="left: 0%"></div>
                         </div>
                         <p id="budgetCount" class="mt-2">عدد الميزانيات: 0</p>
                         <p class="budget-warning" id="budgetWarning">تنبيه: استهلكت 70% من الميزانية!</p>
@@ -327,7 +327,6 @@
                     </div>
                     <canvas id="pieChart" height="250"></canvas>
                     <div class="mt-3 text-center">
-                        <small class="text-muted">أعلى مصروف: <strong>المواصلات (35%)</strong></small>
                     </div>
                 </div>
             </div>
@@ -343,7 +342,7 @@
                     </div>
                     <canvas id="barChart" height="250"></canvas>
                     <div class="mt-3 text-center">
-                        <small class="text-muted">صافي الربح: <strong>0.00 دينار</strong></small>
+                        <small class="text-muted"></small> <strong> </strong></small>
                     </div>
                 </div>
             </div>
@@ -383,7 +382,7 @@
             
             <div class="d-flex justify-content-between align-items-center mt-3">
                 <div>
-                    <span class="text-muted">عرض 1 إلى 5 من 32 معاملة</span>
+                    <span class="text-muted"></span>
                 </div>
                 <div>
                     <nav aria-label="Page navigation">
@@ -415,21 +414,21 @@
                 <div class="col-md-4 text-center">
                     <h6>روابط سريعة</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-muted">الأسئلة الشائعة</a></li>
-                        <li><a href="#" class="text-muted">الدعم الفني</a></li>
-                        <li><a href="#" class="text-muted">الشروط والأحكام</a></li>
+                        <li><a href="HelpSupport.html" class="text-muted" style='color:white'>الأسئلة الشائعة</a></li>
+                        <li><a href="HelpSupport.html" class="text-muted" style='color:white'>الدعم الفني</a></li>
+                        <li><a href="HelpSupport.html" class="text-muted" style='color:white'>الشروط والأحكام</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 text-end">
                     <h6>اتصل بنا</h6>
                     <ul class="list-unstyled">
-                        <li><i class="fas fa-envelope me-2"></i> info@example.com</li>
-                        <li><i class="fas fa-phone me-2"></i> +962 7 0000 0000</li>
+                        <li><i class="fas fa-envelope me-2"></i> toodaylibya348@gmail.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +218 911186075</li>
                     </ul>
                 </div>
             </div>
             <hr class="mt-3 mb-3" style="border-color: rgba(255,255,255,0.1);">
-            <p class="mb-0">© 2023 نظام إدارة المالية الشخصية. جميع الحقوق محفوظة.</p>
+            <p class="mb-0">© 2025 نظام إدارة المالية الشخصية. جميع الحقوق محفوظة.</p>
         </div>
     </footer>
 
@@ -1308,7 +1307,7 @@
             });
         }
 
-async function fetchBudgetSummary() {
+        async function fetchBudgetSummary() {
     const userId = localStorage.getItem('userId');
     if (!userId) {
         console.log('User ID not found');
@@ -1464,7 +1463,7 @@ function updateOverviewCards(totalBalance, totalIncome, totalExpenses, lastBudge
                             <button class="btn btn-sm btn-outline-primary" onclick="viewTransaction('${transaction._id}')">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="editTransaction('${transaction._id}')">
+                            <button class="btn btn-sm btn-outline-secondary" style='display: none;' onclick="editTransaction('${transaction._id}')">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </td>

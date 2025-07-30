@@ -238,6 +238,7 @@
                                 <div id="budgetItemsList">
                                     <!-- سيتم ملء بنود الميزانية هنا -->
                                 </div>
+
                                 
                                 <!-- معاينة تأثير المعاملة على الميزانية -->
                                 <div id="budgetPreviewContainer" class="budget-preview-container" style="display: none;">
@@ -404,7 +405,7 @@
                     categoryGrid.appendChild(categoryItem);
                 }
             });
-        }
+        };
 
         // دالة لجلب ميزانيات المستخدم
         async function fetchUserBudgets() {
@@ -486,7 +487,7 @@ function showBudgetItems(budgetId) {
     budget.items.forEach(item => {
         const remaining = item.allocatedAmount - (item.spentAmount || 0);
         const remainingClass = remaining > item.allocatedAmount * 0.2 ? 'remaining-good' : 
-                              remaining > 0 ? 'remaining-warning' : 'remaining-danger';
+        remaining > 0 ? 'remaining-warning' : 'remaining-danger';
 
         // توليد id آمن للبند (يسمح بالعربي والإنجليزي والأرقام فقط)
         const safeId = 'item_' + item.itemName.replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '_');
@@ -917,6 +918,7 @@ function showBudgetItems(budgetId) {
                 updateTransactionSummary();
             });
         });
+    
     </script>
 </body>
 </html>
