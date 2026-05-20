@@ -45,14 +45,34 @@
         }
 
         .container {
-            background: var(--card-bg);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 24px;
             box-shadow: var(--shadow);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), border-color 0.4s ease, background-color 0.4s ease;
             margin-top: 3rem;
             margin-bottom: 3rem;
+            padding: 35px;
+            max-width: 550px;
+        }
+
+        .dark .container {
+            background: rgba(45, 55, 72, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(102, 126, 234, 0.12);
+        }
+
+        .container:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.22);
+            border-color: rgba(102, 126, 234, 0.35);
+        }
+
+        .dark .container:hover {
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(102, 126, 234, 0.28);
+            border-color: rgba(102, 126, 234, 0.4);
         }
 
         .theme-toggle {
@@ -300,14 +320,24 @@
             <!-- حقل كلمة المرور -->
             <div class="form-group">
                 <label for="passwordSignup">كلمة المرور</label>
-                <input type="password" class="form-control" id="passwordSignup" required placeholder="أدخل كلمة المرور">
+                <div class="password-wrapper" style="position: relative;">
+                    <input type="password" class="form-control" id="passwordSignup" required placeholder="أدخل كلمة المرور" style="padding-left: 45px;">
+                    <span class="password-toggle" id="togglePasswordSignupBtn" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #a0aec0; z-index: 10; transition: color 0.3s ease;">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
                 <div class="invalid-feedback" id="passwordError"></div>
             </div>
             
             <!-- حقل تأكيد كلمة المرور -->
             <div class="form-group">
                 <label for="confirmPassword">تأكيد كلمة المرور</label>
-                <input type="password" class="form-control" id="confirmPassword" required placeholder="تأكيد كلمة المرور">
+                <div class="password-wrapper" style="position: relative;">
+                    <input type="password" class="form-control" id="confirmPassword" required placeholder="تأكيد كلمة المرور" style="padding-left: 45px;">
+                    <span class="password-toggle" id="toggleConfirmPasswordBtn" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #a0aec0; z-index: 10; transition: color 0.3s ease;">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
                 <div class="invalid-feedback" id="confirmPasswordError"></div>
             </div>
             
@@ -631,6 +661,30 @@
             
             // تهيئة معاينة الصورة
             handleProfileImagePreview();
+
+            // تفعيل ميزة إظهار/إخفاء كلمة المرور
+            function setupPasswordToggle(toggleId, inputId) {
+                const toggleBtn = document.getElementById(toggleId);
+                const input = document.getElementById(inputId);
+                if (toggleBtn && input) {
+                    toggleBtn.addEventListener('click', function() {
+                        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                        input.setAttribute('type', type);
+                        const icon = this.querySelector('i');
+                        if (type === 'text') {
+                            icon.classList.remove('fa-eye');
+                            icon.classList.add('fa-eye-slash');
+                            this.style.color = 'var(--primary-color)';
+                        } else {
+                            icon.classList.remove('fa-eye-slash');
+                            icon.classList.add('fa-eye');
+                            this.style.color = '#a0aec0';
+                        }
+                    });
+                }
+            }
+            setupPasswordToggle('togglePasswordSignupBtn', 'passwordSignup');
+            setupPasswordToggle('toggleConfirmPasswordBtn', 'confirmPassword');
             
             // استرداد الصورة المؤقتة إذا كانت موجودة
             const tempImage = localStorage.getItem('tempProfileImage');

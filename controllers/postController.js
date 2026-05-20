@@ -15,7 +15,7 @@ exports.createPost = async (req, res) => {
         
         let imagePath = '';
         if (req.file) {
-            imagePath = req.file.path; // مسار الصورة المحفوظة
+            imagePath = `/uploads/posts/${req.file.filename}`; // مسار الصورة المحفوظة
         }
 
         const newPost = new Post({

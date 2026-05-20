@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const Notification = require('../models/Notification');
 const Budget = require('../models/Budget');
 const Goal = require('../models/Goal');
+const ApiError = require('../utils/apierror');
 
 // إضافة معاملة جديدة
 exports.addTransaction = async (req, res) => {
@@ -190,14 +191,64 @@ exports.getTransaction = async (req, res) => {
 // تحديث معاملة
 exports.updateTransaction = async (req, res) => {
     try {
+        const oldTransaction = await Transaction.findById(req.params.id);
+        if (!oldTransaction) {
+            return res.status(404).json({ message: 'لم يتم العثور على المعاملة' });
+        }
+
+        const newAmount = req.body.amount !== undefined ? req.body.amount : oldTransaction.amount;
+        const diff = newAmount - oldTransaction.amount;
+
+        // تحديث المعاملة في قاعدة البيانات
         const transaction = await Transaction.findByIdAndUpdate(
             req.params.id, 
             req.body, 
             { new: true, runValidators: true }
         );
-        
-        if (!transaction) {
-            return res.status(404).json({ message: 'لم يتم العثور على المعاملة' });
+
+        // إذا كانت المعاملة مصروفاً ومرتبطة بميزانية، نقوم بتعديل المبلغ المصروف في الميزانية بالفرق
+        if (transaction.type === 'expense' && transaction.budgetId && transaction.budgetItemName) {
+            // التحقق من تجاوز الميزانية في حال الزيادة
+            if (diff > 0) {
+                const budget = await Budget.findOne({ _id: transaction.budgetId });
+                if (budget) {
+                    const item = budget.items.find(i => i.itemName === transaction.budgetItemName);
+                    if (item) {
+                        const newSpentAmount = item.spentAmount + diff;
+                        if (newSpentAmount > item.allocatedAmount) {
+                            await Notification.create({
+                                userId: transaction.userId,
+                                title: 'تنبيه تجاوز الميزانية',
+                                message: `تم تجاوز الميزانية المخصصة لبند ${transaction.budgetItemName} بعد تعديل المعاملة. المبلغ المخصص: ${item.allocatedAmount}, المبلغ المصروف الجديد: ${newSpentAmount}`,
+                                type: 'warning',
+                                relatedEntity: 'budget',
+                                entityId: transaction.budgetId
+                            });
+                        }
+                    }
+                }
+            }
+
+            await Budget.updateOne(
+                { 
+                    _id: transaction.budgetId,
+                    "items.itemName": transaction.budgetItemName 
+                },
+                { 
+                    $inc: { 
+                        "items.$.spentAmount": diff 
+                    } 
+                }
+            );
+        }
+
+        // إذا كانت المعاملة دخلاً ومرتبطة بهدف ادخار، نقوم بتحديث المدخرات الحالية بالفرق
+        if (transaction.type === 'income' && transaction.goalId) {
+            const goal = await Goal.findById(transaction.goalId);
+            if (goal) {
+                goal.currentAmount = Math.max(0, goal.currentAmount + diff);
+                await goal.save();
+            }
         }
 
         res.status(200).json({ message: 'تم تحديث المعاملة بنجاح', transaction });
@@ -214,6 +265,35 @@ exports.updateTransaction = async (req, res) => {
 // حذف معاملة
 exports.deleteTransaction = async (req, res) => {
     try {
+        const transaction = await Transaction.findById(req.params.id);
+        if (!transaction) {
+            return res.status(404).json({ message: 'لم يتم العثور على المعاملة' });
+        }
+
+        // إذا كانت المعاملة مصروفاً ومرتبطة بميزانية، نقوم بخصم المبلغ من المصروف الفعلي للبند في الميزانية
+        if (transaction.type === 'expense' && transaction.budgetId && transaction.budgetItemName) {
+            await Budget.updateOne(
+                { 
+                    _id: transaction.budgetId,
+                    "items.itemName": transaction.budgetItemName 
+                },
+                { 
+                    $inc: { 
+                        "items.$.spentAmount": -transaction.amount 
+                    } 
+                }
+            );
+        }
+
+        // إذا كانت المعاملة دخلاً ومرتبطة بهدف ادخار، نقوم بخصم المبلغ من المدخرات الحالية للهدف
+        if (transaction.type === 'income' && transaction.goalId) {
+            const goal = await Goal.findById(transaction.goalId);
+            if (goal) {
+                goal.currentAmount = Math.max(0, goal.currentAmount - transaction.amount);
+                await goal.save();
+            }
+        }
+
         await Transaction.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'تم حذف المعاملة بنجاح' });
     } catch (error) {

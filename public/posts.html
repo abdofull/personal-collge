@@ -239,7 +239,7 @@
         let totalPosts = 0;
         let isLoggedIn = false;
         let currentUser = null;
-        const baseUrl = 'http://localhost:9050'; // عنوان الخادم الأساسي - قم بتغييره حسب الإعدادات لديك
+        const baseUrl = window.location.origin; // عنوان الخادم الأساسي - ديناميكي تلقائياً
         let posts = [];
 
         /* دالة التحقق من حالة تسجيل الدخول */

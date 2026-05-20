@@ -1,6 +1,7 @@
 // controllers/budgetController.js
 const Budget = require('../models/Budget');
 const Notification = require('../models/Notification');
+const Transaction = require('../models/Transaction');
 
 exports.createBudget = async (req, res) => {
     try {

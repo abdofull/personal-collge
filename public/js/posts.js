@@ -1,5 +1,4 @@
-// const url = 'https://personal-accountant2.onrender.com/';
-const url = 'http://localhost:9050/';
+const url = window.location.origin + '/';
 
 let currentUser = null;
 let currentPage = 1;

@@ -64,8 +64,13 @@ router.put('/updateProfileImage/:userId', upload.single('profileImage'), [
 // جلب الرصيد الأولي
 router.get('/getInitialBalance', getInitialBalance);
 
-// مسار تسجيل الخروج
-router.post('/logout/:userId', deleteUserAccount);
+// مسار تسجيل الخروج (آمن ولا يحذف الحساب)
+router.post('/logout/:userId', (req, res) => {
+    res.status(200).json({ success: true, message: 'تم تسجيل الخروج بنجاح' });
+});
+
+// مسار حذف الحساب (يستدعى عند طلب الحذف من الصفحة الشخصية)
+router.delete('/logout/:userId', deleteUserAccount);
 
 
 // توجيه لاسترجاع بيانات المستخدم

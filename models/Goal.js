@@ -84,6 +84,10 @@ const goalSchema = new mongoose.Schema({
     autoUpdate: {
         type: Boolean,
         default: true // لتحديث التلقائي للمبلغ الحالي من المعاملات المرتبطة
+    },
+    notifiedCompleted: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

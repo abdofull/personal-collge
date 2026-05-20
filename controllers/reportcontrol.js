@@ -2,6 +2,8 @@
 const Report = require('../models/ReportModel');
 const Transaction = require('../models/Transaction');
 const ApiError = require('../utils/apierror');
+const Goal = require('../models/Goal');
+const mongoose = require('mongoose');
 
 // إنشاء تقرير جديد
 exports.createReport = async (req, res, next) => {
@@ -125,12 +127,17 @@ exports.deleteUserReports = async (req, res) => {
 
 exports.generateGoalReport = async (req, res) => {
     try {
+        const userId = req.query.userId;
+        if (!userId) {
+            return res.status(400).json({ error: 'معرف المستخدم مطلوب' });
+        }
+
         const goals = await Goal.aggregate([
-            { $match: { userId: req.user._id } },
+            { $match: { userId: new mongoose.Types.ObjectId(userId) } },
             { $group: {
-                _id: '$category',
+                _id: '$type',
                 totalGoals: { $sum: 1 },
-                completed: { $sum: { $cond: ['$isCompleted', 1, 0] } },
+                completed: { $sum: { $cond: [{ $eq: ['$status', 'completed'] }, 1, 0] } },
                 totalAmount: { $sum: '$targetAmount' }
             }}
         ]);

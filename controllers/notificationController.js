@@ -4,6 +4,18 @@ const asyncHandler = require('express-async-handler');
 const Goal = require('../models/Goal');
 const admin = require('firebase-admin');
 const User = require('../models/User');
+const path = require('path');
+
+// تهيئة Firebase Admin SDK
+try {
+    const serviceAccount = require('../css/config/contennt-app-firebase-adminsdk-fbsvc-5edc1d42ea.json');
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+    console.log('✅ Firebase Admin Initialized Successfully');
+} catch (error) {
+    console.error('❌ Failed to initialize Firebase Admin SDK:', error);
+}
 
 
 
@@ -34,6 +46,8 @@ async function sendFcmNotification(userId, title, message) {
         console.error('خطأ في إرسال إشعار FCM:', error);
     }
 };
+
+exports.sendFcmNotification = sendFcmNotification;
 
 
 // إنشاء إشعار جديد
@@ -170,18 +184,18 @@ exports.checkGoalProgress = async () => {
     try {
         // أهداف اقترب موعدها
         const nearingGoals = await Goal.find({
-            isCompleted: false,
-            deadline: { 
+            status: { $ne: 'completed' },
+            endDate: { 
                 $lte: new Date(Date.now() + 3*24*60*60*1000), // 3 أيام
                 $gte: new Date() 
             }
         });
 
         for (const goal of nearingGoals) {
-            await Notification.create({
+            const notification = await Notification.create({
                 userId: goal.userId,
                 title: 'موعد الهدف يقترب',
-                message: `هدفك "${goal.title}" ينتهي في ${goal.deadline.toLocaleDateString()}`,
+                message: `هدفك "${goal.title}" ينتهي في ${goal.endDate.toLocaleDateString()}`,
                 type: 'goal',
                 relatedEntity: 'goal',
                 entityId: goal._id
@@ -193,12 +207,12 @@ exports.checkGoalProgress = async () => {
 
         // أهداف اكتملت تلقائياً
         const completedGoals = await Goal.find({
-            isCompleted: true,
+            status: 'completed',
             notifiedCompleted: { $ne: true }
         });
 
         for (const goal of completedGoals) {
-            await Notification.create({
+            const notification = await Notification.create({
                 userId: goal.userId,
                 title: 'تهانينا! لقد حققت هدفك',
                 message: `لقد حققت هدفك "${goal.title}" بنجاح`,

@@ -1,5 +1,12 @@
 const mongoose = require('mongoose');
+const dns = require('node:dns');
 
+// تجنب مشكلة فشل استعلام DNS SRV على الشبكات المحلية
+try {
+    dns.setServers(['8.8.8.8', '8.8.4.4']);
+} catch (dnsErr) {
+    console.warn('DNS server override failed, continuing with system default:', dnsErr.message);
+}
 
 const conectToDataBase = async () => {
 
