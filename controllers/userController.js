@@ -280,5 +280,32 @@ exports.getUserProfile = async (req, res, next) => {
     });
 };
 
+// تسجيل رمز FCM للمستخدم
+exports.registerFcmToken = async (req, res) => {
+    const { userId, token } = req.body;
+    try {
+        if (!userId || !token) {
+            return res.status(400).json({ success: false, message: 'معرف المستخدم والرمز مطلوبان' });
+        }
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'المستخدم غير موجود' });
+        }
+        
+        if (!user.fcmTokens) {
+            user.fcmTokens = [];
+        }
+        
+        if (!user.fcmTokens.includes(token)) {
+            user.fcmTokens.push(token);
+            await user.save();
+        }
+        
+        res.status(200).json({ success: true, message: 'تم تسجيل رمز FCM بنجاح' });
+    } catch (error) {
+        res.status(400).json({ success: false, message: 'فشل تسجيل رمز FCM', error: error.message });
+    }
+};
+
 
 

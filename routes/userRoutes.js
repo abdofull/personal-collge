@@ -9,7 +9,8 @@ const {
     updateProfileImage,
     getInitialBalance,
     deleteUserAccount,
-    getUserProfile
+    getUserProfile,
+    registerFcmToken
 } = require('../controllers/userController');
 const { body, param , validationResult } = require('express-validator');
 const { upload } = require('../middleware/uploadMiddleware'); // استيراد multer
@@ -75,6 +76,9 @@ router.delete('/logout/:userId', deleteUserAccount);
 
 // توجيه لاسترجاع بيانات المستخدم
 router.get('/users/:userId', getUserProfile);
+
+// مسار تسجيل رمز FCM
+router.post('/register-fcm', registerFcmToken);
 
 
 

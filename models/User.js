@@ -54,8 +54,10 @@ const userSchema = new mongoose.Schema({
         budgetAlerts: { type: Boolean, default: true },
         balanceAlerts: { type: Boolean, default: true }
     },
-
-
+    fcmTokens: {
+        type: [String],
+        default: []
+    }
 });
 
 // دالة لتشفير كلمة المرور قبل حفظ المستخدم
